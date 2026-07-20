@@ -215,26 +215,26 @@ Bundle at `/mnt/user-data/uploads/`: `Founder_RPG_dc.html` (the canvas — read 
 - [x] Quest-complete celebration animations (popIn / floatUp XP chip / twinkle / ringPulse) per §11a
 
 ### Phase 2 — Authored questline
-- [ ] Encode Acts → Chapters → Objectives as structured content (universal spine, parameterized flavor text)
-- [ ] **Questline map** screen (§11b #3): vertical spine, all node states (done / verified / active / locked / gold gate), act header + footer
-- [ ] Self-reported completion flow (Act 1)
-- [ ] **Journal** screen (§11b #4): streak calendar strip, auto-assembled daily entries (templated, not live-LLM), milestone entries, perfect-day badges
+- [x] Encode Acts → Chapters → Objectives as structured content (universal spine, parameterized flavor text) — `src/content/questline.ts` (4 acts, 12 chapters; Act I full per 7b, later acts have titles/taglines/objectives). Deep per-type flavor pass still open (§13).
+- [x] **Questline map** screen (§11b #3): vertical spine, all node states (done / verified / active / locked / gold gate), act header + footer — `src/app/(tabs)/questline.tsx`
+- [x] Self-reported completion flow (Act 1) — chapter-detail modal `src/app/chapter/[id].tsx`; DB helpers `src/db/chapters.ts`
+- [x] **Journal** screen (§11b #4): streak calendar strip, auto-assembled daily entries (templated, not live-LLM), milestone entries, perfect-day badges — `src/app/(tabs)/journal.tsx`, engine `src/logic/journal.ts`
 
 ### Phase 3 — Verification (premium)
-- [ ] Stripe Connect OAuth flow (read-only user revenue; surface the "we never touch your money" trust copy)
-- [ ] RevenueCat-based verification for applicable milestones
-- [ ] Verified vs. standard trophy distinction (gold hexagon seal + VERIFIED badge)
-- [ ] Contextual verification prompt at first money chapter (re-uses onboarding step 3 content)
-- [ ] **Verified milestone celebration** full-screen takeover (§11b #6)
-- [ ] Verified events write to `chapter_progress`
+- [~] Stripe Connect OAuth flow — **UI + write-path built, OAuth launch stubbed pending Stripe credentials.** Verify screen `src/app/verify/[id].tsx`; the webhook target is `markChapterVerified` in `src/logic/verification.ts`. Dev-only "simulate" button exercises the path.
+- [~] RevenueCat-based verification for applicable milestones — write-path shares `markChapterVerified(source:'revenuecat')`; trigger pending keys
+- [x] Verified vs. standard trophy distinction (gold hexagon seal + VERIFIED badge) — questline/journal/founder-card/celebration all branch on `status='verified'`
+- [x] Contextual verification prompt at first money chapter (re-uses onboarding step 3 content) — gold banner in chapter detail → verify screen
+- [x] **Verified milestone celebration** full-screen takeover (§11b #6) — `src/app/milestone/[id].tsx` (verified vs self-reported variants)
+- [x] Verified events write to `chapter_progress` (+ `verification_events` audit row)
 
 ### Phase 4 — Shareable cards & paywall
-- [ ] Founder-card generator (cream card, Newsreader title, gold seal, monospace stat footer, tagline) + **9:16 story export**
-- [ ] Share/export from journal
-- [ ] Paywall at Act 1→2 boundary; gate premium features per §9
+- [x] Founder-card generator (cream card, Newsreader title, gold seal, monospace stat footer, tagline) + **9:16 story export** — `src/components/FounderCard.tsx`, screen `src/app/founder-card/[id].tsx` (Post/Story toggle)
+- [x] Share/export from journal — react-native-view-shot capture + expo-sharing (native); web falls back to capture-only with a note
+- [x] Paywall at Act 1→2 boundary; gate premium features per §9 — `src/app/paywall.tsx`, triggered on completing `act1_ch5` for non-pro; renders RevenueCat packages when keys exist, static hero copy otherwise
 
 ### Phase 5 — Premium AI (margin-safe)
-- [ ] Weekly "custom questline" live-LLM refresh, gated to paid tier only
+- [~] Weekly "custom questline" live-LLM refresh, gated to paid tier only — `src/logic/customQuestline.ts`: pro + 7-day-cooldown gate wired; the single live-LLM entry point `generateCustomQuestline` throws `not-configured` until the Renmus LLM proxy endpoint exists. Last-refresh persisted in `app_meta` (migration v2).
 
 ---
 

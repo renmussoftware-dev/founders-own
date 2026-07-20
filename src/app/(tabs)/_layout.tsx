@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
 import { ArcaneTabBar } from '@/components/ArcaneTabBar';
 import { getCharacter } from '@/db/character';
+import { seedChapters } from '@/db/chapters';
 import { selectNeedsOnboarding, useStore } from '@/store/useStore';
 
 export default function TabsLayout() {
@@ -14,12 +15,16 @@ export default function TabsLayout() {
 
   useEffect(() => {
     if (!characterLoaded) {
-      getCharacter(db).then(setCharacter);
+      getCharacter(db).then(async c => {
+        // Backfill chapter rows for any character created before a content update.
+        if (c) await seedChapters(db);
+        setCharacter(c);
+      });
     }
   }, [characterLoaded, db, setCharacter]);
 
   if (!characterLoaded) return null;
-  if (needsOnboarding) return <Redirect href="/onboarding/index" />;
+  if (needsOnboarding) return <Redirect href="/onboarding" />;
 
   return (
     <Tabs

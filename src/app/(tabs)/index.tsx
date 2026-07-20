@@ -12,6 +12,7 @@ import {
   type QuestLogRow,
 } from '@/logic/dailyQuests';
 import { statLevel, statProgress, statXp, XP_PER_LEVEL } from '@/logic/leveling';
+import { upsertDailyEntry } from '@/logic/journal';
 import { useStore } from '@/store/useStore';
 import { colors, fonts, stats } from '@/theme/tokens';
 
@@ -37,6 +38,7 @@ export default function TodayScreen() {
   const onComplete = useCallback(
     async (quest: QuestLogRow) => {
       const fresh = await completeQuest(db, quest);
+      await upsertDailyEntry(db);
       setCharacter(fresh);
       const updated = await db.getAllAsync<QuestLogRow>(
         'SELECT * FROM quest_log WHERE quest_date = ? ORDER BY id',

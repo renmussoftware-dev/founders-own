@@ -16,6 +16,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { OnboardingProgress, TealButton } from '@/components/onboarding/shared';
 import { ob, SELF_REPORT_ITEMS } from '@/content/onboarding';
 import { createCharacter } from '@/db/character';
+import { seedChapters } from '@/db/chapters';
 import { overallLevel, statLevel } from '@/logic/leveling';
 import { useOnboarding } from '@/store/onboarding';
 import { useStore } from '@/store/useStore';
@@ -56,11 +57,8 @@ export default function SelfReportStep() {
       businessType: businessType ?? 'other',
       startingXp,
     });
-    // First chapter opens immediately so the daily engine has a chapter to pull toward.
-    await db.runAsync(
-      `INSERT OR IGNORE INTO chapter_progress (chapter_id, act, status, objectives_total)
-       VALUES ('act1_ch1', 1, 'active', 3)`
-    );
+    // Seed every chapter (first one active) so the daily engine has a chapter to pull toward.
+    await seedChapters(db);
     setCharacter(character);
     router.push('/onboarding/step3');
   }

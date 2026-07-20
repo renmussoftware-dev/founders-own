@@ -76,6 +76,14 @@ const MIGRATIONS: string[] = [
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
   `,
+
+  // v2 — key/value app metadata (e.g. last custom-questline refresh, Phase 5)
+  `
+  CREATE TABLE app_meta (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
+  `,
 ];
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
