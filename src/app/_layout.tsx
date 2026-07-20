@@ -14,6 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import { colors } from '@/theme/tokens';
 import { migrateDbIfNeeded } from '@/db/migrations';
 import { initAnalytics } from '@/utils/analytics';
+import { bootstrapRevenueCat } from '@/hooks/useRevenueCat';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,8 +28,11 @@ export default function RootLayout() {
   });
 
   // Initialize Meta advertiser-tracking on launch (SDK auto-inits natively).
+  // Configure RevenueCat and sync the Pro entitlement before any screen reads
+  // `isPro` — gating must be correct app-wide, not just after the paywall opens.
   useEffect(() => {
     initAnalytics();
+    bootstrapRevenueCat();
   }, []);
 
   useEffect(() => {

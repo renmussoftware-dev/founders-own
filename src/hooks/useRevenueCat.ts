@@ -19,6 +19,44 @@ const REVENUECAT_API_KEY_ANDROID = '';
 // Must match the entitlement identifier created in the RevenueCat dashboard.
 const ENTITLEMENT_ID = 'Renmus Software LLC Pro';
 
+function apiKey(): string {
+  return Platform.OS === 'ios' ? REVENUECAT_API_KEY_IOS : REVENUECAT_API_KEY_ANDROID;
+}
+
+// Purchases.configure must run exactly once per app session. Both the launch
+// bootstrap and the paywall hook route through here so we never double-configure.
+let configured = false;
+function configureRevenueCat(): boolean {
+  if (configured) return true;
+  const key = apiKey();
+  if (!key) return false; // keys not provisioned for this platform (e.g. web)
+  if (__DEV__) {
+    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+  }
+  Purchases.configure({ apiKey: key });
+  // Link the Facebook anonymous ID so RevenueCat's server-side purchase events
+  // match our SDK funnel (esp. for ATT-denied users). Fire-and-forget.
+  linkFacebookAnonymousIDToRevenueCat();
+  configured = true;
+  return true;
+}
+
+/**
+ * Configure RevenueCat and sync the founder's entitlement into the store on
+ * app launch — so `isPro` is correct app-wide before the paywall is ever
+ * opened (Pro gating depends on it). No-ops when keys aren't provisioned.
+ */
+export async function bootstrapRevenueCat(): Promise<void> {
+  if (!configureRevenueCat()) return;
+  try {
+    const customerInfo = await Purchases.getCustomerInfo();
+    const isPro = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
+    useStore.getState().setIsPro(isPro);
+  } catch (e) {
+    console.warn('RevenueCat bootstrap error:', e);
+  }
+}
+
 export interface PurchaseState {
   isLoading: boolean;
   isPro: boolean;
@@ -43,22 +81,11 @@ export function useRevenueCat() {
   useEffect(() => {
     async function init() {
       try {
-        const apiKey = Platform.OS === 'ios' ? REVENUECAT_API_KEY_IOS : REVENUECAT_API_KEY_ANDROID;
-        if (!apiKey) {
+        if (!configureRevenueCat()) {
           // Keys not provisioned yet — run free-tier only.
           setState(s => ({ ...s, isLoading: false }));
           return;
         }
-
-        if (__DEV__) {
-          Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-        }
-        Purchases.configure({ apiKey });
-
-        // Pass the Facebook anonymous ID through so RevenueCat's server-side
-        // purchase events match our SDK funnel events (esp. for ATT-denied
-        // users). Fire-and-forget — don't block offering load.
-        linkFacebookAnonymousIDToRevenueCat();
 
         const customerInfo = await Purchases.getCustomerInfo();
         const isPro = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
