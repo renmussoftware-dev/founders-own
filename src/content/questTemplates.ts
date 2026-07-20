@@ -214,11 +214,13 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   { id: 'ch3_app_retain', type: 'digital_product', stat: 'product', effort: 'medium', chapter: 'act1_ch3', title: 'Add one reason for users to come back tomorrow' },
   { id: 'ch3_app_winback', type: 'digital_product', stat: 'marketing', effort: 'medium', chapter: 'act1_ch3', title: 'Message lapsed users about one improvement you shipped' },
 
-  // Ch.4 A Week That Runs Itself
-  { id: 'ch4_any_systemize', type: 'any', stat: 'operations', effort: 'medium', chapter: 'act1_ch4', title: 'List your recurring tasks and mark the one to systemize first' },
-  { id: 'ch4_any_automate', type: 'any', stat: 'operations', effort: 'heavy', chapter: 'act1_ch4', title: 'Automate or hand off one recurring task end to end' },
+  // Ch.4 First $1,000 Month
+  { id: 'ch4_app_channel', type: 'digital_product', stat: 'marketing', effort: 'heavy', chapter: 'act1_ch4', title: 'Push your best install channel hard for a week' },
+  { id: 'ch4_app_convert', type: 'digital_product', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch4', title: 'Fix the biggest leak between install and purchase' },
+  { id: 'ch4_any_revenue', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch4', title: 'Do the one thing most likely to drive paid installs, twice' },
 
-  // Ch.5 First $10,000 month
-  { id: 'ch5_any_price', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch5', title: 'Raise price or widen the offer, and measure the effect' },
-  { id: 'ch5_any_channel', type: 'any', stat: 'marketing', effort: 'heavy', chapter: 'act1_ch5', title: 'Build one repeatable acquisition channel you can turn up' },
+  // Ch.5 First $1,000 MRR
+  { id: 'ch5_app_annual', type: 'digital_product', stat: 'revenue', effort: 'medium', chapter: 'act1_ch5', title: 'Add an annual plan and surface it in your paywall' },
+  { id: 'ch5_app_trial', type: 'digital_product', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch5', title: 'Raise trial → paid conversion by one concrete change' },
+  { id: 'ch5_any_retain', type: 'any', stat: 'product', effort: 'medium', chapter: 'act1_ch5', title: 'Remove one reason subscribers cancel' },
 ];

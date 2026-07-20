@@ -65,7 +65,7 @@ export default function MilestoneCelebration() {
             <HexSeal label={data.sealLabel} size={64} />
           </View>
           {data.verified ? (
-            <VerifiedBadge label="VERIFIED · STRIPE" />
+            <VerifiedBadge label="VERIFIED · REVENUECAT" />
           ) : (
             <Text style={styles.selfReport}>SELF-REPORTED</Text>
           )}

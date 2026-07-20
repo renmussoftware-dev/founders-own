@@ -3,11 +3,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ob } from '@/content/onboarding';
 import { fonts } from '@/theme/tokens';
 
-/** 3-segment progress bar shown across all onboarding steps (SPEC §8). */
-export function OnboardingProgress({ step }: { step: 1 | 2 | 3 }) {
+/** Progress bar across onboarding steps (V1: 2 steps). */
+export function OnboardingProgress({ step, total = 2 }: { step: number; total?: number }) {
   return (
     <View style={progressStyles.row}>
-      {[1, 2, 3].map(n =>
+      {Array.from({ length: total }, (_, i) => i + 1).map(n =>
         n <= step ? (
           <LinearGradient
             key={n}

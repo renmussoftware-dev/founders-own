@@ -113,7 +113,7 @@ function ChapterNode({
       >
         <View style={styles.cardMain}>
           <Text style={styles.cardTitle}>Ch. {chapter.index} · {chapter.title}</Text>
-          <Text style={styles.verifiedSub}>Verified via Stripe</Text>
+          <Text style={styles.verifiedSub}>Verified via RevenueCat</Text>
         </View>
         <VerifiedBadge />
       </LinearGradient>

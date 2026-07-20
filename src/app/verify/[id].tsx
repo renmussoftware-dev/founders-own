@@ -1,20 +1,29 @@
+import { useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { useSQLiteContext } from 'expo-sqlite';
-import { GoldButton } from '@/components/onboarding/shared';
+import { ConnectRevenueCat } from '@/components/ConnectRevenueCat';
 import { HexSeal } from '@/components/ui/HexSeal';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { ob } from '@/content/onboarding';
-import { markChapterVerified } from '@/logic/verification';
-import { fonts } from '@/theme/tokens';
+import { useRevenueData } from '@/hooks/useRevenueData';
+import {
+  chapterMet,
+  formatMetric,
+  markChapterVerified,
+  metricLabel,
+  metricValue,
+} from '@/logic/verification';
+import { colors, fonts } from '@/theme/tokens';
 
 /**
- * Contextual verification prompt at a money chapter (SPEC §8 step 3 reused,
- * Phase 3). Real Stripe Connect OAuth is pending credentials — "Connect
- * Stripe" is wired to the stub, and a dev-only action exercises the verified
- * trophy path end-to-end.
+ * Verify a money chapter against live RevenueCat metrics (SPEC §4, V1). If the
+ * founder hasn't connected, show the connect panel; once connected, compare the
+ * live metric to the threshold and gold-verify when it's met — real data, no
+ * simulation.
  */
 export default function VerifyChapter() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,14 +31,27 @@ export default function VerifyChapter() {
   const router = useRouter();
   const db = useSQLiteContext();
   const chapter = id ? CHAPTERS_BY_ID[id] : undefined;
+  const { connected, overview, loading, error, refresh } = useRevenueData();
+  const [busy, setBusy] = useState(false);
+  const [shortfall, setShortfall] = useState(false);
 
-  async function connectStripe() {
-    // TODO: launch Stripe Connect OAuth (read-only) once credentials exist.
-    // The webhook it returns through calls markChapterVerified server-side.
-    if (__DEV__ && id) {
-      await markChapterVerified(db, id, 'stripe', { simulated: true });
+  const verify = chapter?.verify;
+
+  async function onVerify() {
+    if (!chapter || !verify || !id) return;
+    setBusy(true);
+    setShortfall(false);
+    const fresh = await refresh(); // returns the freshly-fetched metrics
+    if (chapterMet(fresh, chapter)) {
+      await markChapterVerified(db, id, 'revenuecat', {
+        metric: verify.metric,
+        value: metricValue(fresh, verify.metric),
+      });
       router.replace(`/milestone/${id}`);
+    } else {
+      setShortfall(true);
     }
+    setBusy(false);
   }
 
   return (
@@ -45,71 +67,97 @@ export default function VerifyChapter() {
         <Rect x="0" y="0" width="100%" height="100%" fill="url(#vDark)" />
       </Svg>
 
-      <View style={[styles.content, { paddingTop: insets.top + 24 }]}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingTop: insets.top + 24, paddingBottom: Math.max(insets.bottom, 28) },
+        ]}
+      >
         <Pressable onPress={() => router.back()} style={styles.closeRow}>
           <Text style={styles.close}>✕</Text>
         </Pressable>
-        <View style={styles.sealWrap}>
-          <HexSeal label="$" size={66} />
-        </View>
-        <Text style={styles.hed}>Verify {chapter?.title ?? 'this milestone'}</Text>
-        <Text style={styles.sub}>
-          Connect Stripe read-only and we&rsquo;ll confirm this from your real revenue — then
-          it&rsquo;s gold, and un-fakeable.
-        </Text>
 
-        <View style={styles.benefits}>
-          <Benefit glyph="✓" text="Gold hexagon seal on your founder card" gold />
-          <Benefit glyph="◆" text="Revenue chart on your quest board, auto-updated" />
-          <Benefit glyph="✦" text="Read-only. We never touch your money." mint />
-        </View>
-      </View>
+        {!connected ? (
+          // Not connected yet — reuse the connect panel; after connecting we
+          // stay here so they can verify.
+          <ConnectRevenueCat onConnected={refresh} onSkip={() => router.back()} />
+        ) : !chapter || !verify ? (
+          <Text style={styles.info}>This milestone isn’t revenue-verifiable.</Text>
+        ) : (
+          <View>
+            <View style={styles.sealWrap}>
+              <HexSeal label={verify.seal} size={66} />
+            </View>
+            <Text style={styles.hed}>Verify {chapter.title}</Text>
+            <Text style={styles.sub}>
+              Pulled from your RevenueCat {metricLabel(verify.metric)} — un-fakeable.
+            </Text>
 
-      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 28) }]}>
-        <GoldButton
-          label={__DEV__ ? 'Connect Stripe (dev: simulate)' : 'Connect Stripe'}
-          onPress={connectStripe}
-        />
-        <Pressable onPress={() => router.back()} style={styles.later}>
-          <Text style={styles.laterText}>Later — keep it self-reported</Text>
-        </Pressable>
-      </View>
+            <View style={styles.gauge}>
+              <View style={styles.gaugeRow}>
+                <Text style={styles.gaugeNow}>
+                  {formatMetric(verify.metric, metricValue(overview, verify.metric))}
+                </Text>
+                <Text style={styles.gaugeTarget}>
+                  / {formatMetric(verify.metric, verify.threshold)}
+                </Text>
+              </View>
+              <View style={styles.track}>
+                <LinearGradient
+                  colors={[colors.gold, colors.goldMid]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={[
+                    styles.fill,
+                    {
+                      width: `${Math.min(
+                        100,
+                        Math.max(
+                          3,
+                          (metricValue(overview, verify.metric) / verify.threshold) * 100
+                        )
+                      )}%`,
+                    },
+                  ]}
+                />
+              </View>
+              <Text style={styles.gaugeLabel}>{metricLabel(verify.metric)}</Text>
+            </View>
+
+            {shortfall ? (
+              <Text style={styles.shortfall}>
+                Not there yet — keep going and check back. This verifies the moment your
+                {' '}{metricLabel(verify.metric)} crosses {formatMetric(verify.metric, verify.threshold)}.
+              </Text>
+            ) : null}
+            {error ? <Text style={styles.shortfall}>{error}</Text> : null}
+
+            <Pressable onPress={onVerify} disabled={busy || loading}>
+              <LinearGradient
+                colors={[colors.gold, colors.goldMid]}
+                style={[styles.cta, (busy || loading) && styles.ctaDisabled]}
+              >
+                <Text style={styles.ctaText}>{busy || loading ? 'Checking RevenueCat…' : 'Verify from RevenueCat'}</Text>
+              </LinearGradient>
+            </Pressable>
+            <Pressable onPress={() => router.back()} style={styles.later}>
+              <Text style={styles.laterText}>Later — keep it self-reported</Text>
+            </Pressable>
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
 
-function Benefit({
-  glyph,
-  text,
-  gold,
-  mint,
-}: {
-  glyph: string;
-  text: string;
-  gold?: boolean;
-  mint?: boolean;
-}) {
-  return (
-    <View style={styles.benefit}>
-      <View
-        style={[
-          styles.benefitDot,
-          gold && styles.dotGold,
-          mint && styles.dotMint,
-        ]}
-      >
-        <Text style={styles.benefitGlyph}>{glyph}</Text>
-      </View>
-      <Text style={styles.benefitText}>{text}</Text>
-    </View>
-  );
-}
+const light = '#FBFAF6';
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#122730' },
-  content: { flex: 1, paddingHorizontal: 26 },
+  content: { paddingHorizontal: 26, flexGrow: 1 },
   closeRow: { alignSelf: 'flex-end', padding: 6 },
   close: { fontFamily: fonts.uiExtraBold, fontSize: 18, color: 'rgba(251,250,246,0.6)' },
+  info: { fontFamily: fonts.uiBold, fontSize: 14, color: light, textAlign: 'center', marginTop: 40 },
   sealWrap: {
     width: 96,
     height: 96,
@@ -118,50 +166,64 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginTop: 4,
-    marginBottom: 18,
+    marginBottom: 16,
   },
-  hed: {
-    fontFamily: fonts.uiExtraBold,
-    fontSize: 23,
-    lineHeight: 29,
-    color: ob.darkText,
-    textAlign: 'center',
-  },
+  hed: { fontFamily: fonts.uiExtraBold, fontSize: 23, lineHeight: 29, color: light, textAlign: 'center' },
   sub: {
     fontFamily: fonts.uiBold,
     fontSize: 13,
     lineHeight: 20,
-    color: ob.darkTextSoft,
+    color: 'rgba(251,250,246,0.65)',
     textAlign: 'center',
     marginTop: 10,
     marginBottom: 22,
   },
-  benefits: { gap: 10 },
-  benefit: {
-    backgroundColor: ob.darkCard,
+  gauge: {
+    backgroundColor: 'rgba(251,250,246,0.06)',
     borderWidth: 1,
-    borderColor: ob.darkCardBorder,
+    borderColor: 'rgba(251,250,246,0.12)',
     borderRadius: 16,
-    paddingHorizontal: 15,
-    paddingVertical: 13,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+    padding: 16,
   },
-  benefitDot: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#3D8098',
+  gaugeRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'center', gap: 6 },
+  gaugeNow: { fontFamily: fonts.uiBlack, fontSize: 28, color: colors.gold },
+  gaugeTarget: { fontFamily: fonts.uiExtraBold, fontSize: 16, color: 'rgba(251,250,246,0.5)' },
+  track: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    overflow: 'hidden',
+    marginTop: 12,
+  },
+  fill: { height: '100%', borderRadius: 4 },
+  gaugeLabel: {
+    fontFamily: fonts.uiBold,
+    fontSize: 11,
+    color: 'rgba(251,250,246,0.5)',
+    textAlign: 'center',
+    marginTop: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  shortfall: {
+    fontFamily: fonts.uiBold,
+    fontSize: 12,
+    lineHeight: 17,
+    color: 'rgba(251,250,246,0.7)',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+  cta: {
+    height: 54,
+    borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 20,
+    borderBottomWidth: 4,
+    borderBottomColor: colors.goldDeep,
   },
-  dotGold: { backgroundColor: '#C89441' },
-  dotMint: { borderRadius: 10, backgroundColor: '#3E7C52' },
-  benefitGlyph: { fontFamily: fonts.uiBlack, fontSize: 12, color: '#FFFFFF' },
-  benefitText: { flex: 1, fontFamily: fonts.uiBold, fontSize: 12.5, lineHeight: 18, color: ob.darkText },
-  footer: { paddingHorizontal: 26, gap: 12 },
-  later: { height: 48, alignItems: 'center', justifyContent: 'center' },
-  laterText: { fontFamily: fonts.uiExtraBold, fontSize: 13, color: ob.darkTextSoft },
+  ctaDisabled: { opacity: 0.5 },
+  ctaText: { fontFamily: fonts.uiExtraBold, fontSize: 15, color: '#3A2A0C' },
+  later: { height: 48, alignItems: 'center', justifyContent: 'center', marginTop: 6 },
+  laterText: { fontFamily: fonts.uiExtraBold, fontSize: 13, color: 'rgba(251,250,246,0.65)' },
 });

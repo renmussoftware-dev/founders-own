@@ -1,23 +1,19 @@
 import { type SQLiteDatabase } from 'expo-sqlite';
-import { CHAPTERS_BY_ID } from '@/content/questline';
+import { CHAPTERS_BY_ID, type Chapter, type VerifyMetric } from '@/content/questline';
 import { unlockNext } from '@/db/chapters';
 import { writeMilestoneEntry } from '@/logic/journal';
+import { type RcOverview } from '@/integrations/revenuecat';
 
 /**
- * Verification write-path (SPEC §7, Phase 3). This is the function that a
- * Stripe Connect webhook or a RevenueCat entitlement event ultimately calls:
- * it records the verification event, promotes the chapter to the gold
- * `verified` tier, writes a verified milestone journal entry, and unlocks the
- * next chapter.
- *
- * The OAuth/webhook plumbing that *triggers* this is pending real Stripe +
- * RevenueCat credentials (see useRevenueCat + docs/SPEC §13). Until then the
- * verify screen calls this directly behind a clearly-labeled dev action.
+ * Verification write-path (SPEC §7). Records the event, promotes the chapter to
+ * the gold `verified` tier, writes a verified milestone entry, and unlocks the
+ * next chapter. In V1 this is driven by real RevenueCat metrics read on-device
+ * (no simulation) — the founder's own sales verify the milestone.
  */
 export async function markChapterVerified(
   db: SQLiteDatabase,
   chapterId: string,
-  source: 'stripe' | 'revenuecat' = 'stripe',
+  source: 'stripe' | 'revenuecat' = 'revenuecat',
   payload: Record<string, unknown> = {}
 ) {
   const chapter = CHAPTERS_BY_ID[chapterId];
@@ -42,14 +38,45 @@ export async function markChapterVerified(
     );
   });
 
-  await writeMilestoneEntry(db, chapter.title, {
-    verified: true,
-    founderCardRef: chapterId,
-  });
+  await writeMilestoneEntry(db, chapter.title, { verified: true, founderCardRef: chapterId });
   await unlockNext(db, chapterId);
 }
 
-/** Whether a chapter can be revenue-verified (money milestones only, SPEC §4). */
+/** A chapter is RevenueCat-verifiable when it carries a verify spec. */
 export function isVerifiable(chapterId: string): boolean {
-  return !!CHAPTERS_BY_ID[chapterId]?.money;
+  return !!CHAPTERS_BY_ID[chapterId]?.verify;
+}
+
+export function metricValue(overview: RcOverview | null, metric: VerifyMetric): number {
+  return overview?.metrics[metric] ?? 0;
+}
+
+/** Is a chapter's verified threshold met by the live metrics? */
+export function chapterMet(overview: RcOverview | null, chapter: Chapter): boolean {
+  if (!chapter.verify) return false;
+  return metricValue(overview, chapter.verify.metric) >= chapter.verify.threshold;
+}
+
+export function metricLabel(metric: VerifyMetric): string {
+  switch (metric) {
+    case 'mrr':
+      return 'MRR';
+    case 'revenue':
+      return 'revenue (28d)';
+    case 'active_subscriptions':
+      return 'active subscribers';
+    case 'active_users':
+      return 'active users';
+    case 'new_customers':
+      return 'new customers (28d)';
+  }
+}
+
+const MONEY_METRICS: VerifyMetric[] = ['mrr', 'revenue'];
+
+export function formatMetric(metric: VerifyMetric, value: number): string {
+  if (MONEY_METRICS.includes(metric)) {
+    return `$${Math.round(value).toLocaleString()}`;
+  }
+  return value.toLocaleString();
 }

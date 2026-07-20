@@ -102,7 +102,7 @@ export default function ChapterDetail() {
             </View>
             <View style={styles.verifyBody}>
               <Text style={styles.verifyTitle}>Verify this from real revenue</Text>
-              <Text style={styles.verifySub}>Gold tier · read-only Stripe connect</Text>
+              <Text style={styles.verifySub}>Gold tier · read-only RevenueCat</Text>
             </View>
             <Text style={styles.verifyChevron}>›</Text>
           </Pressable>

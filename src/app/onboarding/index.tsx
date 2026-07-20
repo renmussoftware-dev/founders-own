@@ -1,68 +1,128 @@
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useMemo } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSQLiteContext } from 'expo-sqlite';
 import { OnboardingProgress, TealButton } from '@/components/onboarding/shared';
-import { BUSINESS_TYPE_CARDS, ob } from '@/content/onboarding';
+import { ob, SELF_REPORT_ITEMS } from '@/content/onboarding';
+import { createCharacter } from '@/db/character';
+import { seedChapters } from '@/db/chapters';
+import { overallLevel, statLevel } from '@/logic/leveling';
 import { useOnboarding } from '@/store/onboarding';
-import { fonts } from '@/theme/tokens';
+import { useStore } from '@/store/useStore';
+import { fonts, stats as statMeta, statOrder, type StatKey } from '@/theme/tokens';
 
-/** Onboarding 1/3 — "What are you building?" (design 4a + added Digital card). */
-export default function BusinessTypeStep() {
+/**
+ * Onboarding 1/2 — "Mark how far you've come" (app-dev V1). The business-type
+ * step is removed; everyone is a digital_product founder. Captures the app
+ * name and self-reported starting milestones, then creates the character.
+ */
+export default function SelfReportStep() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const businessType = useOnboarding(s => s.businessType);
-  const setBusinessType = useOnboarding(s => s.setBusinessType);
+  const db = useSQLiteContext();
+  const setCharacter = useStore(s => s.setCharacter);
+  const { businessName, checked, toggleItem, setBusinessName } = useOnboarding();
+
+  const startingXp = useMemo(() => {
+    const xp: Partial<Record<StatKey, number>> = {};
+    for (const item of SELF_REPORT_ITEMS) {
+      if (checked[item.id]) xp[item.stat] = (xp[item.stat] ?? 0) + item.xp;
+    }
+    return xp;
+  }, [checked]);
+
+  const summary = useMemo(() => {
+    const total = Object.values(startingXp).reduce((a, b) => a + b, 0);
+    const level = overallLevel(total);
+    const parts = statOrder
+      .filter(s => (startingXp[s] ?? 0) > 0)
+      .map(s => `${statMeta[s].label} ${statLevel(startingXp[s]!)}`);
+    return { level, parts };
+  }, [startingXp]);
+
+  async function onCreate() {
+    const character = await createCharacter(db, {
+      businessName: businessName.trim() || 'My App',
+      businessType: 'digital_product',
+      startingXp,
+    });
+    await seedChapters(db);
+    setCharacter(character);
+    router.push('/onboarding/connect');
+  }
 
   return (
     <LinearGradient colors={[ob.bgTop, ob.bgBottom]} style={styles.root}>
-      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 24 }]}>
-        <OnboardingProgress step={1} />
-        <Text style={styles.heading}>What are you{'\n'}building?</Text>
-        <Text style={styles.sub}>
-          This shapes your quests — the work is different for a studio than a shop.
-        </Text>
+      <KeyboardAvoidingView
+        style={styles.root}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 24 }]}>
+          <OnboardingProgress step={1} />
+          <Text style={styles.heading}>Mark how far{'\n'}you&rsquo;ve come</Text>
+          <Text style={styles.sub}>
+            We take your word for the early stuff. Revenue milestones get verified from
+            RevenueCat — that&rsquo;s where the gold is.
+          </Text>
 
-        <View style={styles.grid}>
-          {BUSINESS_TYPE_CARDS.map(card => {
-            const selected = businessType === card.type;
-            return (
-              <Pressable
-                key={card.type}
-                onPress={() => setBusinessType(card.type)}
-                style={[
-                  styles.card,
-                  card.fullWidth ? styles.cardFull : styles.cardHalf,
-                  selected && styles.cardSelected,
-                ]}
-              >
-                <View style={card.fullWidth && styles.cardRow}>
-                  <LinearGradient colors={card.gradient} style={styles.tile}>
-                    <Text style={styles.tileInitial}>{card.initial}</Text>
-                  </LinearGradient>
-                  <View style={card.fullWidth ? styles.cardRowBody : styles.cardBody}>
-                    <Text style={styles.cardTitle}>{card.title}</Text>
-                    <Text style={styles.cardNoun}>
-                      {card.subtitle ?? (
-                        <>
-                          You have <Text style={styles.cardNounEm}>{card.noun}</Text>
-                        </>
-                      )}
-                    </Text>
-                  </View>
-                </View>
-              </Pressable>
-            );
-          })}
+          <TextInput
+            value={businessName}
+            onChangeText={setBusinessName}
+            placeholder="Your app’s name"
+            placeholderTextColor={ob.inkFaint}
+            style={styles.nameInput}
+          />
+
+          <View style={styles.list}>
+            {SELF_REPORT_ITEMS.map(item => {
+              const isChecked = !!checked[item.id];
+              return (
+                <Pressable
+                  key={item.id}
+                  onPress={() => toggleItem(item.id)}
+                  style={[styles.item, !isChecked && styles.itemUnchecked]}
+                >
+                  {isChecked ? (
+                    <LinearGradient colors={[ob.ctaTop, ob.ctaBottom]} style={styles.checkbox}>
+                      <Text style={styles.checkboxMark}>✓</Text>
+                    </LinearGradient>
+                  ) : (
+                    <View style={[styles.checkbox, styles.checkboxEmpty]} />
+                  )}
+                  <Text style={[styles.itemLabel, !isChecked && styles.itemLabelUnchecked]}>
+                    {item.label}
+                  </Text>
+                  <Text style={[styles.itemStat, !isChecked && styles.itemStatUnchecked]}>
+                    +{statMeta[item.stat].label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <View style={styles.summary}>
+            <View style={styles.summaryGem} />
+            <Text style={styles.summaryText}>
+              Your character starts at <Text style={styles.summaryStrong}>Level {summary.level}</Text>
+              {summary.parts.length > 0 ? ` — ${summary.parts.join(' · ')}` : ''}
+            </Text>
+          </View>
+        </ScrollView>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 24) }]}>
+          <TealButton label="Create my character" onPress={onCreate} />
         </View>
-      </ScrollView>
-      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 24) }]}>
-        <TealButton
-          label="Continue"
-          disabled={businessType === null}
-          onPress={() => router.push('/onboarding/step2')}
-        />
-      </View>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 }
@@ -82,57 +142,91 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: ob.inkSoft,
     marginTop: 8,
-    marginBottom: 20,
+    marginBottom: 16,
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 11,
-  },
-  card: {
+  nameInput: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: ob.cardBorder,
-    borderRadius: 18,
-    padding: 15,
+    borderRadius: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 13,
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 14,
+    color: ob.ink,
+    marginBottom: 12,
   },
-  cardHalf: { flexBasis: '47%', flexGrow: 1 },
-  cardFull: { flexBasis: '100%' },
-  cardSelected: {
-    borderWidth: 2,
-    borderColor: ob.cardSelectedBorder,
-    shadowColor: ob.cardSelectedBorder,
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 5,
+  list: { gap: 10 },
+  item: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: ob.cardBorder,
+    borderRadius: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 13,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  cardRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  cardRowBody: { flex: 1 },
-  cardBody: { marginTop: 10 },
-  tile: {
-    width: 42,
-    height: 42,
-    borderRadius: 13,
+  itemUnchecked: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: 'rgba(30,58,68,0.22)',
+  },
+  checkbox: {
+    width: 28,
+    height: 28,
+    borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  tileInitial: {
-    fontFamily: fonts.uiBlack,
-    fontSize: 17,
+  checkboxEmpty: {
+    borderWidth: 2,
+    borderColor: 'rgba(30,58,68,0.2)',
+  },
+  checkboxMark: {
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 14,
     color: '#FFFFFF',
   },
-  cardTitle: {
+  itemLabel: {
+    flex: 1,
     fontFamily: fonts.uiExtraBold,
     fontSize: 14,
     color: ob.ink,
   },
-  cardNoun: {
-    fontFamily: fonts.uiBold,
-    fontSize: 11,
-    color: ob.inkSoft,
-    marginTop: 4,
+  itemLabelUnchecked: { color: 'rgba(30,58,68,0.55)' },
+  itemStat: {
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 10.5,
+    color: ob.accent,
   },
-  cardNounEm: { fontStyle: 'italic' },
+  itemStatUnchecked: { color: ob.inkFaint },
+  summary: {
+    marginTop: 16,
+    backgroundColor: '#E3EFF4',
+    borderRadius: 14,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  summaryGem: {
+    width: 10,
+    height: 10,
+    borderRadius: 3,
+    backgroundColor: '#3D8FA8',
+    transform: [{ rotate: '45deg' }],
+  },
+  summaryText: {
+    flex: 1,
+    fontFamily: fonts.uiBold,
+    fontSize: 11.5,
+    lineHeight: 16,
+    color: ob.accent,
+  },
+  summaryStrong: { fontFamily: fonts.uiBlack },
   footer: { paddingHorizontal: 22, paddingTop: 8 },
 });

@@ -72,12 +72,14 @@ export interface SelfReportItem {
   xp: number;
 }
 
+// App-dev self-report milestones (V1). Business-type cards above are kept for
+// V2 but no longer shown in onboarding.
 export const SELF_REPORT_ITEMS: SelfReportItem[] = [
-  { id: 'told_people', label: 'I’ve told people about my idea', stat: 'finance', xp: 500 },
-  { id: 'sellable', label: 'I have something I could sell today', stat: 'product', xp: 1000 },
-  { id: 'first_sale', label: 'I’ve made my first sale', stat: 'revenue', xp: 500 },
-  { id: 'stranger', label: 'I’ve sold to a stranger', stat: 'marketing', xp: 1000 },
-  { id: 'repeat', label: 'I’ve had a repeat customer', stat: 'revenue', xp: 1000 },
+  { id: 'shipped', label: 'I’ve shipped my app to the store', stat: 'product', xp: 1000 },
+  { id: 'users', label: 'I have real users', stat: 'marketing', xp: 1000 },
+  { id: 'monetized', label: 'I’ve set up subscriptions or in-app purchases', stat: 'operations', xp: 500 },
+  { id: 'first_sub', label: 'I have my first paying subscriber', stat: 'revenue', xp: 1000 },
+  { id: 'recurring', label: 'I’m making recurring revenue', stat: 'finance', xp: 1000 },
 ];
 
 /** Light/teal onboarding palette (design 4a/4b) + dark-teal step 3 (5a). */

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { type CharacterRow } from '@/db/character';
+import { type RcOverview } from '@/integrations/revenuecat';
 
 interface AppState {
   /** Lifetime "Founder's Edition" (or monthly) entitlement, synced by useRevenueCat. */
@@ -10,6 +11,13 @@ interface AppState {
   character: CharacterRow | null;
   characterLoaded: boolean;
   setCharacter: (character: CharacterRow | null) => void;
+
+  /** RevenueCat connection (the founder's own sales, read-only). */
+  rcConnected: boolean;
+  rcProjectName: string | null;
+  rcOverview: RcOverview | null;
+  setRcConnection: (c: { connected: boolean; projectName: string | null }) => void;
+  setRcOverview: (overview: RcOverview | null) => void;
 }
 
 export const useStore = create<AppState>(set => ({
@@ -19,6 +27,12 @@ export const useStore = create<AppState>(set => ({
   character: null,
   characterLoaded: false,
   setCharacter: character => set({ character, characterLoaded: true }),
+
+  rcConnected: false,
+  rcProjectName: null,
+  rcOverview: null,
+  setRcConnection: c => set({ rcConnected: c.connected, rcProjectName: c.projectName }),
+  setRcOverview: overview => set({ rcOverview: overview }),
 }));
 
 /** Select: onboarding is needed until a character row exists. */

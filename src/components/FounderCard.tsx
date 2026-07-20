@@ -19,7 +19,7 @@ export function FounderCard({ data, story }: { data: FounderCardData; story?: bo
         <Text style={styles.sealText}>{data.sealLabel}</Text>
       </LinearGradient>
       <Text style={styles.verified}>
-        {data.verified ? 'Verified · Stripe' : 'Self-reported'}
+        {data.verified ? 'Verified · RevenueCat' : 'Self-reported'}
       </Text>
       <Text style={[styles.title, story && styles.titleStory]}>{data.milestoneTitle}</Text>
       <Text style={styles.subtitle}>
