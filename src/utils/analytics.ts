@@ -27,9 +27,17 @@ import {
   requestTrackingPermissionsAsync,
 } from 'expo-tracking-transparency';
 
+/**
+ * Master switch. OFF during the testing phase — keeps Meta fully inert even
+ * though the SDK and wiring are in place. To turn Meta on: set this to true,
+ * fill the Meta App ID / Client Token, and re-add the plugins to app.json
+ * (see planning/meta-sdk.md).
+ */
+const META_ENABLED = false;
+
 type Fbsdk = typeof import('react-native-fbsdk-next');
 let fb: Fbsdk | null = null;
-if (Platform.OS !== 'web') {
+if (META_ENABLED && Platform.OS !== 'web') {
   try {
     fb = require('react-native-fbsdk-next') as Fbsdk;
   } catch {
