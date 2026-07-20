@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,7 +8,7 @@ import { captureRef } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { FounderCard } from '@/components/FounderCard';
 import { buildFounderCardData, type FounderCardData } from '@/logic/founderCard';
-import { useStore } from '@/store/useStore';
+import { useEnsureCharacter } from '@/hooks/useEnsureCharacter';
 import { colors, fonts } from '@/theme/tokens';
 
 /** Shareable founder card screen (design 1c / §10) with a 9:16 story toggle. */
@@ -17,7 +17,7 @@ export default function FounderCardScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const db = useSQLiteContext();
-  const character = useStore(s => s.character);
+  const { character, loaded } = useEnsureCharacter();
   const [data, setData] = useState<FounderCardData | null>(null);
   const [story, setStory] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -45,6 +45,8 @@ export default function FounderCardScreen() {
     }
   }
 
+  // Reached without a character (deep link before onboarding) → send them there.
+  if (loaded && !character) return <Redirect href="/onboarding" />;
   if (!data) return <View style={styles.root} />;
 
   return (

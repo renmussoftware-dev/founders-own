@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,8 +9,8 @@ import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { HexSeal } from '@/components/ui/HexSeal';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { buildFounderCardData, type FounderCardData } from '@/logic/founderCard';
+import { useEnsureCharacter } from '@/hooks/useEnsureCharacter';
 import { usePopIn, useTwinkle } from '@/theme/motion';
-import { useStore } from '@/store/useStore';
 import { colors, fonts } from '@/theme/tokens';
 
 /** Verified-milestone celebration takeover (design 7e). Fires on chapter completion. */
@@ -19,7 +19,7 @@ export default function MilestoneCelebration() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const db = useSQLiteContext();
-  const character = useStore(s => s.character);
+  const { character, loaded } = useEnsureCharacter();
   const [data, setData] = useState<FounderCardData | null>(null);
 
   const cardPop = usePopIn(120);
@@ -32,6 +32,8 @@ export default function MilestoneCelebration() {
     if (id && character) buildFounderCardData(db, character, id).then(setData);
   }, [db, id, character]);
 
+  // Reached without a character (deep link before onboarding) → send them there.
+  if (loaded && !character) return <Redirect href="/onboarding" />;
   if (!data) return <View style={styles.root} />;
 
   return (
