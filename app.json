@@ -1,12 +1,13 @@
 {
   "expo": {
-    "name": "founder-rpg",
+    "name": "Founder RPG",
     "slug": "founder-rpg",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "founderrpg",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#120F26",
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -28,11 +29,13 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#120F26",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
-      ]
+      ],
+      "expo-sqlite",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
