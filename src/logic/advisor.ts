@@ -1,0 +1,193 @@
+import { type SQLiteDatabase } from 'expo-sqlite';
+import { type CharacterRow } from '@/db/character';
+import { getSnapshots } from '@/db/metrics';
+import { weakestStat } from '@/logic/leveling';
+import { nextUnmetMoneyTarget, formatMetric, metricLabel } from '@/logic/verification';
+import { type RcOverview } from '@/integrations/revenuecat';
+import { CHAPTERS_BY_ID } from '@/content/questline';
+import { type StatKey } from '@/theme/tokens';
+
+/**
+ * The AI advisor (SPEC #4). Two layers, both margin-safe:
+ *  - localAdvisor(): a rules-based read of the founder's real state. Zero token
+ *    cost, always on. This is the genuinely useful "here's your bottleneck".
+ *  - the weekly LLM deep-dive (generateAdvisorDeepDive) is the ONLY live-LLM
+ *    call, gated to a paid + cooldown action so token cost tracks a paid action
+ *    (SPEC §3). Endpoint is pending the Renmus proxy — it throws until then.
+ */
+
+export interface AdvisorSnapshot {
+  connected: boolean;
+  users: number;
+  subs: number;
+  mrr: number;
+  trials: number;
+  weakest: StatKey;
+  activeChapterTitle?: string;
+  next: { title: string; metric: string; gap: number; label: string } | null;
+  questsThisWeek: number;
+  mrrTrend: 'up' | 'flat' | 'down' | 'unknown';
+}
+
+export interface AdvisorInsight {
+  headline: string;
+  detail: string;
+  focusStat: StatKey | null;
+  focusLabel: string;
+}
+
+export async function buildAdvisorSnapshot(
+  db: SQLiteDatabase,
+  character: CharacterRow,
+  overview: RcOverview | null
+): Promise<AdvisorSnapshot> {
+  const active = await db.getFirstAsync<{ chapter_id: string }>(
+    "SELECT chapter_id FROM chapter_progress WHERE status = 'active' ORDER BY act, chapter_id LIMIT 1"
+  );
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekQuests = await db.getFirstAsync<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM quest_log WHERE completed_at IS NOT NULL AND completed_at >= ?",
+    weekAgo.toISOString()
+  );
+
+  const target = nextUnmetMoneyTarget(overview);
+  const snaps = await getSnapshots(db, 14);
+  let trend: AdvisorSnapshot['mrrTrend'] = 'unknown';
+  if (snaps.length >= 2) {
+    const first = snaps[0].mrr;
+    const last = snaps[snaps.length - 1].mrr;
+    trend = last > first * 1.02 ? 'up' : last < first * 0.98 ? 'down' : 'flat';
+  }
+
+  return {
+    connected: !!overview,
+    users: overview?.metrics.active_users ?? 0,
+    subs: overview?.metrics.active_subscriptions ?? 0,
+    mrr: overview?.metrics.mrr ?? 0,
+    trials: overview?.metrics.active_trials ?? 0,
+    weakest: weakestStat(character),
+    activeChapterTitle: active ? CHAPTERS_BY_ID[active.chapter_id]?.title : undefined,
+    next: target?.chapter.verify
+      ? {
+          title: target.chapter.title,
+          metric: target.chapter.verify.metric,
+          gap: target.gap,
+          label: metricLabel(target.chapter.verify.metric),
+        }
+      : null,
+    questsThisWeek: weekQuests?.n ?? 0,
+    mrrTrend: trend,
+  };
+}
+
+/** Rules-based diagnosis — no LLM, no token cost. */
+export function localAdvisor(s: AdvisorSnapshot): AdvisorInsight {
+  if (!s.connected) {
+    return {
+      headline: 'Connect RevenueCat so I can read your real numbers',
+      detail:
+        'Right now I’m guessing from your quests. Link your read-only key and I’ll pinpoint the one thing holding your revenue back.',
+      focusStat: null,
+      focusLabel: 'Connect',
+    };
+  }
+
+  if (s.questsThisWeek < 3) {
+    return {
+      headline: 'Momentum is your bottleneck this week',
+      detail: `Only ${s.questsThisWeek} quest${s.questsThisWeek === 1 ? '' : 's'} done in the last 7 days. Consistency compounds — protect the streak before anything else.`,
+      focusStat: 'operations',
+      focusLabel: 'Consistency',
+    };
+  }
+
+  if (s.users < 50) {
+    return {
+      headline: 'You need reach before revenue',
+      detail: `With ${s.users.toLocaleString()} active users, the fastest lever is more of the right people trying the app. Push your best acquisition channel.`,
+      focusStat: 'marketing',
+      focusLabel: 'Marketing',
+    };
+  }
+
+  if (s.subs === 0) {
+    return {
+      headline: 'Users, but nobody’s paying yet',
+      detail:
+        'You’ve got reach and no monetization. Put a real paywall in front of your best feature and get your first paying subscriber.',
+      focusStat: 'revenue',
+      focusLabel: 'Revenue',
+    };
+  }
+
+  const arpu = s.mrr / Math.max(1, s.subs);
+  if (arpu < 3) {
+    return {
+      headline: 'Your revenue per user is thin',
+      detail: `About $${arpu.toFixed(2)} MRR per subscriber. Test pricing, an annual plan, or one upsell — small ARPU gains flow straight to MRR.`,
+      focusStat: 'revenue',
+      focusLabel: 'Pricing',
+    };
+  }
+
+  if (s.mrrTrend === 'down') {
+    return {
+      headline: 'MRR is slipping — churn is the ceiling',
+      detail:
+        'Your recurring revenue trended down this stretch. Find one reason subscribers cancel and remove it before chasing new installs.',
+      focusStat: 'product',
+      focusLabel: 'Retention',
+    };
+  }
+
+  if (s.next) {
+    return {
+      headline: `You’re ${formatMetric(s.next.metric as never, s.next.gap)} ${s.next.label} from ${s.next.title}`,
+      detail:
+        s.mrrTrend === 'up'
+          ? 'MRR is trending up — keep doing what’s working and lean into your strongest channel to close the gap.'
+          : 'Growth is flat. Pick the one lever most likely to move that metric and go deep on it this week.',
+      focusStat: 'revenue',
+      focusLabel: 'Revenue',
+    };
+  }
+
+  return {
+    headline: 'You’re on track — widen the moat',
+    detail: 'Core metrics look healthy. Invest in retention and one repeatable growth channel to make it durable.',
+    focusStat: 'product',
+    focusLabel: 'Durability',
+  };
+}
+
+// ---- Premium weekly LLM deep-dive (margin-safe; endpoint pending) ----
+
+const LAST_DEEPDIVE_KEY = 'advisor_deepdive_last';
+const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+
+export async function advisorDeepDiveEligible(
+  db: SQLiteDatabase,
+  isPro: boolean
+): Promise<{ eligible: boolean; reason: 'ok' | 'not_pro' | 'cooldown' }> {
+  if (!isPro) return { eligible: false, reason: 'not_pro' };
+  const row = await db.getFirstAsync<{ value: string }>(
+    'SELECT value FROM app_meta WHERE key = ?',
+    LAST_DEEPDIVE_KEY
+  );
+  if (row) {
+    const next = new Date(row.value).getTime() + COOLDOWN_MS;
+    if (Date.now() < next) return { eligible: false, reason: 'cooldown' };
+  }
+  return { eligible: true, reason: 'ok' };
+}
+
+/**
+ * The single live-LLM call for the advisor. Assembles the snapshot into a
+ * prompt and asks Claude (via the Renmus proxy) for a richer weekly read.
+ * Endpoint + auth pending — throws so callers surface "coming to Pro".
+ */
+export async function generateAdvisorDeepDive(_snapshot: AdvisorSnapshot): Promise<string> {
+  // TODO(Phase 5): POST the snapshot to the Renmus LLM proxy; return the read.
+  throw new Error('advisor-endpoint-not-configured');
+}

@@ -7,6 +7,14 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
 import { QuestCard } from '@/components/QuestCard';
 import { RevenueDashboard } from '@/components/RevenueDashboard';
+import { AdvisorCard } from '@/components/AdvisorCard';
+import {
+  advisorDeepDiveEligible,
+  buildAdvisorSnapshot,
+  generateAdvisorDeepDive,
+  localAdvisor,
+  type AdvisorInsight,
+} from '@/logic/advisor';
 import { devSeedSampleMetrics } from '@/db/dev';
 import { getSnapshots, recordSnapshot, type MetricSnapshot } from '@/db/metrics';
 import {
@@ -39,9 +47,12 @@ export default function TodayScreen() {
   const celebrationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { connected, projectName, overview, loading } = useRevenueData();
+  const isPro = useStore(s => s.isPro);
   const [snapshots, setSnapshots] = useState<MetricSnapshot[]>([]);
   const [next, setNext] = useState<NextMilestone | null>(null);
   const [activeChapterTitle, setActiveChapterTitle] = useState<string | undefined>();
+  const [advice, setAdvice] = useState<AdvisorInsight | null>(null);
+  const [deepDiveStatus, setDeepDiveStatus] = useState<string | null>(null);
 
   useEffect(() => {
     if (character) {
@@ -67,10 +78,35 @@ export default function TodayScreen() {
     })();
   }, [db, overview]);
 
+  // Recompute the advisor's read whenever the character or metrics change.
+  useEffect(() => {
+    if (!character) return;
+    buildAdvisorSnapshot(db, character, overview).then(s => setAdvice(localAdvisor(s)));
+  }, [db, character, overview]);
+
   async function onDevSample() {
     const fixture = await devSeedSampleMetrics(db);
     setRcConnection({ connected: true, projectName: 'Fretionary (sample)' });
     setRcOverview(fixture);
+  }
+
+  async function onDeepDive() {
+    if (!character) return;
+    const gate = await advisorDeepDiveEligible(db, isPro);
+    if (gate.reason === 'not_pro') {
+      router.push('/paywall');
+      return;
+    }
+    if (gate.reason === 'cooldown') {
+      setDeepDiveStatus('Your next weekly deep-dive isn’t ready yet — check back soon.');
+      return;
+    }
+    try {
+      const snapshot = await buildAdvisorSnapshot(db, character, overview);
+      await generateAdvisorDeepDive(snapshot);
+    } catch {
+      setDeepDiveStatus('Weekly AI deep-dive is coming to Pro shortly.');
+    }
   }
 
   const onComplete = useCallback(
@@ -169,6 +205,17 @@ export default function TodayScreen() {
           ))}
         </View>
 
+        {advice ? (
+          <View style={styles.advisor}>
+            <AdvisorCard
+              insight={advice}
+              isPro={isPro}
+              deepDiveStatus={deepDiveStatus}
+              onDeepDive={onDeepDive}
+            />
+          </View>
+        ) : null}
+
         <View style={styles.statBar}>
           <View style={styles.statBarBody}>
             <Text style={[styles.statBarLabel, { color: tone.tint }]}>
@@ -254,6 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(237,234,251,0.14)',
   },
   dashboard: { marginTop: 16 },
+  advisor: { marginTop: 16 },
   devSample: { alignSelf: 'center', paddingVertical: 8 },
   devSampleText: { fontFamily: fonts.uiBold, fontSize: 10, color: colors.textFaint },
   headingRow: {
