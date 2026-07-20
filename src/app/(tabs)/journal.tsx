@@ -1,12 +1,13 @@
 import { useCallback, useState } from 'react';
-import { useFocusEffect } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSQLiteContext } from 'expo-sqlite';
 import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
 import { HexSeal } from '@/components/ui/HexSeal';
 import {
+  exportJournalText,
   getJournalEntries,
   getStreakStrip,
   parseXpSummary,
@@ -18,9 +19,10 @@ import { colors, fonts, stats } from '@/theme/tokens';
 
 const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-/** Journal (design 7c). */
+/** Journal (design 7c) + Founder Wrapped + export (SPEC #3). */
 export default function JournalScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const db = useSQLiteContext();
   const character = useStore(s => s.character);
   const [entries, setEntries] = useState<JournalRow[]>([]);
@@ -32,6 +34,22 @@ export default function JournalScreen() {
       getStreakStrip(db).then(setStrip);
     }, [db])
   );
+
+  async function onExport() {
+    if (!character) return;
+    const text = await exportJournalText(db, character.business_name);
+    if (Platform.OS === 'web') {
+      const blob = new Blob([text], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${character.business_name}-journal.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      await Share.share({ message: text });
+    }
+  }
 
   const dayCount = character
     ? Math.max(
@@ -46,7 +64,28 @@ export default function JournalScreen() {
   return (
     <ArcaneBackground>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 20 }]}>
-        <Text style={styles.title}>Journal</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>Journal</Text>
+          <Pressable onPress={onExport} style={styles.exportBtn}>
+            <Text style={styles.exportText}>Export</Text>
+          </Pressable>
+        </View>
+
+        <Pressable onPress={() => router.push('/wrapped')}>
+          <LinearGradient
+            colors={['rgba(240,205,121,0.16)', 'rgba(200,148,65,0.06)']}
+            style={styles.wrappedCta}
+          >
+            <View style={styles.wrappedIcon}>
+              <Text style={styles.wrappedIconText}>✦</Text>
+            </View>
+            <View style={styles.wrappedBody}>
+              <Text style={styles.wrappedTitle}>Your story so far</Text>
+              <Text style={styles.wrappedSub}>A shareable recap of your whole journey.</Text>
+            </View>
+            <Text style={styles.wrappedChevron}>›</Text>
+          </LinearGradient>
+        </Pressable>
 
         <View style={styles.calendar}>
           <View style={styles.calHeader}>
@@ -163,12 +202,48 @@ function MilestoneEntry({ entry }: { entry: JournalRow }) {
 
 const styles = StyleSheet.create({
   content: { paddingHorizontal: 20, paddingBottom: 40 },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
   title: {
     fontFamily: fonts.uiExtraBold,
     fontSize: 24,
     color: colors.textPrimary,
-    marginBottom: 14,
   },
+  exportBtn: {
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  exportText: { fontFamily: fonts.uiExtraBold, fontSize: 11, color: colors.textSecondary },
+  wrappedCta: {
+    borderWidth: 1.5,
+    borderColor: 'rgba(223,195,131,0.4)',
+    borderRadius: 18,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  wrappedIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.goldMid,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  wrappedIconText: { fontFamily: fonts.uiBlack, fontSize: 16, color: '#2A1F0C' },
+  wrappedBody: { flex: 1 },
+  wrappedTitle: { fontFamily: fonts.uiExtraBold, fontSize: 15, color: colors.textPrimary },
+  wrappedSub: { fontFamily: fonts.uiBold, fontSize: 11.5, color: colors.textSecondary, marginTop: 2 },
+  wrappedChevron: { fontFamily: fonts.uiExtraBold, fontSize: 18, color: colors.gold },
   calendar: {
     backgroundColor: colors.surfaceBottom,
     borderWidth: 1,

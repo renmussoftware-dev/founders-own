@@ -61,6 +61,21 @@ export async function getActiveChapter(db: SQLiteDatabase): Promise<ChapterProgr
   );
 }
 
+export interface MilestoneItem {
+  chapter_id: string;
+  status: ChapterStatus;
+  completed_at: string | null;
+}
+
+/** Completed + verified chapters, newest first — the milestone timeline (SPEC #3). */
+export async function getMilestoneTimeline(db: SQLiteDatabase): Promise<MilestoneItem[]> {
+  return db.getAllAsync<MilestoneItem>(
+    `SELECT chapter_id, status, completed_at FROM chapter_progress
+     WHERE status IN ('done','verified')
+     ORDER BY completed_at DESC, chapter_id DESC`
+  );
+}
+
 export function parseFlags(row: ChapterProgressRow): Record<string, boolean> {
   try {
     return JSON.parse(row.objective_flags) as Record<string, boolean>;

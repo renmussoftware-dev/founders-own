@@ -1,19 +1,22 @@
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSQLiteContext } from 'expo-sqlite';
 import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
+import { HexSeal } from '@/components/ui/HexSeal';
 import { StatRow } from '@/components/ui/StatRow';
+import { getMilestoneTimeline, type MilestoneItem } from '@/db/chapters';
 import { devResetAll } from '@/db/dev';
+import { CHAPTERS_BY_ID } from '@/content/questline';
 import { colors, fonts, statOrder } from '@/theme/tokens';
 import { statXp } from '@/logic/leveling';
 import { useStore } from '@/store/useStore';
 
 type SheetTab = 'Stats' | 'Milestones' | 'Journal';
 
-/** Character sheet (design 7a). */
+/** Character sheet (design 7a) + milestone timeline (SPEC #3). */
 export default function CharacterScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -21,6 +24,13 @@ export default function CharacterScreen() {
   const character = useStore(s => s.character);
   const setCharacter = useStore(s => s.setCharacter);
   const [tab, setTab] = useState<SheetTab>('Stats');
+  const [milestones, setMilestones] = useState<MilestoneItem[]>([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getMilestoneTimeline(db).then(setMilestones);
+    }, [db])
+  );
 
   async function onDevReset() {
     await devResetAll(db);
@@ -80,34 +90,84 @@ export default function CharacterScreen() {
               ))}
             </View>
           )}
-          {tab === 'Milestones' && (
-            <Text style={styles.placeholder}>
-              Chapter milestones appear here as you complete them — verified ones get the
-              gold seal.
-            </Text>
-          )}
+          {tab === 'Milestones' &&
+            (milestones.length === 0 ? (
+              <Text style={styles.placeholder}>
+                Chapter milestones appear here as you complete them — verified ones get the
+                gold seal.
+              </Text>
+            ) : (
+              <View style={styles.timeline}>
+                {milestones.map(m => (
+                  <MilestoneRow key={m.chapter_id} item={m} />
+                ))}
+              </View>
+            ))}
           {tab === 'Journal' && (
-            <Text style={styles.placeholder}>
-              Your recent journal entries will surface here once the journal engine lands.
-            </Text>
+            <Pressable onPress={() => router.push('/(tabs)/journal')}>
+              <Text style={styles.placeholder}>
+                Your full journal lives in the Journal tab — open it ›
+              </Text>
+            </Pressable>
           )}
 
           {tab === 'Stats' && (
             <>
               <View style={styles.milestoneHeader}>
                 <Text style={styles.milestoneTitle}>Latest milestone</Text>
-                <Text style={styles.viewAll}>View all ›</Text>
+                {milestones.length > 0 ? (
+                  <Pressable onPress={() => setTab('Milestones')}>
+                    <Text style={styles.viewAll}>View all ›</Text>
+                  </Pressable>
+                ) : null}
               </View>
-              <View style={styles.milestoneEmpty}>
-                <Text style={styles.milestoneEmptyText}>
-                  No milestones yet — Chapter 1 is waiting on the questline.
-                </Text>
-              </View>
+              {milestones.length > 0 ? (
+                <MilestoneRow item={milestones[0]} />
+              ) : (
+                <View style={styles.milestoneEmpty}>
+                  <Text style={styles.milestoneEmptyText}>
+                    No milestones yet — Chapter 1 is waiting on the questline.
+                  </Text>
+                </View>
+              )}
             </>
           )}
         </ScrollView>
       </LinearGradient>
     </ArcaneBackground>
+  );
+}
+
+function MilestoneRow({ item }: { item: MilestoneItem }) {
+  const chapter = CHAPTERS_BY_ID[item.chapter_id];
+  const verified = item.status === 'verified';
+  const date = item.completed_at
+    ? new Date(item.completed_at).toLocaleDateString([], { month: 'short', year: 'numeric' })
+    : '';
+  return (
+    <LinearGradient
+      colors={
+        verified
+          ? ['rgba(240,205,121,0.16)', 'rgba(200,148,65,0.08)']
+          : [colors.surfaceBottom, colors.surfaceBottom]
+      }
+      style={[styles.mRow, verified && styles.mRowVerified]}
+    >
+      {verified ? (
+        <HexSeal label="✓" size={40} />
+      ) : (
+        <View style={styles.mCheck}>
+          <Text style={styles.mCheckText}>✓</Text>
+        </View>
+      )}
+      <View style={styles.mBody}>
+        <Text style={styles.mTitle}>{chapter?.title ?? item.chapter_id}</Text>
+        <Text style={[styles.mSub, verified && styles.mSubGold]}>
+          {verified ? `Verified via RevenueCat${date ? ` · ${date}` : ''}` : `Done${date ? ` · ${date}` : ''}`}
+        </Text>
+      </View>
+      {verified ? <Text style={styles.mBadge}>VERIFIED</Text> : null}
+    </LinearGradient>
   );
 }
 
@@ -236,5 +296,36 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: colors.textSecondary,
     paddingVertical: 8,
+  },
+  timeline: { gap: 10 },
+  mRow: {
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  mRowVerified: { borderColor: 'rgba(223,195,131,0.55)' },
+  mCheck: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: colors.mint,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mCheckText: { fontFamily: fonts.uiBlack, fontSize: 15, color: '#0E2418' },
+  mBody: { flex: 1 },
+  mTitle: { fontFamily: fonts.uiExtraBold, fontSize: 14, color: colors.textPrimary },
+  mSub: { fontFamily: fonts.uiBold, fontSize: 11, color: colors.textSecondary, marginTop: 2 },
+  mSubGold: { color: colors.gold },
+  mBadge: {
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 8.5,
+    letterSpacing: 1.5,
+    color: colors.gold,
   },
 });

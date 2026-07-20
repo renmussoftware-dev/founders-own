@@ -117,6 +117,29 @@ export async function getJournalEntries(db: SQLiteDatabase): Promise<JournalRow[
   );
 }
 
+/** Assemble the whole journal into portable Markdown (SPEC #3 export). */
+export async function exportJournalText(
+  db: SQLiteDatabase,
+  businessName: string
+): Promise<string> {
+  const entries = await getJournalEntries(db);
+  const lines: string[] = [`# ${businessName} — the Founders Own record`, ''];
+  for (const e of [...entries].reverse()) {
+    if (e.kind === 'milestone') {
+      lines.push(`## ${e.entry_date} · ${e.body}`, '');
+      continue;
+    }
+    lines.push(`### ${e.entry_date}${e.perfect_day ? ' · Perfect day' : ''}`);
+    lines.push(e.body);
+    const chips = parseXpSummary(e)
+      .map(([s, xp]) => `+${xp} ${stats[s].label}`)
+      .join(' · ');
+    if (chips) lines.push(`_${chips}_`);
+    lines.push('');
+  }
+  return lines.join('\n');
+}
+
 export function parseXpSummary(row: JournalRow): [StatKey, number][] {
   try {
     const obj = JSON.parse(row.xp_summary) as Record<string, number>;

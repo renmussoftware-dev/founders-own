@@ -50,6 +50,7 @@ export default function RootLayout() {
         <Stack.Screen name="founder-card/[id]" options={{ presentation: 'modal' }} />
         <Stack.Screen name="verify/[id]" options={{ presentation: 'modal' }} />
         <Stack.Screen name="connect" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="wrapped" options={{ presentation: 'modal' }} />
         <Stack.Screen name="paywall" options={{ presentation: 'fullScreenModal' }} />
       </Stack>
     </SQLiteProvider>
