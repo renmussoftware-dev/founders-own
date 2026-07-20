@@ -1,17 +1,29 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Clipboard from 'expo-clipboard';
 import { HexSeal } from '@/components/ui/HexSeal';
 import { saveRcCredentials } from '@/integrations/rcCredentials';
-import { validateKey, type RcProject } from '@/integrations/revenuecat';
+import { getOverview, validateKey, RcError, type RcProject } from '@/integrations/revenuecat';
 import { useStore } from '@/store/useStore';
 import { colors, fonts } from '@/theme/tokens';
 
+const DASHBOARD_URL = 'https://app.revenuecat.com/';
+
+const STEPS = [
+  'Open RevenueCat and pick the project you want to track.',
+  'Go to Project settings → API keys.',
+  'Create a new v2 (secret) key.',
+  'Set it to read-only: grant Read on Projects and Charts & metrics — no write access.',
+  'Copy the key and paste it here.',
+];
+
 /**
- * Connect-RevenueCat panel: paste a read-only API key → validate → pick the
- * project that is "this founder's app" → store it. Used in onboarding and as a
- * standalone re-connect / contextual-verify entry point. Renders on a dark
- * background supplied by the wrapper.
+ * Connect-RevenueCat panel: paste a read-only API key → validate (projects +
+ * metrics scope) → pick the project → store it. Reduces onboarding friction
+ * with a deep link to the dashboard, step-by-step scope guidance, a paste
+ * button, and a metrics-scope check so under-scoped keys fail loudly here
+ * instead of silently later.
  */
 export function ConnectRevenueCat({
   onConnected,
@@ -28,6 +40,15 @@ export function ConnectRevenueCat({
   const [projects, setProjects] = useState<RcProject[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showHelp, setShowHelp] = useState(false);
+
+  async function onPaste() {
+    const text = await Clipboard.getStringAsync();
+    if (text) {
+      setApiKey(text.trim());
+      setError(null);
+    }
+  }
 
   async function onValidate() {
     if (!apiKey.trim()) return;
@@ -52,6 +73,22 @@ export function ConnectRevenueCat({
 
   async function connect(project: RcProject) {
     setBusy(true);
+    setError(null);
+    // Confirm the key can actually read metrics before we commit to it —
+    // otherwise the dashboard would just silently fail later.
+    try {
+      await getOverview(apiKey.trim(), project.id);
+    } catch (e) {
+      setBusy(false);
+      if (e instanceof RcError && (e.status === 401 || e.status === 403)) {
+        setError(
+          `“${project.name}” connected, but this key can’t read its metrics. In RevenueCat, give the key Read access to Charts & metrics, then reconnect.`
+        );
+        return;
+      }
+      setError(e instanceof Error ? e.message : 'Could not read metrics for that project.');
+      return;
+    }
     await saveRcCredentials({ apiKey: apiKey.trim(), projectId: project.id, projectName: project.name });
     setRcConnection({ connected: true, projectName: project.name });
     setBusy(false);
@@ -68,22 +105,45 @@ export function ConnectRevenueCat({
         <>
           <Text style={styles.hed}>Connect RevenueCat</Text>
           <Text style={styles.sub}>
-            Paste a read-only API key. We read your revenue metrics to verify your
-            milestones — never your customers, never your money.
+            Paste a read-only API key. We only read your revenue metrics to verify your
+            milestones — never your customers, never your money. The key is stored in your
+            device keychain.
           </Text>
 
-          <TextInput
-            value={apiKey}
-            onChangeText={setApiKey}
-            placeholder="sk_… (read-only v2 key)"
-            placeholderTextColor="rgba(251,250,246,0.4)"
-            autoCapitalize="none"
-            autoCorrect={false}
-            style={styles.input}
-          />
-          <Text style={styles.help}>
-            RevenueCat → Project settings → API keys → new <Text style={styles.helpEm}>read-only</Text> v2 key.
-          </Text>
+          <View style={styles.inputRow}>
+            <TextInput
+              value={apiKey}
+              onChangeText={setApiKey}
+              placeholder="Read-only v2 API key"
+              placeholderTextColor="rgba(251,250,246,0.4)"
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={styles.input}
+            />
+            <Pressable onPress={onPaste} style={styles.pasteBtn}>
+              <Text style={styles.pasteText}>Paste</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.linkRow}>
+            <Pressable onPress={() => Linking.openURL(DASHBOARD_URL)}>
+              <Text style={styles.link}>Open RevenueCat ↗</Text>
+            </Pressable>
+            <Pressable onPress={() => setShowHelp(h => !h)}>
+              <Text style={styles.link}>How to get a key {showHelp ? '▴' : '▾'}</Text>
+            </Pressable>
+          </View>
+
+          {showHelp ? (
+            <View style={styles.steps}>
+              {STEPS.map((s, i) => (
+                <View key={i} style={styles.step}>
+                  <Text style={styles.stepNum}>{i + 1}</Text>
+                  <Text style={styles.stepText}>{s}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
 
           <View style={styles.benefits}>
             <Benefit glyph="✓" text="Gold-verified milestones, pulled from real revenue" gold />
@@ -163,7 +223,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 18,
   },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   input: {
+    flex: 1,
     backgroundColor: 'rgba(251,250,246,0.08)',
     borderWidth: 1,
     borderColor: 'rgba(251,250,246,0.18)',
@@ -174,8 +236,43 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: light,
   },
-  help: { fontFamily: fonts.uiBold, fontSize: 11, color: 'rgba(251,250,246,0.5)', marginTop: 8 },
-  helpEm: { color: colors.gold },
+  pasteBtn: {
+    borderWidth: 1,
+    borderColor: 'rgba(251,250,246,0.25)',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+  },
+  pasteText: { fontFamily: fonts.uiExtraBold, fontSize: 13, color: light },
+  linkRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  link: { fontFamily: fonts.uiExtraBold, fontSize: 12, color: colors.gold },
+  steps: {
+    marginTop: 12,
+    backgroundColor: 'rgba(251,250,246,0.06)',
+    borderWidth: 1,
+    borderColor: 'rgba(251,250,246,0.12)',
+    borderRadius: 14,
+    padding: 14,
+    gap: 10,
+  },
+  step: { flexDirection: 'row', gap: 10, alignItems: 'flex-start' },
+  stepNum: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: colors.goldMid,
+    color: '#2A1F0C',
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 11,
+    textAlign: 'center',
+    lineHeight: 18,
+    overflow: 'hidden',
+  },
+  stepText: { flex: 1, fontFamily: fonts.uiBold, fontSize: 12, lineHeight: 17, color: light },
   benefits: { gap: 10, marginTop: 18 },
   benefit: {
     backgroundColor: 'rgba(251,250,246,0.08)',
@@ -203,6 +300,7 @@ const styles = StyleSheet.create({
   error: {
     fontFamily: fonts.uiBold,
     fontSize: 12,
+    lineHeight: 17,
     color: '#FF9C9C',
     textAlign: 'center',
     marginTop: 14,
