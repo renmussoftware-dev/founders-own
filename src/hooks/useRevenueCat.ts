@@ -10,11 +10,11 @@ import { useStore } from '@/store/useStore';
 
 // RevenueCat project "Founders Own" (proj5386be70). Products/pricing live in
 // App Store Connect (like Fretionary); the paywall reads them from offerings.
-// Fill these once the store apps are added in RevenueCat:
-//   iOS     -> appl_...  (add an App Store app; needs the ASC app + shared secret)
-//   Android -> goog_...  (add a Play Store app)
+// These are public app-specific SDK keys — safe to ship in the binary.
+//   iOS     -> appl_...  (App Store app; set)
+//   Android -> goog_...  (add a Play Store app when we ship Android)
 // Pre-store device testing: RevenueCat Test Store key 'test_XcejGcIKndRuAwEOMXyaBFIURhd'.
-const REVENUECAT_API_KEY_IOS = '';
+const REVENUECAT_API_KEY_IOS = 'appl_gTRoNOfQcLQnytUctFlWiEckNVW';
 const REVENUECAT_API_KEY_ANDROID = '';
 // Must match the entitlement identifier created in the RevenueCat dashboard.
 const ENTITLEMENT_ID = 'Renmus Software LLC Pro';
