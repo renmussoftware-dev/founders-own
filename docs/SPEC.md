@@ -33,19 +33,19 @@ A single-player RPG where the player's real business progress drives a persisten
 | Questline structure | One universal spine, parameterized copy | Avoids authoring N trees per business type |
 | Verification line | Act 1 self-reported → Act 2 transition → Act 3–4 verified | Frictionless start, un-fakeable where it counts |
 | Verification framing | Verified = visibly different (gold) trophy | Verification is a flex, not a chore |
-| Daily quests | On-device selection from tagged template pool | Protects margins under a lifetime (one-time) revenue model |
+| Daily quests | On-device selection from tagged template pool | Free-tier users run entirely on-device — no recurring API/LLM cost (the margin line) |
 | Business type | 6 types chosen at onboarding (incl. Digital product/app); tags Revenue/Marketing templates | "Reach out to past clients" is nonsense for an anonymous-download app founder |
 | Stats | Product · Marketing · Revenue · Operations · Finance | Real competencies; prototype's "Grit" replaced by Finance |
 | v1 integration | Stripe-only (OAuth) + RevenueCat | Cleanest path; avoid the "every processor" scope trap |
-| Monetization | Free = Act 1 + self-report; Paywall at Act 1→2 boundary; Lifetime hero $44.99 | Paywall lands at highest-intent moment |
+| Monetization | Free = Act 1 + self-report (on-device); Pro subscription gates the RevenueCat connection + verification + AI; paywall at Act 1→2 boundary | Recurring value + recurring cost → recurring revenue; free tier stays margin-free |
 
 ---
 
 ## 3. The Margin Trap (critical constraint)
 
-The lifetime IAP model means revenue is **one-time** but any live per-user-per-day API call is a **recurring cost with no marginal income** after purchase. This quietly inverts unit economics at scale.
+Any live per-user-per-day API call (reading revenue metrics, LLM generation) is a **recurring cost**. The subscription model (see §9) matches that with recurring revenue for paying users — but the discipline still holds two ways: **(a)** free-tier users must incur **no** recurring cost (they run entirely on-device: self-report + templated quests + journal, no integrations), and **(b)** live LLM calls stay gated to paid, cooldown-bounded actions so token cost never tracks a free open.
 
-**Therefore:** "AI-generated daily quests" means **AI-assembled from a parameterized template pool with on-device selection logic** — nearly free, offline-capable. Reserve true live LLM generation for a **premium weekly "custom questline" refresh** so token cost tracks a paid action, never a free user's daily open.
+**Therefore:** "AI-generated daily quests" means **AI-assembled from a parameterized template pool with on-device selection logic** — nearly free, offline-capable. Reserve true live LLM generation for **premium, gated actions** (the weekly "custom questline" refresh and the AI advisor deep-dive) so token cost always tracks a paid action, never a free user's daily open.
 
 ---
 
@@ -134,10 +134,13 @@ After onboarding: straight into the Today/quest board (dark Arcane). Verificatio
 
 ## 9. Monetization
 
-- **Free:** Act 1 + self-reported everything + basic daily quests
-- **Paywall trigger:** Act 1→2 boundary (also the first real milestone = highest intent)
-- **Premium unlocks:** verification integrations, verified-trophy tier, full journal history, AI custom questlines, premium card designs
-- **Hero:** Lifetime "Founder's Edition" @ $44.99 (RevenueCat, hard paywall, monthly as price anchor)
+Subscription model (moved off the earlier lifetime tier — value and cost both compound over time, so recurring revenue matches both).
+
+- **Free:** Act 1 + self-reported everything + basic daily quests + journal + shareable (self-reported) founder cards. Entirely on-device — **no RevenueCat connection**, so free users cost ~nothing (this is the margin line, §3).
+- **Pro (subscription):** unlocks the RevenueCat connection → live revenue dashboard, gold verified milestones, all Acts, full journal history + export, AI advisor deep-dives, custom questlines.
+- **Pricing:** annual-first — **$49.99/yr with a 7-day free trial** (hero), **$8.99/mo** (anchor). Prices render live from the RevenueCat offering; A/B via RevenueCat experiments.
+- **Paywall trigger:** Act 1→2 boundary (first real milestone = highest intent), plus contextual gates ("connect to verify this milestone," "AI deep-dive").
+- **Later — Studio tier:** multi-app (each app its own focused journey), gated on the `app_portfolio` signal (recorded at connect time). Never aggregate apps into one character.
 
 ---
 
@@ -203,7 +206,7 @@ Bundle at `/mnt/user-data/uploads/`: `Founder_RPG_dc.html` (the canvas — read 
 ### Phase 0 — Scaffold
 - [x] Init Expo + TypeScript project, Expo Router, Zustand store, expo-sqlite
 - [x] Set up the 5 SQLite tables per §7 with migrations
-- [x] RevenueCat SDK wired (reuse Renmus pattern), hard paywall, lifetime $44.99 + monthly anchor
+- [x] RevenueCat SDK wired (reuse Renmus pattern), hard paywall, annual-first subscription ($49.99/yr with 7-day trial + $8.99/mo anchor)
 - [x] Establish the Arcane design system (§11a): theme tokens (colors/gradients/jewel tones), Nunito + Newsreader fonts, shared card/badge/hexagon-seal components, the 5 named animations, 4-tab bottom nav shell
 
 ### Phase 1 — Character & daily loop (free tier, no integrations)

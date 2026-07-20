@@ -3,7 +3,7 @@ import { type CharacterRow } from '@/db/character';
 import { type RcOverview } from '@/integrations/revenuecat';
 
 interface AppState {
-  /** Lifetime "Founder's Edition" (or monthly) entitlement, synced by useRevenueCat. */
+  /** Pro subscription (annual/monthly) entitlement, synced by useRevenueCat. */
   isPro: boolean;
   setIsPro: (isPro: boolean) => void;
 
