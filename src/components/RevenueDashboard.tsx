@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RevenueSparkline } from '@/components/RevenueSparkline';
 import { type MetricSnapshot } from '@/db/metrics';
@@ -50,9 +50,24 @@ export function RevenueDashboard({
     );
   }
 
-  const mrr = overview?.metrics.mrr ?? 0;
-  const revenue = overview?.metrics.revenue ?? 0;
-  const subs = overview?.metrics.active_subscriptions ?? 0;
+  // Connected but metrics not loaded yet (cold app open) — show a loading card
+  // instead of a misleading $0.
+  if (!overview) {
+    return (
+      <LinearGradient colors={[colors.surfaceTop, colors.surfaceBottom]} style={styles.card}>
+        <View style={styles.loadingRow}>
+          <ActivityIndicator size="small" color={colors.gold} />
+          <Text style={styles.loadingText}>
+            Loading {projectName ?? 'your app'}&rsquo;s live metrics…
+          </Text>
+        </View>
+      </LinearGradient>
+    );
+  }
+
+  const mrr = overview.metrics.mrr ?? 0;
+  const revenue = overview.metrics.revenue ?? 0;
+  const subs = overview.metrics.active_subscriptions ?? 0;
   const series = snapshots.map(s => s.mrr);
 
   return (
@@ -157,6 +172,8 @@ const styles = StyleSheet.create({
   connectSub: { fontFamily: fonts.uiBold, fontSize: 11.5, lineHeight: 16, color: colors.textSecondary, marginTop: 2 },
   connectChevron: { fontFamily: fonts.uiExtraBold, fontSize: 18, color: colors.gold },
 
+  loadingRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  loadingText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.textSecondary },
   header: { flexDirection: 'row', alignItems: 'center', gap: 7 },
   liveDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.mintBright },
   headerText: { fontFamily: fonts.uiExtraBold, fontSize: 11, letterSpacing: 0.5, color: colors.textSecondary, textTransform: 'uppercase' },

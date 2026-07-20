@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Clipboard from 'expo-clipboard';
 import { HexSeal } from '@/components/ui/HexSeal';
@@ -36,12 +36,14 @@ export function ConnectRevenueCat({
   skipLabel?: string;
 }) {
   const setRcConnection = useStore(s => s.setRcConnection);
+  const setRcOverview = useStore(s => s.setRcOverview);
   const [apiKey, setApiKey] = useState('');
   const [phase, setPhase] = useState<'input' | 'pick'>('input');
   const [projects, setProjects] = useState<RcProject[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showHelp, setShowHelp] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'connecting' | 'success'>('idle');
 
   async function onPaste() {
     const text = await Clipboard.getStringAsync();
@@ -76,17 +78,20 @@ export function ConnectRevenueCat({
   }
 
   async function connect(project: RcProject) {
-    setBusy(true);
+    setStatus('connecting');
     setError(null);
-    // Confirm the key can actually read metrics before we commit to it —
-    // otherwise the dashboard would just silently fail later.
+    // Fetch the overview once here: it both confirms the key can read metrics
+    // AND primes the dashboard, so the founder lands on live numbers instantly
+    // (no second round-trip).
+    let overview;
     try {
-      await getOverview(apiKey.trim(), project.id);
+      overview = await getOverview(apiKey.trim(), project.id);
     } catch (e) {
+      setStatus('idle');
       setBusy(false);
       if (e instanceof RcError && (e.status === 401 || e.status === 403)) {
         setError(
-          `“${project.name}” connected, but this key can’t read its metrics. In RevenueCat, give the key Read access to Charts & metrics, then reconnect.`
+          `“${project.name}” connected, but this key can’t read its metrics. In RevenueCat, set Charts metrics to Read only, then reconnect.`
         );
         return;
       }
@@ -95,8 +100,33 @@ export function ConnectRevenueCat({
     }
     await saveRcCredentials({ apiKey: apiKey.trim(), projectId: project.id, projectName: project.name });
     setRcConnection({ connected: true, projectName: project.name });
+    setRcOverview(overview);
     setBusy(false);
-    onConnected();
+    setStatus('success');
+    // Hold the confirmation briefly so the success reads before we navigate.
+    setTimeout(onConnected, 1100);
+  }
+
+  if (status !== 'idle') {
+    return (
+      <View style={styles.root}>
+        <View style={styles.sealWrap}>
+          {status === 'connecting' ? (
+            <ActivityIndicator size="large" color={colors.gold} />
+          ) : (
+            <View style={styles.successCheck}>
+              <Text style={styles.successCheckText}>✓</Text>
+            </View>
+          )}
+        </View>
+        <Text style={styles.hed}>{status === 'connecting' ? 'Connecting…' : 'Connected!'}</Text>
+        <Text style={styles.sub}>
+          {status === 'connecting'
+            ? 'Reading your live revenue from RevenueCat.'
+            : 'Loading your dashboard…'}
+        </Text>
+      </View>
+    );
   }
 
   return (
@@ -217,6 +247,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 16,
   },
+  successCheck: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.mint,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  successCheckText: { fontFamily: fonts.uiBlack, fontSize: 30, color: '#0E2418' },
   hed: { fontFamily: fonts.uiExtraBold, fontSize: 24, color: light, textAlign: 'center' },
   sub: {
     fontFamily: fonts.uiBold,
