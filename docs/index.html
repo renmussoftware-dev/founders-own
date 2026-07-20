@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Founders Own — Turn your app's revenue into a game worth playing</title>
+<meta name="description" content="Founders Own is the founder RPG for indie app developers. Connect RevenueCat (read-only), verify your revenue milestones in gold, get AI-diagnosed focus, and build your journey to $1M — one quest at a time.">
+<meta name="theme-color" content="#120F26">
+<link rel="canonical" href="https://foundersown.com/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://foundersown.com/">
+<meta property="og:title" content="Founders Own — the founder RPG for indie app developers">
+<meta property="og:description" content="Connect RevenueCat read-only, verify revenue milestones in gold, and gamify your app's journey to $1M.">
+<meta property="og:site_name" content="Founders Own">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Founders Own — the founder RPG for indie app developers">
+<meta name="twitter:description" content="Connect RevenueCat read-only, verify revenue milestones in gold, and gamify your app's journey to $1M.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Newsreader:ital,opsz@1,6..72&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #120F26;
+    --bg2: #1C1838;
+    --surface-top: #2C2652;
+    --surface-bottom: #231E42;
+    --border: rgba(237,234,251,.1);
+    --text: #EDEAFB;
+    --text-soft: rgba(237,234,251,.6);
+    --text-faint: rgba(237,234,251,.4);
+    --violet: #7C68E8;
+    --violet-bright: #A493FF;
+    --gold: #F0CD79;
+    --gold-mid: #C89441;
+    --gold-deep: #8A6224;
+    --mint: #7FD0A0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Nunito, -apple-system, system-ui, sans-serif;
+    color: var(--text);
+    background: #120F26;
+    background-image: radial-gradient(120% 720px at 50% -160px, #2A2450, #1C1838 55%, #120F26);
+    background-repeat: no-repeat;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+
+  /* nav */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0; position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(10px);
+    background: linear-gradient(180deg, rgba(18,15,38,.85), rgba(18,15,38,0));
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 18px; }
+  .brand .mark {
+    width: 30px; height: 30px; border-radius: 9px;
+    background: radial-gradient(circle at 32% 28%, #B4A6FF, #7C68E8 60%, #4F3EAE);
+    display: grid; place-items: center; color: #14102E; font-weight: 900; font-size: 16px;
+  }
+  .nav-links { display: flex; gap: 26px; font-weight: 800; font-size: 14px; color: var(--text-soft); }
+  .nav-links a:hover { color: var(--text); }
+  @media (max-width: 640px) { .nav-links { display: none; } }
+
+  /* hero */
+  .hero { text-align: center; padding: 70px 0 40px; }
+  .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gold);
+    border: 1px solid rgba(223,195,131,.4); border-radius: 999px; padding: 7px 14px; margin-bottom: 22px;
+  }
+  h1 { font-size: clamp(34px, 6vw, 56px); font-weight: 900; line-height: 1.08; letter-spacing: -.02em; }
+  h1 .grad {
+    background: linear-gradient(120deg, #C9BDFF, #7C68E8);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.lead {
+    font-size: clamp(16px, 2.4vw, 20px); color: var(--text-soft);
+    max-width: 640px; margin: 22px auto 0; line-height: 1.55;
+  }
+  .cta-row { display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 34px; }
+  .btn-gold {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, var(--gold), var(--gold-mid));
+    color: #3A2A0C; font-weight: 900; font-size: 15px;
+    padding: 15px 26px; border-radius: 999px;
+    box-shadow: 0 4px 0 var(--gold-deep), 0 14px 30px -8px rgba(200,148,65,.5);
+  }
+  .btn-ghost { font-weight: 800; font-size: 14px; color: var(--text-soft); padding: 15px 6px; }
+  .btn-ghost:hover { color: var(--text); }
+  .cta-note { font-size: 12.5px; color: var(--text-faint); margin-top: 16px; font-weight: 700; }
+
+  /* mock cards row */
+  .mocks { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 56px; }
+  .card {
+    background: linear-gradient(180deg, var(--surface-top), var(--surface-bottom));
+    border: 1px solid var(--border); border-radius: 18px; padding: 18px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 20px 40px -18px rgba(0,0,0,.6);
+    text-align: left;
+  }
+  .mock-dash { width: 300px; max-width: 100%; }
+  .mock-dash .live { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 800; letter-spacing: .5px; color: var(--text-soft); text-transform: uppercase; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); }
+  .mrr { font-size: 40px; font-weight: 900; color: var(--gold); margin-top: 8px; }
+  .mrr small { font-size: 12px; letter-spacing: 1px; color: var(--text-faint); font-weight: 800; display: block; }
+  .spark { height: 46px; margin: 12px 0; background:
+    linear-gradient(180deg, rgba(240,205,121,.28), rgba(240,205,121,0));
+    clip-path: polygon(0 100%, 0 70%, 20% 62%, 40% 55%, 60% 40%, 80% 30%, 100% 18%, 100% 100%);
+  }
+  .next { border-top: 1px solid var(--border); padding-top: 12px; }
+  .next .lbl { font-size: 9px; letter-spacing: 1px; color: var(--text-faint); font-weight: 800; }
+  .next .val { font-size: 12px; color: var(--gold); font-weight: 800; margin-top: 4px; }
+
+  .mock-quest { width: 300px; max-width: 100%; align-self: center; }
+  .quest { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; margin-bottom: 10px; }
+  .quest:last-child { margin-bottom: 0; }
+  .q-rev { background: linear-gradient(135deg, #4A3822, #3B2C1B); border: 1px solid rgba(240,184,101,.25); }
+  .q-mkt { background: linear-gradient(135deg, #46264E, #38203F); border: 1px solid rgba(220,130,200,.25); }
+  .q-seal { width: 40px; height: 40px; border-radius: 12px; flex: none; display: grid; place-items: center; font-weight: 900; color: #14102E; }
+  .q-rev .q-seal { background: linear-gradient(160deg,#F0B865,#9A5F1E); }
+  .q-mkt .q-seal { background: linear-gradient(160deg,#E89CD4,#7E3A6E); }
+  .q-body .t { font-weight: 800; font-size: 13px; }
+  .q-body .s { font-weight: 700; font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+  /* sections */
+  section { padding: 64px 0; }
+  .section-head { text-align: center; max-width: 640px; margin: 0 auto 44px; }
+  .section-head h2 { font-size: clamp(26px, 4vw, 36px); font-weight: 900; letter-spacing: -.01em; }
+  .section-head p { color: var(--text-soft); font-size: 16px; margin-top: 12px; }
+
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .feature { background: linear-gradient(180deg, var(--surface-top), var(--surface-bottom)); border: 1px solid var(--border); border-radius: 18px; padding: 24px; }
+  .feature .ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; font-size: 20px; margin-bottom: 14px; }
+  .feature h3 { font-size: 17px; font-weight: 900; }
+  .feature p { color: var(--text-soft); font-size: 14px; margin-top: 8px; line-height: 1.55; }
+  .ic-gold { background: linear-gradient(160deg,#F8DD8E,#8A6224); }
+  .ic-violet { background: linear-gradient(160deg,#9D8CF2,#4F3EAE); }
+  .ic-mint { background: linear-gradient(160deg,#7FD0A0,#276A44); }
+  .ic-magenta { background: linear-gradient(160deg,#E89CD4,#7E3A6E); }
+
+  /* steps */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 16px; counter-reset: step; }
+  .step { background: rgba(237,234,251,.04); border: 1px solid var(--border); border-radius: 18px; padding: 24px; position: relative; }
+  .step .n { width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #B4A6FF, #7C68E8 60%, #4F3EAE); color: #14102E; font-weight: 900; display: grid; place-items: center; margin-bottom: 14px; }
+  .step h3 { font-size: 16px; font-weight: 900; }
+  .step p { color: var(--text-soft); font-size: 14px; margin-top: 8px; }
+
+  /* pricing */
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 18px; max-width: 720px; margin: 0 auto; }
+  .plan { background: linear-gradient(180deg, var(--surface-top), var(--surface-bottom)); border: 1.5px solid var(--border); border-radius: 20px; padding: 26px; }
+  .plan.pro { border-color: var(--gold); box-shadow: 0 20px 50px -20px rgba(200,148,65,.4); }
+  .plan .name { font-weight: 900; font-size: 18px; }
+  .plan .badge { float: right; font-size: 10px; font-weight: 900; letter-spacing: .5px; color: #3A2A0C; background: var(--gold); border-radius: 999px; padding: 4px 10px; }
+  .plan .price { font-size: 34px; font-weight: 900; margin: 14px 0 2px; }
+  .plan .price small { font-size: 14px; color: var(--text-soft); font-weight: 800; }
+  .plan .sub { color: var(--gold); font-weight: 800; font-size: 13px; }
+  .plan ul { list-style: none; margin-top: 18px; display: grid; gap: 10px; }
+  .plan li { font-size: 14px; color: var(--text-soft); padding-left: 24px; position: relative; }
+  .plan li::before { content: "✓"; position: absolute; left: 0; color: var(--gold); font-weight: 900; }
+
+  /* footer */
+  footer { border-top: 1px solid var(--border); padding: 40px 0 60px; margin-top: 40px; }
+  .foot-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .foot-links { display: flex; gap: 22px; font-size: 14px; font-weight: 800; color: var(--text-soft); }
+  .foot-links a:hover { color: var(--text); }
+  .copyright { font-size: 13px; color: var(--text-faint); font-weight: 700; }
+  .tagline-serif { font-family: Newsreader, Georgia, serif; font-style: italic; color: var(--text-faint); font-size: 15px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="/"><span class="mark">F</span> Founders Own</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/privacy">Privacy</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <span class="eyebrow">The founder RPG for app developers</span>
+    <h1>Turn your app's revenue<br>into <span class="grad">a game worth playing</span></h1>
+    <p class="lead">
+      Connect RevenueCat read-only, verify your revenue milestones in gold, and get an
+      AI-diagnosed focus every week. Your real app business becomes the campaign — one quest at a time.
+    </p>
+    <div class="cta-row">
+      <a class="btn-gold" href="#pricing">Coming to the App Store</a>
+      <a class="btn-ghost" href="#how">See how it works →</a>
+    </div>
+    <p class="cta-note">iOS first · Android to follow · built by Renmus Software</p>
+
+    <div class="mocks">
+      <div class="card mock-dash">
+        <div class="live"><span class="dot"></span> Your app · live</div>
+        <div class="mrr">$526 <small>MRR</small></div>
+        <div class="spark"></div>
+        <div class="next">
+          <div class="lbl">READY TO VERIFY</div>
+          <div class="val">First $1,000 MRR — claim it in gold ›</div>
+        </div>
+      </div>
+      <div class="card mock-quest">
+        <div class="quest q-rev">
+          <div class="q-seal">◆</div>
+          <div class="q-body">
+            <div class="t">Fix your biggest trial → paid drop-off</div>
+            <div class="s">$474 MRR from First $1,000 MRR</div>
+          </div>
+        </div>
+        <div class="quest q-mkt">
+          <div class="q-seal">◆</div>
+          <div class="q-body">
+            <div class="t">Reply to 3 App Store reviews</div>
+            <div class="s">Daily habit — keep the streak alive</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="section-head">
+      <h2>Not a to-do list with badges</h2>
+      <p>Your progress is pulled from real revenue — un-fakeable. That's what makes it a scoreboard, not a toy.</p>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <div class="ic ic-gold">✓</div>
+        <h3>Verified milestones</h3>
+        <p>Connect RevenueCat with a read-only key. Hit $1k MRR and it's confirmed from your real revenue — sealed in gold, impossible to fake.</p>
+      </div>
+      <div class="feature">
+        <div class="ic ic-violet">◆</div>
+        <h3>A real questline</h3>
+        <p>An authored journey from your first paying subscriber to $1M — with daily quests chosen for your business type and exactly where you are.</p>
+      </div>
+      <div class="feature">
+        <div class="ic ic-mint">✦</div>
+        <h3>An AI advisor</h3>
+        <p>Every week, a read of your actual numbers: the one bottleneck holding your revenue back, and where to point your focus.</p>
+      </div>
+      <div class="feature">
+        <div class="ic ic-magenta">✎</div>
+        <h3>A founder's record</h3>
+        <p>Every day gets written down. Streaks, a milestone timeline, and a shareable "Founder Wrapped" recap of your whole journey.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="section-head">
+      <h2>How it works</h2>
+      <p>Read-only, on your device. We never touch your money — and never see your customers.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="n">1</div>
+        <h3>Connect (read-only)</h3>
+        <p>Paste a read-only RevenueCat API key. It's stored in your device keychain and only ever reads your metrics.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h3>Play your day</h3>
+        <p>Three quests a day, picked for your app and your stage. Complete them, build streaks, level up your founder.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h3>Verify in gold</h3>
+        <p>When your real MRR crosses a milestone, claim it — a gold, un-fakeable trophy and a shareable founder card.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="section-head">
+      <h2>Start free. Go Pro when it counts.</h2>
+      <p>The free tier runs entirely on your device. Pro unlocks the RevenueCat-backed layer — verified revenue, all acts, and the AI advisor.</p>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <div class="name">Free</div>
+        <div class="price">$0</div>
+        <div class="sub">Forever</div>
+        <ul>
+          <li>Act I of the questline</li>
+          <li>Daily quests + streaks</li>
+          <li>Founder journal</li>
+          <li>Self-reported milestones + cards</li>
+        </ul>
+      </div>
+      <div class="plan pro">
+        <span class="badge">7-DAY FREE TRIAL</span>
+        <div class="name">Pro</div>
+        <div class="price">$49.99<small> / year</small></div>
+        <div class="sub">or $8.99 / month</div>
+        <ul>
+          <li>Connect RevenueCat — live revenue dashboard</li>
+          <li>Gold-verified milestones</li>
+          <li>Every act — the whole road to $1M</li>
+          <li>Weekly AI advisor deep-dives</li>
+          <li>Full journal history + exports</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-row">
+      <div>
+        <a class="brand" href="/"><span class="mark">F</span> Founders Own</a>
+        <div class="tagline-serif">Un-fakeable. Pulled straight from your revenue.</div>
+      </div>
+      <div class="foot-links">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="mailto:renmussoftware@gmail.com">Support</a>
+      </div>
+    </div>
+    <div class="copyright" style="margin-top:24px">© 2026 Renmus Software LLC. All rights reserved.</div>
+  </footer>
+</div>
+</body>
+</html>

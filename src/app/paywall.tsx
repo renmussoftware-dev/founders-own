@@ -18,8 +18,8 @@ const ANNUAL_SAVINGS = '53%';
 const TRIAL_DAYS = 7;
 
 // Apple requires functional Terms + Privacy links on a subscription paywall.
-const TERMS_URL = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
-const PRIVACY_URL = 'https://foundersown.app/privacy'; // TODO: set the real Privacy Policy URL
+const TERMS_URL = 'https://foundersown.com/terms';
+const PRIVACY_URL = 'https://foundersown.com/privacy';
 
 const PERKS = [
   'Live revenue dashboard — your real MRR, every day',
