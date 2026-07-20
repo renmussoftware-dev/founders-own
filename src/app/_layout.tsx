@@ -57,6 +57,7 @@ export default function RootLayout() {
         <Stack.Screen name="verify/[id]" options={{ presentation: 'modal' }} />
         <Stack.Screen name="connect" options={{ presentation: 'modal' }} />
         <Stack.Screen name="wrapped" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="unlock" options={{ presentation: 'fullScreenModal' }} />
         <Stack.Screen name="paywall" options={{ presentation: 'fullScreenModal' }} />
       </Stack>
     </SQLiteProvider>

@@ -27,6 +27,7 @@ import { statLevel, statProgress, statXp, XP_PER_LEVEL } from '@/logic/leveling'
 import { upsertDailyEntry } from '@/logic/journal';
 import { questContext } from '@/logic/questContext';
 import { nextMoneyMilestone, type NextMilestone } from '@/logic/verification';
+import { proLocked } from '@/config/pro';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { useRevenueData } from '@/hooks/useRevenueData';
 import { useStore } from '@/store/useStore';
@@ -167,7 +168,7 @@ export default function TodayScreen() {
             snapshots={snapshots}
             next={next}
             onConnect={() => router.push('/connect')}
-            onVerifyNext={id => router.push(`/verify/${id}`)}
+            onVerifyNext={id => router.push(proLocked(isPro) ? '/paywall' : `/verify/${id}`)}
           />
           {__DEV__ && !connected ? (
             <Pressable onPress={onDevSample} style={styles.devSample}>

@@ -33,7 +33,11 @@ export default function ConnectModal() {
         <Pressable onPress={done} style={styles.closeRow}>
           <Text style={styles.close}>✕</Text>
         </Pressable>
-        <ConnectRevenueCat onConnected={done} onSkip={done} skipLabel="Not now" />
+        <ConnectRevenueCat
+          onConnected={() => router.replace('/unlock')}
+          onSkip={done}
+          skipLabel="Not now"
+        />
       </ScrollView>
     </View>
   );

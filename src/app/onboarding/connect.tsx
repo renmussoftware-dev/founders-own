@@ -11,9 +11,9 @@ import { logOnboardingComplete } from '@/utils/analytics';
 export default function ConnectStep() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const enterApp = () => {
+  const finish = (dest: '/unlock' | '/(tabs)') => {
     logOnboardingComplete();
-    router.replace('/(tabs)');
+    router.replace(dest);
   };
 
   return (
@@ -31,7 +31,8 @@ export default function ConnectStep() {
 
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 24, paddingBottom: Math.max(insets.bottom, 28) }]}>
         <OnboardingProgress step={2} />
-        <ConnectRevenueCat onConnected={enterApp} onSkip={enterApp} />
+        {/* Connected → celebrate + pitch Pro; skipped → straight into the app. */}
+        <ConnectRevenueCat onConnected={() => finish('/unlock')} onSkip={() => finish('/(tabs)')} />
       </ScrollView>
     </View>
   );

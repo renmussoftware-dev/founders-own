@@ -17,6 +17,8 @@ import {
   metricLabel,
   metricValue,
 } from '@/logic/verification';
+import { proLocked } from '@/config/pro';
+import { useStore } from '@/store/useStore';
 import { colors, fonts } from '@/theme/tokens';
 
 /**
@@ -32,6 +34,7 @@ export default function VerifyChapter() {
   const db = useSQLiteContext();
   const chapter = id ? CHAPTERS_BY_ID[id] : undefined;
   const { connected, overview, loading, error, refresh } = useRevenueData();
+  const isPro = useStore(s => s.isPro);
   const [busy, setBusy] = useState(false);
   const [shortfall, setShortfall] = useState(false);
 
@@ -39,6 +42,11 @@ export default function VerifyChapter() {
 
   async function onVerify() {
     if (!chapter || !verify || !id) return;
+    // Gold verification is the Pro payoff (model B) — gate when enabled.
+    if (proLocked(isPro)) {
+      router.replace('/paywall');
+      return;
+    }
     setBusy(true);
     setShortfall(false);
     const fresh = (await refresh()) ?? overview; // fresh fetch, else cached
