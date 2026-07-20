@@ -7,11 +7,16 @@ import Purchases, {
 } from 'react-native-purchases';
 import { useStore } from '@/store/useStore';
 
-// TODO: replace with the Founders Own app keys once the RevenueCat project exists.
-// Offering: lifetime "Founder's Edition" $44.99 hero + monthly price anchor (SPEC §9).
+// RevenueCat project "Founders Own" (proj5386be70). Products/pricing live in
+// App Store Connect (like Fretionary); the paywall reads them from offerings.
+// Fill these once the store apps are added in RevenueCat:
+//   iOS     -> appl_...  (add an App Store app; needs the ASC app + shared secret)
+//   Android -> goog_...  (add a Play Store app)
+// Pre-store device testing: RevenueCat Test Store key 'test_XcejGcIKndRuAwEOMXyaBFIURhd'.
 const REVENUECAT_API_KEY_IOS = '';
 const REVENUECAT_API_KEY_ANDROID = '';
-const ENTITLEMENT_ID = 'Founders Own Pro';
+// Must match the entitlement identifier created in the RevenueCat dashboard.
+const ENTITLEMENT_ID = 'Renmus Software LLC Pro';
 
 export interface PurchaseState {
   isLoading: boolean;
