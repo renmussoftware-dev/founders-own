@@ -96,6 +96,29 @@ const MIGRATIONS: string[] = [
     captured_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
   `,
+
+  // v4 — relax quest_log.slot CHECK to allow new slots (e.g. 'chain', #2)
+  `
+  CREATE TABLE quest_log_v4 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    quest_date TEXT NOT NULL,
+    template_id TEXT NOT NULL,
+    slot TEXT NOT NULL,
+    title TEXT NOT NULL,
+    stat TEXT NOT NULL CHECK (stat IN
+      ('product','marketing','revenue','operations','finance')),
+    effort TEXT NOT NULL CHECK (effort IN ('light','medium','heavy')),
+    xp INTEGER NOT NULL,
+    completed_at TEXT
+  );
+  INSERT INTO quest_log_v4
+    (id, quest_date, template_id, slot, title, stat, effort, xp, completed_at)
+    SELECT id, quest_date, template_id, slot, title, stat, effort, xp, completed_at
+    FROM quest_log;
+  DROP TABLE quest_log;
+  ALTER TABLE quest_log_v4 RENAME TO quest_log;
+  CREATE INDEX idx_quest_log_date ON quest_log (quest_date);
+  `,
 ];
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {

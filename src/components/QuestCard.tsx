@@ -12,11 +12,14 @@ interface Props {
   celebrating?: boolean;
   /** Shown on the last pending card: "One left — finish for a perfect day". */
   subtitle?: string;
+  /** Data-aware "why this quest" line (SPEC #2). */
+  context?: string;
   onComplete?: (quest: QuestLogRow) => void;
 }
 
-export function QuestCard({ quest, celebrating, subtitle, onComplete }: Props) {
+export function QuestCard({ quest, celebrating, subtitle, context, onComplete }: Props) {
   const done = quest.completed_at !== null;
+  const isChain = quest.slot === 'chain';
 
   if (celebrating) return <CelebratingCard quest={quest} />;
 
@@ -47,13 +50,18 @@ export function QuestCard({ quest, celebrating, subtitle, onComplete }: Props) {
   const tint = questCardTints[quest.stat];
   return (
     <Pressable onPress={() => onComplete?.(quest)} style={styles.wrap}>
-      <LinearGradient colors={tint.gradient} style={[styles.card, { borderColor: tint.border }]}>
+      <LinearGradient
+        colors={tint.gradient}
+        style={[styles.card, { borderColor: isChain ? colors.violetBright : tint.border }]}
+      >
         <LinearGradient colors={stats[quest.stat].tone.gradient} style={styles.statTile}>
-          <Text style={styles.statTileGlyph}>◆</Text>
+          <Text style={styles.statTileGlyph}>{isChain ? '⛓' : '◆'}</Text>
         </LinearGradient>
         <View style={styles.body}>
           <Text style={styles.title}>{quest.title}</Text>
-          {subtitle ? <Text style={styles.meta}>{subtitle}</Text> : null}
+          {subtitle || context ? (
+            <Text style={[styles.meta, isChain && styles.metaChain]}>{subtitle ?? context}</Text>
+          ) : null}
         </View>
         <View style={[styles.xpChip, { backgroundColor: tint.chipBg }]}>
           <Text style={[styles.xpChipText, { color: tint.chipText }]}>+{quest.xp}</Text>
@@ -151,6 +159,7 @@ const styles = StyleSheet.create({
     color: 'rgba(237,234,251,0.5)',
     marginTop: 2,
   },
+  metaChain: { color: colors.violetBright },
   celebrateMeta: {
     fontFamily: fonts.uiBold,
     fontSize: 11,

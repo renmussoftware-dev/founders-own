@@ -17,7 +17,9 @@ import {
 } from '@/logic/dailyQuests';
 import { statLevel, statProgress, statXp, XP_PER_LEVEL } from '@/logic/leveling';
 import { upsertDailyEntry } from '@/logic/journal';
+import { questContext } from '@/logic/questContext';
 import { nextMoneyMilestone, type NextMilestone } from '@/logic/verification';
+import { CHAPTERS_BY_ID } from '@/content/questline';
 import { useRevenueData } from '@/hooks/useRevenueData';
 import { useStore } from '@/store/useStore';
 import { colors, fonts, stats } from '@/theme/tokens';
@@ -39,11 +41,15 @@ export default function TodayScreen() {
   const { connected, projectName, overview, loading } = useRevenueData();
   const [snapshots, setSnapshots] = useState<MetricSnapshot[]>([]);
   const [next, setNext] = useState<NextMilestone | null>(null);
+  const [activeChapterTitle, setActiveChapterTitle] = useState<string | undefined>();
 
   useEffect(() => {
     if (character) {
-      ensureTodayQuests(db, character).then(setQuests);
+      ensureTodayQuests(db, character, overview).then(setQuests);
     }
+    db.getFirstAsync<{ chapter_id: string }>(
+      "SELECT chapter_id FROM chapter_progress WHERE status = 'active' ORDER BY act, chapter_id LIMIT 1"
+    ).then(r => setActiveChapterTitle(r ? CHAPTERS_BY_ID[r.chapter_id]?.title : undefined));
     // Issue once per mount; quest rows for today are stable afterwards.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db]);
@@ -157,6 +163,7 @@ export default function TodayScreen() {
                   ? 'One left — finish for a perfect day'
                   : undefined
               }
+              context={questContext(quest, { activeChapterTitle, overview })}
               onComplete={onComplete}
             />
           ))}

@@ -88,6 +88,23 @@ export interface NextMilestone {
 }
 
 /**
+ * The nearest revenue target the founder hasn't hit yet — the first verifiable
+ * chapter whose live metric is below threshold. Used for the motivational "gap"
+ * line on revenue quests (SPEC #2), independent of verification order.
+ */
+export function nextUnmetMoneyTarget(
+  overview: RcOverview | null
+): { chapter: Chapter; current: number; gap: number } | null {
+  if (!overview) return null;
+  for (const c of CHAPTERS) {
+    if (!c.verify) continue;
+    const current = metricValue(overview, c.verify.metric);
+    if (current < c.verify.threshold) return { chapter: c, current, gap: c.verify.threshold - current };
+  }
+  return null;
+}
+
+/**
  * The next revenue milestone the founder is working toward — the lowest-index
  * verifiable chapter not yet verified — with progress against the live metric.
  * Powers the "next milestone" block on the revenue dashboard.

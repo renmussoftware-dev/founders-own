@@ -25,6 +25,10 @@ export interface QuestTemplate {
   habit?: boolean;
   /** Chapter-pull templates tied to an authored chapter (SPEC §6). */
   chapter?: string;
+  /** Completing this quest unlocks the follow-up template with this id (a chain). */
+  chain?: string;
+  /** Follow-up-only: never dealt directly, only surfaced by a chain. */
+  chainOnly?: boolean;
 }
 
 export const XP_BY_EFFORT: Record<Effort, number> = {
@@ -89,7 +93,8 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   // =========================================================================
 
   // ---- Product ----
-  { id: 'app_prod_f1', type: 'digital_product', stat: 'product', effort: 'light', stages: ['foundation'], title: 'Write your app’s one-line pitch: who it’s for and the problem it solves' },
+  { id: 'app_prod_f1', type: 'digital_product', stat: 'product', effort: 'light', stages: ['foundation'], title: 'Write your app’s one-line pitch: who it’s for and the problem it solves', chain: 'app_prod_f1b' },
+  { id: 'app_prod_f1b', type: 'digital_product', stat: 'marketing', effort: 'light', chainOnly: true, title: 'Put that one-liner as your App Store subtitle' },
   { id: 'app_prod_f2', type: 'digital_product', stat: 'product', effort: 'light', stages: ['foundation'], title: 'Pick the single core action your app has to nail' },
   { id: 'app_prod_f3', type: 'digital_product', stat: 'product', effort: 'heavy', stages: ['foundation'], title: 'Ship the smallest build a real user could try today' },
   { id: 'app_prod_e1', type: 'digital_product', stat: 'product', effort: 'medium', stages: ['early', 'growth'], title: 'Fix the top crash or bug from this week' },
@@ -101,7 +106,8 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   { id: 'app_mkt_f1', type: 'digital_product', stat: 'marketing', effort: 'medium', stages: ['foundation'], title: 'Write your store title + subtitle around one target keyword' },
   { id: 'app_mkt_f2', type: 'digital_product', stat: 'marketing', effort: 'medium', stages: ['foundation', 'early'], title: 'Record a 15-second clip of the app solving the problem' },
   { id: 'app_mkt_f3', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['foundation', 'early'], title: 'Post one build-in-public update' },
-  { id: 'app_mkt_e1', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Write one new ad hook to test' },
+  { id: 'app_mkt_e1', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Write one new ad hook to test', chain: 'app_mkt_e1b' },
+  { id: 'app_mkt_e1b', type: 'digital_product', stat: 'marketing', effort: 'medium', chainOnly: true, title: 'Post that hook as an ad or a short today' },
   { id: 'app_mkt_e2', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Reply to 3 App Store or Play Store reviews' },
   { id: 'app_mkt_e3', type: 'digital_product', stat: 'marketing', effort: 'medium', stages: ['early', 'growth'], title: 'Post one short video of the app in action' },
   { id: 'app_mkt_g1', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['growth', 'scale'], title: 'Study a competitor’s top-performing creative; note why it works' },
@@ -111,7 +117,8 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   { id: 'app_rev_f1', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['foundation'], title: 'Decide what’s free vs paid in your app' },
   { id: 'app_rev_f2', type: 'digital_product', stat: 'revenue', effort: 'heavy', stages: ['foundation'], title: 'Set up your subscription or one-time purchase in the store' },
   { id: 'app_rev_f3', type: 'digital_product', stat: 'revenue', effort: 'light', stages: ['foundation', 'early'], title: 'Compare your price against 3 competing apps' },
-  { id: 'app_rev_e1', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Check yesterday’s install → trial conversion; note one drop-off point' },
+  { id: 'app_rev_e1', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Check yesterday’s install → trial conversion; note one drop-off point', chain: 'app_rev_e1b' },
+  { id: 'app_rev_e1b', type: 'digital_product', stat: 'revenue', effort: 'heavy', chainOnly: true, title: 'Ship one fix for that drop-off point' },
   { id: 'app_rev_e2', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Change one thing on your paywall and note the before/after' },
   { id: 'app_rev_g1', type: 'digital_product', stat: 'revenue', effort: 'heavy', stages: ['growth', 'scale'], title: 'A/B test one element of your paywall' },
   { id: 'app_rev_g2', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['growth', 'scale'], title: 'Add an annual option or one upsell' },
@@ -198,7 +205,8 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   { id: 'ch1_any_offer', type: 'any', stat: 'revenue', effort: 'light', chapter: 'act1_ch1', title: 'Write your offer in one sentence' },
   { id: 'ch1_any_reach', type: 'any', stat: 'marketing', effort: 'heavy', chapter: 'act1_ch1', title: 'Get your offer in front of 10 people who have the problem' },
   { id: 'ch1_any_close', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch1', title: 'Ask one interested person to buy or sign up — today' },
-  { id: 'ch1_app_who', type: 'digital_product', stat: 'product', effort: 'light', chapter: 'act1_ch1', title: 'Write who your app is for and the one problem it solves' },
+  { id: 'ch1_app_who', type: 'digital_product', stat: 'product', effort: 'light', chapter: 'act1_ch1', title: 'Write who your app is for and the one problem it solves', chain: 'ch1_app_who_b' },
+  { id: 'ch1_app_who_b', type: 'digital_product', stat: 'marketing', effort: 'light', chainOnly: true, title: 'Post that one-liner where your target users will see it' },
   { id: 'ch1_app_reach', type: 'digital_product', stat: 'marketing', effort: 'heavy', chapter: 'act1_ch1', title: 'Get your app in front of 10 people who have that problem' },
   { id: 'ch1_app_watch', type: 'digital_product', stat: 'product', effort: 'medium', chapter: 'act1_ch1', title: 'Get 5 target users to try it and watch what they do' },
 
@@ -224,3 +232,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   { id: 'ch5_app_trial', type: 'digital_product', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch5', title: 'Raise trial → paid conversion by one concrete change' },
   { id: 'ch5_any_retain', type: 'any', stat: 'product', effort: 'medium', chapter: 'act1_ch5', title: 'Remove one reason subscribers cancel' },
 ];
+
+export const QUEST_TEMPLATES_BY_ID: Record<string, QuestTemplate> = Object.fromEntries(
+  QUEST_TEMPLATES.map(t => [t.id, t])
+);
