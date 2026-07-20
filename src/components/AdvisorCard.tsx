@@ -4,20 +4,52 @@ import { type AdvisorInsight } from '@/logic/advisor';
 import { colors, fonts, stats } from '@/theme/tokens';
 
 /**
- * The AI advisor card on the Today board (SPEC #4). Shows the free, rules-based
- * read of the founder's bottleneck; the weekly LLM deep-dive is the Pro upsell.
+ * The AI advisor card on the Today board (SPEC #4). Pro feature under model B:
+ * for non-Pro users (when gating is on) it renders a locked teaser that routes
+ * to the paywall; for Pro users it shows the rules-based bottleneck read plus
+ * the weekly LLM deep-dive.
  */
 export function AdvisorCard({
   insight,
   isPro,
-  deepDiveStatus,
+  deepDiveStatus = null,
   onDeepDive,
+  locked,
+  onUnlock,
 }: {
-  insight: AdvisorInsight;
-  isPro: boolean;
-  deepDiveStatus: string | null;
-  onDeepDive: () => void;
+  insight?: AdvisorInsight | null;
+  isPro?: boolean;
+  deepDiveStatus?: string | null;
+  onDeepDive?: () => void;
+  locked?: boolean;
+  onUnlock?: () => void;
 }) {
+  if (locked) {
+    return (
+      <LinearGradient colors={[colors.surfaceTop, colors.surfaceBottom]} style={styles.card}>
+        <View style={styles.header}>
+          <View style={styles.spark}>
+            <Text style={styles.sparkText}>✦</Text>
+          </View>
+          <Text style={styles.label}>YOUR ADVISOR</Text>
+          <View style={styles.proBadge}>
+            <Text style={styles.proText}>PRO</Text>
+          </View>
+        </View>
+        <Text style={styles.headline}>See the one bottleneck holding your revenue back</Text>
+        <Text style={styles.detail}>
+          A weekly AI read of your real numbers — the highest-leverage fix for where your
+          business is right now.
+        </Text>
+        <Pressable onPress={onUnlock} style={styles.deepDive}>
+          <Text style={styles.deepDiveText}>Unlock with Pro</Text>
+          <Text style={styles.deepDiveHint}>→</Text>
+        </Pressable>
+      </LinearGradient>
+    );
+  }
+
+  if (!insight) return null;
   const focusTone = insight.focusStat ? stats[insight.focusStat].tone.tint : colors.violetBright;
 
   return (
@@ -77,6 +109,13 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   focusText: { fontFamily: fonts.uiExtraBold, fontSize: 10 },
+  proBadge: {
+    backgroundColor: colors.gold,
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+  },
+  proText: { fontFamily: fonts.uiBlack, fontSize: 9.5, letterSpacing: 0.5, color: '#3A2A0C' },
   headline: {
     fontFamily: fonts.uiExtraBold,
     fontSize: 16,

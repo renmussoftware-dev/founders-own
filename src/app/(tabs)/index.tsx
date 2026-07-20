@@ -55,9 +55,16 @@ export default function TodayScreen() {
   const [advice, setAdvice] = useState<AdvisorInsight | null>(null);
   const [deepDiveStatus, setDeepDiveStatus] = useState<string | null>(null);
 
+  // Model B: metric-driven personalization (quest selection, the "why this
+  // quest" data line) and the advisor are Pro. Free users get pre-scripted
+  // quests (business-type + stage only) — so we withhold the live metrics from
+  // the quest engine when locked. The live dashboard itself stays free.
+  const advisorLocked = proLocked(isPro);
+  const questOverview = advisorLocked ? null : overview;
+
   useEffect(() => {
     if (character) {
-      ensureTodayQuests(db, character, overview).then(setQuests);
+      ensureTodayQuests(db, character, questOverview).then(setQuests);
     }
     db.getFirstAsync<{ chapter_id: string }>(
       "SELECT chapter_id FROM chapter_progress WHERE status = 'active' ORDER BY act, chapter_id LIMIT 1"
@@ -80,10 +87,14 @@ export default function TodayScreen() {
   }, [db, overview]);
 
   // Recompute the advisor's read whenever the character or metrics change.
+  // Skipped entirely when locked — free users see the teaser, not real advice.
   useEffect(() => {
-    if (!character) return;
+    if (!character || advisorLocked) {
+      setAdvice(null);
+      return;
+    }
     buildAdvisorSnapshot(db, character, overview).then(s => setAdvice(localAdvisor(s)));
-  }, [db, character, overview]);
+  }, [db, character, overview, advisorLocked]);
 
   async function onDevSample() {
     const fixture = await devSeedSampleMetrics(db);
@@ -200,13 +211,17 @@ export default function TodayScreen() {
                   ? 'One left — finish for a perfect day'
                   : undefined
               }
-              context={questContext(quest, { activeChapterTitle, overview })}
+              context={questContext(quest, { activeChapterTitle, overview: questOverview })}
               onComplete={onComplete}
             />
           ))}
         </View>
 
-        {advice ? (
+        {advisorLocked ? (
+          <View style={styles.advisor}>
+            <AdvisorCard locked onUnlock={() => router.push('/paywall')} />
+          </View>
+        ) : advice ? (
           <View style={styles.advisor}>
             <AdvisorCard
               insight={advice}
