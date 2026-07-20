@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { colors } from '@/theme/tokens';
 import { migrateDbIfNeeded } from '@/db/migrations';
+import { initAnalytics } from '@/utils/analytics';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,6 +25,11 @@ export default function RootLayout() {
     Nunito_900Black,
     Newsreader_400Regular_Italic,
   });
+
+  // Initialize Meta advertiser-tracking on launch (SDK auto-inits natively).
+  useEffect(() => {
+    initAnalytics();
+  }, []);
 
   useEffect(() => {
     if (fontsLoaded) {

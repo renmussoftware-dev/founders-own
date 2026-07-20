@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,6 +7,7 @@ import type { PurchasesPackage } from 'react-native-purchases';
 import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
 import { HexSeal } from '@/components/ui/HexSeal';
 import { useRevenueCat } from '@/hooks/useRevenueCat';
+import { logInitiateCheckout, logPaywallView } from '@/utils/analytics';
 import { colors, fonts } from '@/theme/tokens';
 
 // Fallback copy shown before the RevenueCat offering loads (or in dev/web).
@@ -57,8 +58,19 @@ export default function Paywall() {
 
   const enterApp = () => router.replace('/(tabs)/questline');
 
+  useEffect(() => {
+    logPaywallView();
+  }, []);
+
   async function buy(pkg?: PurchasesPackage) {
     if (!pkg) return;
+    // Meta funnel: checkout intent (RevenueCat sends the conversion server-side).
+    logInitiateCheckout({
+      productId: pkg.product.identifier,
+      price: pkg.product.price,
+      currency: pkg.product.currencyCode ?? 'USD',
+      packageType: pkg.packageType,
+    });
     const ok = await purchasePackage(pkg);
     if (ok) enterApp();
   }

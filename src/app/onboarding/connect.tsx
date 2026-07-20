@@ -5,12 +5,16 @@ import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 import { ConnectRevenueCat } from '@/components/ConnectRevenueCat';
 import { OnboardingProgress } from '@/components/onboarding/shared';
 import { ob } from '@/content/onboarding';
+import { logOnboardingComplete } from '@/utils/analytics';
 
 /** Onboarding 2/2 — connect RevenueCat (or skip to self-report). */
 export default function ConnectStep() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const enterApp = () => router.replace('/(tabs)');
+  const enterApp = () => {
+    logOnboardingComplete();
+    router.replace('/(tabs)');
+  };
 
   return (
     <View style={styles.root}>

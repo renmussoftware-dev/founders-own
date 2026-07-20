@@ -6,6 +6,7 @@ import { ArcaneTabBar } from '@/components/ArcaneTabBar';
 import { getCharacter } from '@/db/character';
 import { seedChapters } from '@/db/chapters';
 import { selectNeedsOnboarding, useStore } from '@/store/useStore';
+import { maybePromptATT } from '@/utils/analytics';
 
 export default function TabsLayout() {
   const db = useSQLiteContext();
@@ -22,6 +23,11 @@ export default function TabsLayout() {
       });
     }
   }, [characterLoaded, db, setCharacter]);
+
+  // Prompt for ATT once the founder is in the app (a value-experienced moment).
+  useEffect(() => {
+    maybePromptATT();
+  }, []);
 
   if (!characterLoaded) return null;
   if (needsOnboarding) return <Redirect href="/onboarding" />;

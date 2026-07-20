@@ -43,7 +43,27 @@
       "expo-sqlite",
       "expo-font",
       "expo-sharing",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "REPLACE_WITH_META_APP_ID",
+          "clientToken": "REPLACE_WITH_META_CLIENT_TOKEN",
+          "displayName": "Founders Own",
+          "scheme": "fbREPLACE_WITH_META_APP_ID",
+          "advertiserIDCollectionEnabled": true,
+          "autoLogAppEventsEnabled": true,
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "Allow Founders Own to use your activity to measure ad performance, so we can reach founders like you and keep the app affordable."
+        }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Allow Founders Own to use your activity to measure ad performance, so we can reach founders like you and keep the app affordable."
+        }
+      ],
+      "./plugins/withAdIdPermission"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -5,6 +5,7 @@ import Purchases, {
   type CustomerInfo,
   type PurchasesPackage,
 } from 'react-native-purchases';
+import { linkFacebookAnonymousIDToRevenueCat } from '@/utils/analytics';
 import { useStore } from '@/store/useStore';
 
 // RevenueCat project "Founders Own" (proj5386be70). Products/pricing live in
@@ -53,6 +54,11 @@ export function useRevenueCat() {
           Purchases.setLogLevel(LOG_LEVEL.DEBUG);
         }
         Purchases.configure({ apiKey });
+
+        // Pass the Facebook anonymous ID through so RevenueCat's server-side
+        // purchase events match our SDK funnel events (esp. for ATT-denied
+        // users). Fire-and-forget — don't block offering load.
+        linkFacebookAnonymousIDToRevenueCat();
 
         const customerInfo = await Purchases.getCustomerInfo();
         const isPro = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
