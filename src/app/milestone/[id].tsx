@@ -70,26 +70,34 @@ export default function MilestoneCelebration() {
           {data.verified ? 'a verified milestone!' : 'a milestone!'}
         </Text>
 
-        <Animated.View style={[styles.card, cardPop]}>
-          <View style={styles.sealRing}>
-            <HexSeal label={data.sealLabel} size={64} />
-          </View>
-          {data.verified ? (
-            <VerifiedBadge label="VERIFIED · REVENUECAT" />
-          ) : (
-            <Text style={styles.selfReport}>SELF-REPORTED</Text>
-          )}
-          <Text style={styles.milestoneTitle}>{data.milestoneTitle}</Text>
-          <View style={styles.footerStats}>
-            <Stat value={`Lv ${data.level}`} label="Founder" />
-            <View style={styles.divider} />
-            <Stat value={String(data.streak)} label="Day streak" />
-            <View style={styles.divider} />
-            <Stat value={String(data.questsDone)} label="Quests" />
-          </View>
-          <Text style={styles.wordmark}>
-            {data.businessName.toUpperCase()} · {data.monthYear}
-          </Text>
+        <Animated.View style={[styles.cardShadow, cardPop]}>
+          <LinearGradient
+            colors={['#2E2758', '#1A1436', '#120E28']}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+            style={styles.card}
+          >
+            <View style={styles.cardHairline} />
+            <View style={styles.sealRing}>
+              <HexSeal label={data.sealLabel} size={64} />
+            </View>
+            {data.verified ? (
+              <VerifiedBadge label="VERIFIED · REVENUECAT" />
+            ) : (
+              <Text style={styles.selfReport}>SELF-REPORTED</Text>
+            )}
+            <Text style={styles.milestoneTitle}>{data.milestoneTitle}</Text>
+            <View style={styles.footerStats}>
+              <Stat value={`Lv ${data.level}`} label="Founder" />
+              <View style={styles.divider} />
+              <Stat value={String(data.streak)} label="Day streak" />
+              <View style={styles.divider} />
+              <Stat value={String(data.questsDone)} label="Quests" />
+            </View>
+            <Text style={styles.wordmark}>
+              {data.businessName.toUpperCase()} · {data.monthYear}
+            </Text>
+          </LinearGradient>
         </Animated.View>
       </View>
 
@@ -133,36 +141,57 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-  card: {
-    backgroundColor: '#FAF9F5',
+  cardShadow: {
     borderRadius: 24,
-    paddingHorizontal: 22,
-    paddingTop: 22,
-    paddingBottom: 20,
+    shadowColor: colors.gold,
+    shadowOpacity: 0.24,
+    shadowRadius: 30,
+    shadowOffset: { width: 0, height: 16 },
+    elevation: 14,
+  },
+  card: {
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: 'rgba(240,205,121,0.3)',
+    paddingHorizontal: 24,
+    paddingTop: 26,
+    paddingBottom: 22,
     alignItems: 'center',
+    overflow: 'hidden',
+  },
+  // Thin gold sheen along the very top edge — a "foil" catch-light.
+  cardHairline: {
+    position: 'absolute',
+    top: 0,
+    left: 28,
+    right: 28,
+    height: 1,
+    backgroundColor: 'rgba(240,205,121,0.55)',
   },
   sealRing: {
     width: 92,
     height: 92,
     borderRadius: 46,
-    backgroundColor: '#F5EDD6',
+    backgroundColor: 'rgba(240,205,121,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(240,205,121,0.35)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   selfReport: {
     fontFamily: fonts.uiExtraBold,
     fontSize: 10,
     letterSpacing: 2,
-    color: '#8A6A2A',
+    color: 'rgba(240,205,121,0.72)',
     marginVertical: 6,
   },
   milestoneTitle: {
     fontFamily: fonts.serifItalic,
-    fontSize: 26,
-    color: '#2A2450',
+    fontSize: 27,
+    color: '#F5EFE0',
     textAlign: 'center',
-    marginTop: 6,
+    marginTop: 8,
   },
   footerStats: {
     flexDirection: 'row',
@@ -171,24 +200,24 @@ const styles = StyleSheet.create({
     marginTop: 18,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(42,36,80,0.1)',
+    borderTopColor: 'rgba(240,205,121,0.16)',
     alignSelf: 'stretch',
   },
   stat: { alignItems: 'center' },
-  statValue: { fontFamily: fonts.uiBlack, fontSize: 15, color: '#2A2450' },
+  statValue: { fontFamily: fonts.uiBlack, fontSize: 15, color: colors.textPrimary },
   statLabel: {
     fontFamily: fonts.uiExtraBold,
     fontSize: 9,
     letterSpacing: 0.8,
-    color: 'rgba(42,36,80,0.45)',
+    color: 'rgba(240,205,121,0.55)',
     marginTop: 5,
   },
-  divider: { width: 1, backgroundColor: 'rgba(42,36,80,0.1)' },
+  divider: { width: 1, backgroundColor: 'rgba(240,205,121,0.16)' },
   wordmark: {
     fontFamily: fonts.uiExtraBold,
     fontSize: 9,
     letterSpacing: 1.4,
-    color: 'rgba(42,36,80,0.35)',
+    color: 'rgba(240,205,121,0.42)',
     marginTop: 14,
   },
   actions: { paddingHorizontal: 26, gap: 12 },

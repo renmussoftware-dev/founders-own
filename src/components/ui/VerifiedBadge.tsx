@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
   badge: {
     borderWidth: 1,
     borderColor: colors.goldMid,
+    backgroundColor: 'rgba(240,205,121,0.1)',
     borderRadius: radius.pill,
     paddingHorizontal: 10,
     paddingVertical: 3,
