@@ -100,3 +100,52 @@ export const fonts = {
 
 /** Hexagon seal points for react-native-svg Polygon, in a 100×100 viewBox (SPEC §11a clip-path). */
 export const hexagonPoints = '50,0 93,25 93,75 50,100 7,75 7,25';
+
+/**
+ * Quest-card tints per stat (design 7d: card background hue follows the
+ * quest's stat — violet/magenta shown; the rest derived from the palette).
+ */
+export const questCardTints: Record<
+  StatKey,
+  { gradient: [string, string]; border: string; chipText: string; chipBg: string }
+> = {
+  product: {
+    gradient: ['#3A3068', '#2F2756'],
+    border: 'rgba(164,147,255,0.3)',
+    chipText: '#C9BDFF',
+    chipBg: 'rgba(164,147,255,0.13)',
+  },
+  marketing: {
+    gradient: ['#46264E', '#38203F'],
+    border: 'rgba(220,130,200,0.25)',
+    chipText: '#F2BBE4',
+    chipBg: 'rgba(232,156,212,0.13)',
+  },
+  revenue: {
+    gradient: ['#4A3822', '#3B2C1B'],
+    border: 'rgba(240,184,101,0.25)',
+    chipText: '#F0B865',
+    chipBg: 'rgba(240,184,101,0.13)',
+  },
+  operations: {
+    gradient: ['#1F3A4A', '#1A2F3C'],
+    border: 'rgba(142,210,232,0.25)',
+    chipText: '#8ED2E8',
+    chipBg: 'rgba(142,210,232,0.13)',
+  },
+  finance: {
+    gradient: ['#20392E', '#1A2F26'],
+    border: 'rgba(127,208,160,0.25)',
+    chipText: '#7FD0A0',
+    chipBg: 'rgba(127,208,160,0.13)',
+  },
+};
+
+/** Celebration (quest-complete) card colors — mint family (design 7d). */
+export const celebration = {
+  gradient: ['#1E3A38', '#193029'] as [string, string],
+  border: '#3FA46C',
+  check: ['#7FD0A0', '#3FA46C', '#276A44'] as [string, string, string],
+  chipGradient: ['#7FD0A0', '#3FA46C'] as [string, string],
+  chipText: '#0E2418',
+};

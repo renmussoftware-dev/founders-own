@@ -1,84 +1,210 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
-import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { StatRow } from '@/components/ui/StatRow';
-import { HexSeal } from '@/components/ui/HexSeal';
-import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { colors, fonts, statOrder } from '@/theme/tokens';
+import { statXp } from '@/logic/leveling';
+import { useStore } from '@/store/useStore';
 
-/**
- * Character sheet (SPEC §11b #2).
- * Phase 0 shell — real character data + Stats/Milestones/Journal tabs land in Phase 1.
- */
+type SheetTab = 'Stats' | 'Milestones' | 'Journal';
+
+/** Character sheet (design 7a). */
 export default function CharacterScreen() {
   const insets = useSafeAreaInsets();
+  const character = useStore(s => s.character);
+  const [tab, setTab] = useState<SheetTab>('Stats');
+
+  if (!character) return <ArcaneBackground />;
 
   return (
     <ArcaneBackground>
-      <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}>
-        <View style={styles.hero}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarInitial}>F</Text>
-          </View>
-          <Text style={styles.name}>Your Business</Text>
-          <Text style={styles.rank}>Level 1 · Apprentice Founder</Text>
-        </View>
-
-        <SurfaceCard>
-          {statOrder.map(stat => (
-            <StatRow key={stat} stat={stat} level={1} xp={0} />
+      <View style={[styles.hero, { paddingTop: insets.top + 20 }]}>
+        <LinearGradient
+          colors={['#B4A6FF', '#7C68E8', '#4F3EAE']}
+          style={styles.avatar}
+        >
+          <Text style={styles.avatarInitial}>{character.business_initial}</Text>
+        </LinearGradient>
+        <Text style={styles.name}>{character.business_name}</Text>
+        <Text style={styles.rank}>
+          Level {character.overall_level} · {character.rank_title}
+        </Text>
+        <View style={styles.tabPill}>
+          {(['Stats', 'Milestones', 'Journal'] as SheetTab[]).map(t => (
+            <Pressable key={t} onPress={() => setTab(t)}>
+              {tab === t ? (
+                <LinearGradient colors={['#EDEAFB', '#D6D0F0']} style={styles.tabActive}>
+                  <Text style={styles.tabActiveText}>{t}</Text>
+                </LinearGradient>
+              ) : (
+                <View style={styles.tabInactive}>
+                  <Text style={styles.tabInactiveText}>{t}</Text>
+                </View>
+              )}
+            </Pressable>
           ))}
-        </SurfaceCard>
+        </View>
+      </View>
 
-        <SurfaceCard style={styles.milestoneCard}>
-          <View style={styles.milestoneRow}>
-            <HexSeal label="$1K" size={56} />
-            <View style={styles.milestoneBody}>
-              <VerifiedBadge label="VERIFIED · STRIPE" />
-              <Text style={styles.milestoneTitle}>Latest milestone appears here</Text>
+      <LinearGradient colors={['#28224C', '#1E1A3C']} style={styles.sheet}>
+        <ScrollView contentContainerStyle={styles.sheetContent}>
+          {tab === 'Stats' && (
+            <View style={styles.statList}>
+              {statOrder.map(stat => (
+                <View key={stat} style={styles.statCard}>
+                  <StatRow
+                    stat={stat}
+                    level={character[`${stat}_level`]}
+                    xp={statXp(character, stat)}
+                  />
+                </View>
+              ))}
             </View>
-          </View>
-        </SurfaceCard>
-      </ScrollView>
+          )}
+          {tab === 'Milestones' && (
+            <Text style={styles.placeholder}>
+              Chapter milestones appear here as you complete them — verified ones get the
+              gold seal.
+            </Text>
+          )}
+          {tab === 'Journal' && (
+            <Text style={styles.placeholder}>
+              Your recent journal entries will surface here once the journal engine lands.
+            </Text>
+          )}
+
+          {tab === 'Stats' && (
+            <>
+              <View style={styles.milestoneHeader}>
+                <Text style={styles.milestoneTitle}>Latest milestone</Text>
+                <Text style={styles.viewAll}>View all ›</Text>
+              </View>
+              <View style={styles.milestoneEmpty}>
+                <Text style={styles.milestoneEmptyText}>
+                  No milestones yet — Chapter 1 is waiting on the questline.
+                </Text>
+              </View>
+            </>
+          )}
+        </ScrollView>
+      </LinearGradient>
     </ArcaneBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { padding: 20, gap: 14, paddingBottom: 40 },
-  hero: { alignItems: 'center', gap: 6, marginBottom: 6 },
+  hero: {
+    alignItems: 'center',
+    paddingBottom: 18,
+  },
   avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 2,
-    borderColor: colors.violet,
-    backgroundColor: colors.surfaceBottom,
+    width: 78,
+    height: 78,
+    borderRadius: 39,
+    borderWidth: 3,
+    borderColor: 'rgba(237,234,251,0.9)',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 10,
   },
   avatarInitial: {
     fontFamily: fonts.uiBlack,
-    fontSize: 28,
-    color: colors.textPrimary,
+    fontSize: 30,
+    color: '#14102E',
   },
   name: {
-    fontFamily: fonts.uiBlack,
-    fontSize: 20,
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 19,
     color: colors.textPrimary,
   },
   rank: {
-    fontFamily: fonts.uiBold,
-    fontSize: 13,
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 12,
     color: colors.textSecondary,
+    marginTop: 5,
   },
-  milestoneCard: { marginTop: 2 },
-  milestoneRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  milestoneBody: { flex: 1, gap: 8 },
+  tabPill: {
+    flexDirection: 'row',
+    gap: 4,
+    backgroundColor: 'rgba(0,0,0,0.28)',
+    borderRadius: 999,
+    padding: 4,
+    marginTop: 14,
+  },
+  tabActive: {
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+  tabActiveText: {
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 11.5,
+    color: '#1C1838',
+  },
+  tabInactive: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+  tabInactiveText: {
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 11.5,
+    color: 'rgba(237,234,251,0.65)',
+  },
+  sheet: {
+    flex: 1,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+  },
+  sheetContent: {
+    padding: 18,
+    paddingBottom: 32,
+  },
+  statList: { gap: 9 },
+  statCard: {
+    backgroundColor: colors.surfaceBottom,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 3,
+  },
+  milestoneHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 18,
+    marginBottom: 10,
+  },
   milestoneTitle: {
-    fontFamily: fonts.serifItalic,
+    fontFamily: fonts.uiExtraBold,
     fontSize: 15,
     color: colors.textPrimary,
+  },
+  viewAll: {
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 12,
+    color: 'rgba(237,234,251,0.4)',
+  },
+  milestoneEmpty: {
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: 'rgba(237,234,251,0.16)',
+    borderRadius: 18,
+    padding: 15,
+  },
+  milestoneEmptyText: {
+    fontFamily: fonts.uiBold,
+    fontSize: 12,
+    lineHeight: 18,
+    color: colors.textSecondary,
+  },
+  placeholder: {
+    fontFamily: fonts.uiBold,
+    fontSize: 13,
+    lineHeight: 20,
+    color: colors.textSecondary,
+    paddingVertical: 8,
   },
 });

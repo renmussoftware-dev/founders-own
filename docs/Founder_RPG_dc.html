@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EFEDE7;font-family:-apple-system,system-ui,"Helvetica Neue",sans-serif;color:#1D1A15}
+a{color:#9A7430;text-decoration:none}a:hover{color:#7A5B22}
+@keyframes shine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(10px) scale(.9)}20%{opacity:1;transform:translateY(0) scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-26px) scale(1)}}
+@keyframes popIn{0%{transform:scale(0)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes twinkle{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes ringPulse{0%{box-shadow:0 0 0 0 rgba(62,124,82,.45)}100%{box-shadow:0 0 0 18px rgba(62,124,82,0)}}
+</style>
+</helmet>
+<section style="padding:44px 48px 56px;border-bottom:1px solid rgba(29,26,21,.1)">
+<div style="margin:0 0 8px;font:600 13px/1.2 -apple-system,system-ui,sans-serif">Turn 7 — Arcane rolled out across the app</div>
+<div style="margin:0 0 28px;max-width:720px;font:400 12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)">The <a href="#6b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">6b</a> indigo-violet palette applied to every core screen. Stats get jewel tones (violet / magenta / amber / teal / mint), success moments go mint, and the founder card itself stays cream — a light artifact that pops against the dark app and reads well when shared. Gold = verified everywhere.</div>
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<div id="7a" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#7a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">7a</a>Character sheet</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Character — Arcane" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(130% 90% at 50% -10%,#2A2450,#1C1838 55%,#120F26);font-family:Nunito,-apple-system,sans-serif;color:#EDEAFB">
+<div style="flex:none;text-align:center;padding:66px 20px 18px">
+  <div style="width:78px;height:78px;margin:0 auto 10px;border-radius:50%;background:radial-gradient(circle at 32% 26%,#B4A6FF,#7C68E8 55%,#4F3EAE);border:3px solid rgba(237,234,251,.9);display:flex;align-items:center;justify-content:center;font:900 30px/1 Nunito,sans-serif;color:#14102E;box-shadow:inset 0 2px 3px rgba(255,255,255,.45),0 10px 26px -6px rgba(124,104,232,.6),0 0 0 6px rgba(237,234,251,.07)">W</div>
+  <div style="font:800 19px/1.2 Nunito,sans-serif;text-shadow:0 2px 8px rgba(0,0,0,.4)">Willow &amp; Sage Ceramics</div>
+  <div style="font:800 12px/1 Nunito,sans-serif;color:rgba(237,234,251,.6);margin:5px 0 0">Level 7 · Journeyman Merchant</div>
+  <div style="display:inline-flex;gap:4px;background:rgba(0,0,0,.28);border-radius:999px;padding:4px;margin:14px 0 0;box-shadow:inset 0 2px 4px rgba(0,0,0,.4)">
+    <span style="font:800 11.5px/1 Nunito,sans-serif;background:linear-gradient(180deg,#EDEAFB,#D6D0F0);color:#1C1838;border-radius:999px;padding:7px 14px;box-shadow:0 2px 5px rgba(0,0,0,.4),inset 0 1px 0 #fff">Stats</span>
+    <span style="font:800 11.5px/1 Nunito,sans-serif;color:rgba(237,234,251,.65);padding:7px 14px">Milestones</span>
+    <span style="font:800 11.5px/1 Nunito,sans-serif;color:rgba(237,234,251,.65);padding:7px 14px">Journal</span>
+  </div>
+</div>
+<div style="flex:1;overflow:hidden;background:linear-gradient(180deg,#28224C,#1E1A3C);border-radius:28px 28px 0 0;padding:18px 18px 0;box-shadow:0 -12px 30px -10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.08)">
+  <div style="display:flex;flex-direction:column;gap:9px">
+    <sc-for list="{{ stats7 }}" as="s" hint-placeholder-count="5">
+      <div style="background:linear-gradient(180deg,#2C2652,#231E42);border:1px solid rgba(237,234,251,.1);border-radius:16px;padding:11px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 10px 20px -10px rgba(0,0,0,.5)">
+        <span style="flex:none;width:40px;height:40px;border-radius:13px;background:{{ s.grad }};display:flex;align-items:center;justify-content:center;color:#14102E;font:900 15px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.4),0 4px 10px -2px {{ s.glow }}">{{ s.initial }}</span>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="font:800 13.5px/1.2 Nunito,sans-serif">{{ s.name }}</span>
+            <span style="font:800 9.5px/1 Nunito,sans-serif;color:{{ s.tint }};border:1.5px solid {{ s.glow }};border-radius:6px;padding:3px 5px;background:rgba(255,255,255,.05)">LV.{{ s.level }}</span>
+          </div>
+          <div style="height:7px;border-radius:4px;background:rgba(0,0,0,.35);margin:7px 0 0;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.5)"><div style="height:100%;border-radius:4px;background:{{ s.grad }};width:{{ s.pct }};box-shadow:inset 0 1px 0 rgba(255,255,255,.4)"></div></div>
+        </div>
+        <span style="flex:none;font:800 11px/1 Nunito,sans-serif;color:rgba(237,234,251,.4)">{{ s.xp }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin:18px 0 10px">
+    <div style="font:800 15px/1 Nunito,sans-serif">Latest milestone</div>
+    <span style="flex:1"></span>
+    <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(237,234,251,.4)">View all ›</span>
+  </div>
+  <div style="background:linear-gradient(120deg,rgba(240,205,121,.16),rgba(200,148,65,.08));border:1.5px solid rgba(223,195,131,.55);border-radius:18px;padding:13px 15px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 10px 24px -8px rgba(200,148,65,.45)">
+    <span style="flex:none;width:44px;height:44px;background:linear-gradient(160deg,#F8DD8E,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#2A1F0C;font:900 18px/1 Nunito,sans-serif;filter:drop-shadow(0 3px 6px rgba(200,148,65,.6))">✓</span>
+    <div style="flex:1">
+      <div style="font:800 14px/1.3 Nunito,sans-serif">First $1,000 month</div>
+      <div style="font:700 11px/1.3 Nunito,sans-serif;color:#F0CD79;margin:2px 0 0">Verified via Stripe · June 2026</div>
+    </div>
+    <span style="font:800 9.5px/1 Nunito,sans-serif;letter-spacing:.1em;color:#F0CD79;border:1.5px solid rgba(223,195,131,.6);padding:6px 8px;border-radius:8px;background:rgba(240,205,121,.1)">VERIFIED</span>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#231E42,#181432);border-top:1px solid rgba(237,234,251,.1);padding:10px 22px 30px">
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">◆</span>
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#B4A6FF,#7C68E8 65%,#4F3EAE);color:#14102E;display:flex;align-items:center;justify-content:center;font:800 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.45),0 6px 16px -3px rgba(124,104,232,.6)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="7b" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#7b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">7b</a>Questline map</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Questline — Arcane" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(130% 90% at 50% -10%,#2A2450,#1C1838 55%,#120F26);font-family:Nunito,-apple-system,sans-serif;color:#EDEAFB">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 2px 8px rgba(0,0,0,.5);margin:8px 0 2px">Questline</div>
+  <div style="font:700 12.5px/1.4 Nunito,sans-serif;color:rgba(237,234,251,.5);margin:0 0 18px">Act I — Proof it works</div>
+  <div style="position:relative;padding:0 0 0 26px">
+    <span style="position:absolute;left:9px;top:10px;bottom:10px;width:4px;border-radius:2px;background:linear-gradient(180deg,#3FA46C 0%,#3FA46C 34%,#C89441 34%,#C89441 40%,#7C68E8 40%,#7C68E8 58%,rgba(237,234,251,.12) 58%)"></span>
+    <div style="position:relative;margin:0 0 14px">
+      <span style="position:absolute;left:-26px;top:8px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#7FD0A0,#3FA46C 60%,#276A44);border:3px solid #1C1838;display:flex;align-items:center;justify-content:center;color:#0E2418;font:900 10px/1 Nunito,sans-serif;box-shadow:0 3px 8px -1px rgba(63,164,108,.6)">✓</span>
+      <div style="background:rgba(237,234,251,.05);border:1px solid rgba(237,234,251,.09);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><div style="font:800 13px/1.2 Nunito,sans-serif;color:rgba(237,234,251,.6)">Ch. 1 · First Sale</div></div>
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#7FD0A0">DONE · MAR</span>
+      </div>
+    </div>
+    <div style="position:relative;margin:0 0 14px">
+      <span style="position:absolute;left:-29px;top:6px;width:28px;height:28px;background:linear-gradient(160deg,#F8DD8E,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#2A1F0C;font:900 11px/1 Nunito,sans-serif;filter:drop-shadow(0 3px 6px rgba(200,148,65,.6))">✓</span>
+      <div style="background:linear-gradient(120deg,rgba(240,205,121,.16),rgba(200,148,65,.08));border:1.5px solid rgba(223,195,131,.55);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 6px 16px -6px rgba(200,148,65,.5)">
+        <div style="flex:1">
+          <div style="font:800 13px/1.2 Nunito,sans-serif">Ch. 2 · First $1,000 month</div>
+          <div style="font:700 10.5px/1.3 Nunito,sans-serif;color:#F0CD79;margin:2px 0 0">Verified via Stripe</div>
+        </div>
+        <span style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.1em;color:#F0CD79;border:1.5px solid rgba(223,195,131,.6);padding:5px 7px;border-radius:7px;background:rgba(240,205,121,.1)">VERIFIED</span>
+      </div>
+    </div>
+    <div style="position:relative;margin:0 0 14px">
+      <span style="position:absolute;left:-31px;top:14px;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#B4A6FF,#7C68E8 60%,#4F3EAE);border:3px solid #1C1838;display:flex;align-items:center;justify-content:center;color:#14102E;font:900 12px/1 Nunito,sans-serif;box-shadow:0 4px 12px -1px rgba(124,104,232,.7),0 0 0 5px rgba(124,104,232,.2)">3</span>
+      <div style="background:linear-gradient(180deg,#2C2652,#231E42);border:2px solid #7C68E8;border-radius:18px;padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 12px 28px -8px rgba(124,104,232,.5)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;font:800 15px/1.2 Nunito,sans-serif">Ch. 3 · First Repeat Customer</div>
+          <span style="font:800 10.5px/1 Nunito,sans-serif;color:#C9BDFF;background:rgba(164,147,255,.15);border-radius:999px;padding:5px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1)">4/7</span>
+        </div>
+        <div style="font:700 12px/1.45 Nunito,sans-serif;color:rgba(237,234,251,.55);margin:6px 0 10px;font-style:italic">&ldquo;Make your offer worth coming back for.&rdquo;</div>
+        <div style="height:8px;border-radius:4px;background:rgba(0,0,0,.35);overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.5)"><div style="height:100%;width:57%;border-radius:4px;background:linear-gradient(90deg,#7C68E8,#A493FF);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)"></div></div>
+        <div style="display:flex;align-items:center;gap:8px;margin:10px 0 0">
+          <span style="width:6px;height:6px;background:#A493FF;transform:rotate(45deg)"></span>
+          <div style="font:700 11.5px/1.3 Nunito,sans-serif;color:rgba(237,234,251,.6)">Today&rsquo;s chapter quest: <strong>fix one reason customers don&rsquo;t return</strong></div>
+        </div>
+      </div>
+    </div>
+    <div style="position:relative;margin:0 0 14px">
+      <span style="position:absolute;left:-26px;top:8px;width:22px;height:22px;border-radius:50%;background:rgba(237,234,251,.1);border:3px solid #1C1838;display:flex;align-items:center;justify-content:center;color:rgba(237,234,251,.4);font:900 10px/1 Nunito,sans-serif">4</span>
+      <div style="background:rgba(237,234,251,.04);border:1.5px dashed rgba(237,234,251,.16);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><div style="font:800 13px/1.2 Nunito,sans-serif;color:rgba(237,234,251,.45)">Ch. 4 · A Week That Runs Itself</div><div style="font:700 10.5px/1.3 Nunito,sans-serif;color:rgba(237,234,251,.3);margin:2px 0 0">Systemize one recurring task</div></div>
+        <span style="font:800 8.5px/1 Nunito,sans-serif;letter-spacing:.12em;color:rgba(237,234,251,.35);border:1.5px solid rgba(237,234,251,.18);padding:5px 7px;border-radius:7px">LOCKED</span>
+      </div>
+    </div>
+    <div style="position:relative">
+      <span style="position:absolute;left:-29px;top:6px;width:28px;height:28px;background:rgba(200,148,65,.3);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#F0CD79;font:900 11px/1 Nunito,sans-serif">$</span>
+      <div style="background:rgba(240,205,121,.06);border:1.5px dashed rgba(223,195,131,.4);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><div style="font:800 13px/1.2 Nunito,sans-serif;color:rgba(237,234,251,.45)">Ch. 5 · First $10,000 month</div><div style="font:700 10.5px/1.3 Nunito,sans-serif;color:rgba(240,205,121,.7);margin:2px 0 0">Revenue-verified · gold tier</div></div>
+        <span style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.1em;color:#F0CD79;border:1.5px dashed rgba(223,195,131,.5);padding:5px 7px;border-radius:7px">GATE</span>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;font:700 11.5px/1.5 Nunito,sans-serif;color:rgba(237,234,251,.35);margin:16px 0 0">Act II unlocks at Chapter 5 · 3 acts authored</div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#231E42,#181432);border-top:1px solid rgba(237,234,251,.1);padding:10px 22px 30px">
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">⌂</span>
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#B4A6FF,#7C68E8 65%,#4F3EAE);color:#14102E;display:flex;align-items:center;justify-content:center;font:800 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.45),0 6px 16px -3px rgba(124,104,232,.6)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="7c" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#7c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">7c</a>Journal</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Journal — Arcane" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(130% 90% at 50% -10%,#2A2450,#1C1838 55%,#120F26);font-family:Nunito,-apple-system,sans-serif;color:#EDEAFB">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 2px 8px rgba(0,0,0,.5);margin:8px 0 14px">Journal</div>
+  <div style="background:linear-gradient(180deg,#2C2652,#231E42);border:1px solid rgba(237,234,251,.1);border-radius:18px;padding:14px 16px;margin:0 0 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 20px -8px rgba(0,0,0,.5)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin:0 0 10px">
+      <span style="font:800 13px/1 Nunito,sans-serif">July</span>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#C9BDFF">34-day streak</span>
+    </div>
+    <div style="display:flex;gap:5px">
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(160deg,#F8DD8E,#C89441);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 8px rgba(240,205,121,.35)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(180deg,#8A76F0,#5F4CC8)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(180deg,#8A76F0,#5F4CC8)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(160deg,#F8DD8E,#C89441);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 0 8px rgba(240,205,121,.35)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(180deg,#8A76F0,#5F4CC8)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:rgba(237,234,251,.1)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;border:2px dashed rgba(237,234,251,.25);background:rgba(0,0,0,.2)"></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font:700 9.5px/1 Nunito,sans-serif;color:rgba(237,234,251,.4);margin:6px 2px 0"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="background:linear-gradient(180deg,#2C2652,#231E42);border:1px solid rgba(237,234,251,.1);border-radius:18px;padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 20px -8px rgba(0,0,0,.5)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(237,234,251,.45)">Sat, Jul 18</span>
+        <span style="flex:1"></span>
+        <span style="font:800 9.5px/1 Nunito,sans-serif;letter-spacing:.08em;color:#F0CD79;background:rgba(240,205,121,.12);border:1px solid rgba(223,195,131,.45);border-radius:7px;padding:4px 7px">PERFECT DAY</span>
+      </div>
+      <div style="font:italic 400 15px/1.5 Newsreader,Georgia,serif;color:rgba(237,234,251,.85);margin:9px 0 10px">Shipped a glaze-day reel, asked three past clients for referrals — one said yes on the spot — and rewrote the care card that ships with every mug.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#E89CD4;background:rgba(232,156,212,.13);border-radius:999px;padding:5px 8px">+15 Marketing</span>
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#F0B865;background:rgba(240,184,101,.13);border-radius:999px;padding:5px 8px">+25 Revenue</span>
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#A493FF;background:rgba(164,147,255,.13);border-radius:999px;padding:5px 8px">+20 Product</span>
+      </div>
+    </div>
+    <div style="background:linear-gradient(120deg,rgba(240,205,121,.16),rgba(200,148,65,.08));border:1.5px solid rgba(223,195,131,.55);border-radius:18px;padding:15px 16px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 10px 24px -8px rgba(200,148,65,.45)">
+      <span style="flex:none;width:40px;height:40px;background:linear-gradient(160deg,#F8DD8E,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#2A1F0C;font:900 15px/1 Nunito,sans-serif;filter:drop-shadow(0 3px 5px rgba(200,148,65,.55))">✓</span>
+      <div style="flex:1">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Milestone: First $1,000 month</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#F0CD79;margin:2px 0 0">Verified · founder card saved to journal</div>
+      </div>
+      <span style="font:800 12px/1 Nunito,sans-serif;color:#F0CD79">›</span>
+    </div>
+    <div style="background:linear-gradient(180deg,#2C2652,#231E42);border:1px solid rgba(237,234,251,.1);border-radius:18px;padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 20px -8px rgba(0,0,0,.5)">
+      <div style="font:800 12px/1 Nunito,sans-serif;color:rgba(237,234,251,.45)">Fri, Jul 17</div>
+      <div style="font:italic 400 15px/1.5 Newsreader,Georgia,serif;color:rgba(237,234,251,.85);margin:9px 0 10px">Slow day — one quest done between kiln loads. Kept the streak alive, and that was the win.</div>
+      <div style="display:flex;gap:6px">
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#E89CD4;background:rgba(232,156,212,.13);border-radius:999px;padding:5px 8px">+15 Marketing</span>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;font:italic 400 13px/1.5 Newsreader,Georgia,serif;color:rgba(237,234,251,.4);margin:16px 0 0">Day 114 of Willow &amp; Sage. Every day is written down.</div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#231E42,#181432);border-top:1px solid rgba(237,234,251,.1);padding:10px 22px 30px">
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">✦</span>
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#B4A6FF,#7C68E8 65%,#4F3EAE);color:#14102E;display:flex;align-items:center;justify-content:center;font:800 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.45),0 6px 16px -3px rgba(124,104,232,.6)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="7d" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#7d" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">7d</a>Quest complete (animated)</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Quest complete — Arcane" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(130% 90% at 50% -10%,#2A2450,#1C1838 55%,#120F26);font-family:Nunito,-apple-system,sans-serif;color:#EDEAFB">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#B4A6FF,#7C68E8 60%,#4F3EAE);color:#14102E;display:flex;align-items:center;justify-content:center;font:800 19px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.45),0 5px 14px -2px rgba(124,104,232,.55)">W</div>
+    <div style="display:flex;gap:8px;background:linear-gradient(180deg,#2C2652,#231E42);border:1px solid rgba(237,234,251,.12);border-radius:999px;padding:7px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 10px -2px rgba(0,0,0,.5),0 0 0 3px rgba(240,205,121,.3)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:linear-gradient(135deg,#C9BDFF,#7C68E8 55%,#4F3EAE);border-radius:3px;transform:rotate(45deg);box-shadow:inset 0 1px 1px rgba(255,255,255,.6)"></span><span style="font:800 13px/1 Nunito,sans-serif;color:#F0CD79">2,365</span></span>
+      <span style="width:1px;background:rgba(237,234,251,.14)"></span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:radial-gradient(circle at 35% 28%,#FFE9A0,#F2C94C 50%,#C8861B);border-radius:50%;box-shadow:inset 0 1px 2px rgba(255,255,255,.8),inset 0 -2px 3px rgba(122,80,10,.5)"></span><span style="font:800 13px/1 Nunito,sans-serif">34</span></span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 0">
+    <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 2px 8px rgba(0,0,0,.5)">Complete<br>today&rsquo;s quests</div>
+    <div style="text-align:right">
+      <div style="font:900 30px/1 Nunito,sans-serif;background:linear-gradient(180deg,#C9BDFF,#7C68E8);-webkit-background-clip:text;background-clip:text;color:transparent">67<span style="font:800 18px/1 Nunito,sans-serif">%</span></div>
+      <div style="display:inline-flex;align-items:center;gap:4px;font:800 11px/1 Nunito,sans-serif;color:#A493FF;margin:4px 0 0"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:6px solid #A493FF"></span>2 of 3 done</div>
+    </div>
+  </div>
+  <div style="margin:22px 0 12px;font:800 17px/1 Nunito,sans-serif">Quests</div>
+  <div style="display:flex;flex-direction:column;gap:11px;position:relative">
+    <div style="background:linear-gradient(135deg,#3A3068,#2F2756);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;border:1px solid rgba(164,147,255,.3);opacity:.55">
+      <span style="flex:none;width:44px;height:44px;background:linear-gradient(160deg,#FFE08A,#DA9A28 65%,#B07A18);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#2A1F0C;font:900 17px/1 Nunito,sans-serif">✓</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif;text-decoration:line-through;text-decoration-color:rgba(237,234,251,.4)">Ship one piece of content · TikTok</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(237,234,251,.5);margin:2px 0 0">Done · 9:12 AM</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:rgba(237,234,251,.4);flex:none">+15 ✓</span>
+    </div>
+    <div style="position:relative;background:linear-gradient(135deg,#1E3A38,#193029);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;border:2px solid #3FA46C;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 10px 26px -6px rgba(63,164,108,.55);animation:ringPulse 1.6s ease-out infinite">
+      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#7FD0A0,#3FA46C 60%,#276A44);border:3px solid rgba(237,234,251,.25);display:flex;align-items:center;justify-content:center;color:#0E2418;font:900 19px/1 Nunito,sans-serif;box-shadow:inset 0 1px 2px rgba(255,255,255,.45),0 4px 10px -1px rgba(39,106,68,.6);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both">✓</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ask 3 past clients for a referral</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#7FD0A0;margin:2px 0 0">Quest complete!</div>
+      </div>
+      <span style="position:absolute;top:-14px;right:14px;font:800 12px/1 Nunito,sans-serif;color:#0E2418;background:linear-gradient(180deg,#7FD0A0,#3FA46C);border-radius:999px;padding:8px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 6px 16px -3px rgba(63,164,108,.7);animation:floatUp 2.4s ease-in-out infinite">+25 Revenue XP</span>
+      <span style="position:absolute;top:-6px;left:38px;color:#F0CD79;font:800 13px/1 Nunito,sans-serif;animation:twinkle 1.8s ease-in-out infinite">✦</span>
+      <span style="position:absolute;bottom:-4px;right:70px;color:#7FD0A0;font:800 10px/1 Nunito,sans-serif;animation:twinkle 1.8s ease-in-out .6s infinite">✦</span>
+      <span style="position:absolute;top:12px;right:-6px;color:#C9BDFF;font:800 9px/1 Nunito,sans-serif;animation:twinkle 1.8s ease-in-out 1.1s infinite">✦</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#46264E,#38203F);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;border:1px solid rgba(220,130,200,.25);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 18px -6px rgba(0,0,0,.5)">
+      <span style="flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(160deg,#E89CD4,#B45C9E 65%,#7E3A6E);display:flex;align-items:center;justify-content:center;color:#2E0F26;font:900 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.4)">◆</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Fix one reason customers don&rsquo;t return</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(237,234,251,.5);margin:2px 0 0">One left — finish for a perfect day</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#F2BBE4;background:rgba(232,156,212,.13);border-radius:999px;padding:6px 9px;flex:none">+20</span>
+    </div>
+  </div>
+  <div style="margin:18px 0 0;background:linear-gradient(180deg,#2C2652,#231E42);border:1px solid rgba(237,234,251,.1);border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.09)">
+    <div style="flex:1">
+      <div style="font:800 12px/1.3 Nunito,sans-serif;color:#F0B865">Revenue stat</div>
+      <div style="height:7px;border-radius:4px;background:rgba(0,0,0,.35);margin:7px 0 0;overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.5)"><div style="height:100%;width:43%;border-radius:4px;background:linear-gradient(90deg,#D68A3E,#F0B865);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)"></div></div>
+    </div>
+    <span style="font:800 11px/1 Nunito,sans-serif;color:#F0B865">415 / 1,000 → LV.5</span>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#231E42,#181432);border-top:1px solid rgba(237,234,251,.1);padding:10px 22px 30px">
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#B4A6FF,#7C68E8 65%,#4F3EAE);color:#14102E;display:flex;align-items:center;justify-content:center;font:800 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.45),0 6px 16px -3px rgba(124,104,232,.6)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="7e" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#7e" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">7e</a>Verified milestone — celebration</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Milestone — Arcane" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(120% 80% at 50% 28%,#2E2758,#1C1838 60%,#120F26);font-family:Nunito,-apple-system,sans-serif;position:relative;overflow:hidden">
+<div style="position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 32%,rgba(237,234,251,.06) 0deg 11deg,transparent 11deg 22deg)"></div>
+<div style="position:absolute;top:16%;left:50%;transform:translateX(-50%);width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(240,205,121,.3),transparent 65%)"></div>
+<span style="position:absolute;top:120px;left:44px;color:rgba(237,234,251,.55);font:800 16px/1 Nunito,sans-serif;text-shadow:0 0 8px rgba(237,234,251,.6);animation:twinkle 2.2s ease-in-out infinite">✦</span>
+<span style="position:absolute;top:200px;right:38px;color:rgba(201,189,255,.6);font:800 11px/1 Nunito,sans-serif;animation:twinkle 2.2s ease-in-out .7s infinite">✦</span>
+<span style="position:absolute;bottom:220px;left:30px;color:rgba(237,234,251,.35);font:800 12px/1 Nunito,sans-serif;animation:twinkle 2.2s ease-in-out 1.3s infinite">✦</span>
+<span style="position:absolute;top:340px;right:52px;color:rgba(240,205,121,.7);font:800 13px/1 Nunito,sans-serif;text-shadow:0 0 8px rgba(240,205,121,.7);animation:twinkle 2.2s ease-in-out .4s infinite">✦</span>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:54px 26px 0;position:relative">
+  <div style="text-align:center;color:#EDEAFB;font:800 21px/1.35 Nunito,sans-serif;margin:0 0 20px;text-shadow:0 2px 10px rgba(0,0,0,.5)">You just hit a<br>verified milestone!</div>
+  <div style="background:linear-gradient(180deg,#FFFFFF,#F6F3EC);border-radius:24px;padding:26px 22px 20px;text-align:center;color:#2A2450;box-shadow:inset 0 1px 0 #fff,0 30px 70px -12px rgba(0,0,0,.7),0 0 40px -8px rgba(124,104,232,.4)">
+    <div style="width:92px;height:92px;margin:0 auto 4px;border-radius:50%;background:radial-gradient(circle at 50% 38%,#F5EDD6,#EADFC0);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 5px rgba(138,98,36,.25),0 1px 0 #fff">
+      <span style="width:64px;height:64px;background:linear-gradient(160deg,#F8DD8E,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 16px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.6);filter:drop-shadow(0 4px 6px rgba(138,98,36,.6))">$1K</span>
+    </div>
+    <div style="font:800 10px/1 Nunito,sans-serif;letter-spacing:.16em;color:#8A6A2A;margin:8px 0 8px">VERIFIED · STRIPE</div>
+    <div style="font:900 24px/1.2 Nunito,sans-serif;background:linear-gradient(180deg,#5F4CC8,#2A2450);-webkit-background-clip:text;background-clip:text;color:transparent">First $1,000 month</div>
+    <div style="font:800 14px/1 Nunito,sans-serif;color:#2E8A5C;margin:8px 0 0">+250 Revenue XP</div>
+    <div style="display:flex;justify-content:center;gap:16px;margin:18px 0 0;padding:14px 0 0;border-top:1px solid rgba(42,36,80,.1)">
+      <div><div style="font:900 15px/1 Nunito,sans-serif">Lv 7</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(42,36,80,.45);margin:5px 0 0">FOUNDER</div></div>
+      <div style="width:1px;background:rgba(42,36,80,.1)"></div>
+      <div><div style="font:900 15px/1 Nunito,sans-serif">34</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(42,36,80,.45);margin:5px 0 0">DAY STREAK</div></div>
+      <div style="width:1px;background:rgba(42,36,80,.1)"></div>
+      <div><div style="font:900 15px/1 Nunito,sans-serif">217</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(42,36,80,.45);margin:5px 0 0">QUESTS</div></div>
+    </div>
+    <div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.14em;color:rgba(42,36,80,.35);margin:14px 0 0">WILLOW &amp; SAGE CERAMICS · JUNE 2026</div>
+  </div>
+</div>
+<div style="flex:none;padding:22px 26px 40px;display:flex;flex-direction:column;gap:12px;position:relative">
+  <div style="height:52px;border-radius:999px;background:linear-gradient(180deg,#F0CD79,#C89441);color:#3A2A0C;display:flex;align-items:center;justify-content:center;font:800 15px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),0 4px 0 #8A6224,0 14px 26px -6px rgba(200,148,65,.6)">Share founder card</div>
+  <div style="height:48px;display:flex;align-items:center;justify-content:center;font:800 13px/1 Nunito,sans-serif;color:rgba(237,234,251,.65)">Keep it in the journal</div>
+</div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p style="margin:26px 0 0;font:12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.5);max-width:720px">Onboarding still shows the old teal (turns 4–5) — say "restyle onboarding" and I&rsquo;ll bring it over. Also try: "light Arcane variant for outdoors readability" · "app icon in this palette".</p>
+</section>
+<section style="padding:44px 48px 56px;border-bottom:1px solid rgba(29,26,21,.1)">
+<div style="margin:0 0 8px;font:600 13px/1.2 -apple-system,system-ui,sans-serif">Turn 6 — palette explorations (same quest board, three moods)</div>
+<div style="margin:0 0 28px;max-width:720px;font:400 12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#6a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">6a</a> <strong>Ember</strong> — warm charcoal dark mode, candlelit amber; the most "tavern at night" RPG feel. <a href="#6b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">6b</a> <strong>Arcane</strong> — deep indigo-violet dark, cooler and more premium-game. <a href="#6c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">6c</a> <strong>Sage &amp; Clay</strong> — a warmer light alternative to the teal: moss ink, terracotta accents. Gold = verified stays constant in all three.</div>
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<div id="6a" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#6a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">6a</a>Ember — warm dark</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Palette — Ember dark" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(130% 90% at 50% -10%,#2B241C,#1D1813 55%,#151109);font-family:Nunito,-apple-system,sans-serif;color:#F3EDE2">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#F0B865,#C8862B 60%,#8F5C14);color:#1D1813;display:flex;align-items:center;justify-content:center;font:800 19px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.4),0 5px 14px -2px rgba(200,134,43,.5)">W</div>
+    <div style="display:flex;gap:8px;background:linear-gradient(180deg,#2E271F,#241E17);border:1px solid rgba(243,237,226,.1);border-radius:999px;padding:7px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 10px -2px rgba(0,0,0,.5)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:linear-gradient(135deg,#A9E0F2,#3D8FA8 55%,#1F5C72);border-radius:3px;transform:rotate(45deg);box-shadow:inset 0 1px 1px rgba(255,255,255,.6)"></span><span style="font:800 13px/1 Nunito,sans-serif">2,340</span></span>
+      <span style="width:1px;background:rgba(243,237,226,.12)"></span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:radial-gradient(circle at 35% 28%,#FFE9A0,#F2C94C 50%,#C8861B);border-radius:50%;box-shadow:inset 0 1px 2px rgba(255,255,255,.8),inset 0 -2px 3px rgba(122,80,10,.5)"></span><span style="font:800 13px/1 Nunito,sans-serif">34</span></span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 0">
+    <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 2px 8px rgba(0,0,0,.5)">Complete<br>today&rsquo;s quests</div>
+    <div style="text-align:right">
+      <div style="font:900 30px/1 Nunito,sans-serif;background:linear-gradient(180deg,#F0CD79,#C8862B);-webkit-background-clip:text;background-clip:text;color:transparent">33<span style="font:800 18px/1 Nunito,sans-serif">%</span></div>
+      <div style="display:inline-flex;align-items:center;gap:4px;font:800 11px/1 Nunito,sans-serif;color:#E0A954;margin:4px 0 0"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:6px solid #E0A954"></span>1 of 3 done</div>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(180deg,#2E271F,#241E17);border:1px solid rgba(243,237,226,.1);border-radius:20px;padding:16px 18px 14px;margin:16px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 30px -10px rgba(0,0,0,.6)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font:800 15px/1.2 Nunito,sans-serif">Revenue climb</div>
+      <div style="font:800 11px/1 Nunito,sans-serif;color:#E0A954;border-radius:999px;padding:6px 11px;background:rgba(224,169,84,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)">Chapter 3 · 4/7</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:4px;height:64px;margin:12px 0 6px">
+      <span style="flex:1;height:22%;background:linear-gradient(180deg,#4A3E2E,#3A3024);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:30%;background:linear-gradient(180deg,#4A3E2E,#3A3024);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:26%;background:linear-gradient(180deg,#5E4C33,#4A3C28);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:44%;background:linear-gradient(180deg,#5E4C33,#4A3C28);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:38%;background:linear-gradient(180deg,#7E6339,#64502C);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:58%;background:linear-gradient(180deg,#7E6339,#64502C);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:52%;background:linear-gradient(180deg,#A6803F,#856633);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:72%;background:linear-gradient(180deg,#A6803F,#856633);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:66%;background:linear-gradient(180deg,#CC9E48,#A6803F);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:88%;background:linear-gradient(180deg,#CC9E48,#A6803F);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:100%;background:linear-gradient(180deg,#FFDE8A,#DA9A28);border-radius:4px 4px 2px 2px;box-shadow:0 0 14px rgba(255,222,138,.45)"></span><span style="flex:1;height:34%;background:rgba(243,237,226,.1);border-radius:4px 4px 2px 2px"></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font:700 10px/1 Nunito,sans-serif;color:rgba(243,237,226,.4)"><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span style="color:#F0CD79">$1K ✓</span><span>Jul</span></div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin:20px 0 12px">
+    <div style="font:800 17px/1 Nunito,sans-serif">Quests</div>
+    <span style="font:800 11px/1 Nunito,sans-serif;background:linear-gradient(180deg,#E0A954,#B07A18);color:#1D1813;border-radius:999px;padding:4px 8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)">3</span>
+    <span style="flex:1"></span>
+    <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(243,237,226,.4)">View all ›</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:11px">
+    <div style="background:linear-gradient(135deg,#3C3120,#332818);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 18px -6px rgba(0,0,0,.5);border:1px solid rgba(224,169,84,.28)">
+      <span style="flex:none;width:44px;height:44px;background:linear-gradient(160deg,#FFE08A,#DA9A28 65%,#B07A18);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#2A1F0C;font:900 15px/1 Nunito,sans-serif;filter:drop-shadow(0 3px 6px rgba(218,154,40,.5))">34</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ship one piece of content · TikTok</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(243,237,226,.5);margin:2px 0 0">Daily habit · day 34</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#F0CD79;background:rgba(240,205,121,.12);border-radius:999px;padding:6px 9px;flex:none">+15</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(243,237,226,.3);flex:none">⋯</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#28331F,#202A18);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 18px -6px rgba(0,0,0,.5);border:1px solid rgba(140,180,110,.22)">
+      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#9BC47E,#5E8A42 60%,#3E5E2A);border:3px solid rgba(243,237,226,.2);display:flex;align-items:center;justify-content:center;color:#1A230F;font:900 16px/1 Nunito,sans-serif;box-shadow:inset 0 1px 2px rgba(255,255,255,.4)">R</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ask 3 past clients for a referral</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#E0A954;margin:2px 0 0">Revenue is lagging — boost quest</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#B8D69C;background:rgba(155,196,126,.12);border-radius:999px;padding:6px 9px;flex:none">+25</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(243,237,226,.3);flex:none">⋯</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#22303C,#1B2731);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 18px -6px rgba(0,0,0,.5);border:1px solid rgba(120,160,200,.22)">
+      <span style="flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(160deg,#7FA8D0,#4A7AAC 65%,#2F5680);display:flex;align-items:center;justify-content:center;color:#0F1E2E;font:900 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.4)">◆</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Fix one reason customers don&rsquo;t return</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(243,237,226,.5);margin:2px 0 0">Chapter quest · advances objective</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#A9CBEE;background:rgba(127,168,208,.12);border-radius:999px;padding:6px 9px;flex:none">+20</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(243,237,226,.3);flex:none">⋯</span>
+    </div>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#241E17,#1A150F);border-top:1px solid rgba(243,237,226,.08);padding:10px 22px 30px">
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#F0B865,#C8862B 65%,#8F5C14);color:#1D1813;display:flex;align-items:center;justify-content:center;font:800 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.4),0 6px 16px -3px rgba(200,134,43,.55)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(243,237,226,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(243,237,226,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(243,237,226,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="6b" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#6b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">6b</a>Arcane — indigo-violet dark</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Palette — Arcane dark" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(130% 90% at 50% -10%,#2A2450,#1C1838 55%,#120F26);font-family:Nunito,-apple-system,sans-serif;color:#EDEAFB">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#B4A6FF,#7C68E8 60%,#4F3EAE);color:#14102E;display:flex;align-items:center;justify-content:center;font:800 19px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.45),0 5px 14px -2px rgba(124,104,232,.55)">W</div>
+    <div style="display:flex;gap:8px;background:linear-gradient(180deg,#2C2652,#231E42);border:1px solid rgba(237,234,251,.12);border-radius:999px;padding:7px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 10px -2px rgba(0,0,0,.5)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:linear-gradient(135deg,#C9BDFF,#7C68E8 55%,#4F3EAE);border-radius:3px;transform:rotate(45deg);box-shadow:inset 0 1px 1px rgba(255,255,255,.6)"></span><span style="font:800 13px/1 Nunito,sans-serif">2,340</span></span>
+      <span style="width:1px;background:rgba(237,234,251,.14)"></span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:radial-gradient(circle at 35% 28%,#FFE9A0,#F2C94C 50%,#C8861B);border-radius:50%;box-shadow:inset 0 1px 2px rgba(255,255,255,.8),inset 0 -2px 3px rgba(122,80,10,.5)"></span><span style="font:800 13px/1 Nunito,sans-serif">34</span></span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 0">
+    <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 2px 8px rgba(0,0,0,.5)">Complete<br>today&rsquo;s quests</div>
+    <div style="text-align:right">
+      <div style="font:900 30px/1 Nunito,sans-serif;background:linear-gradient(180deg,#C9BDFF,#7C68E8);-webkit-background-clip:text;background-clip:text;color:transparent">33<span style="font:800 18px/1 Nunito,sans-serif">%</span></div>
+      <div style="display:inline-flex;align-items:center;gap:4px;font:800 11px/1 Nunito,sans-serif;color:#A493FF;margin:4px 0 0"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:6px solid #A493FF"></span>1 of 3 done</div>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(180deg,#2C2652,#231E42);border:1px solid rgba(237,234,251,.12);border-radius:20px;padding:16px 18px 14px;margin:16px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 14px 30px -10px rgba(0,0,0,.6)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font:800 15px/1.2 Nunito,sans-serif">Revenue climb</div>
+      <div style="font:800 11px/1 Nunito,sans-serif;color:#C9BDFF;border-radius:999px;padding:6px 11px;background:rgba(164,147,255,.15);box-shadow:inset 0 1px 0 rgba(255,255,255,.1)">Chapter 3 · 4/7</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:4px;height:64px;margin:12px 0 6px">
+      <span style="flex:1;height:22%;background:linear-gradient(180deg,#39325F,#2E2950);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:30%;background:linear-gradient(180deg,#39325F,#2E2950);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:26%;background:linear-gradient(180deg,#4A4180,#3B3468);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:44%;background:linear-gradient(180deg,#4A4180,#3B3468);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:38%;background:linear-gradient(180deg,#5F53A8,#4C4288);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:58%;background:linear-gradient(180deg,#5F53A8,#4C4288);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:52%;background:linear-gradient(180deg,#7C68E8,#5F53A8);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:72%;background:linear-gradient(180deg,#7C68E8,#5F53A8);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:66%;background:linear-gradient(180deg,#A493FF,#7C68E8);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:88%;background:linear-gradient(180deg,#A493FF,#7C68E8);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:100%;background:linear-gradient(180deg,#FFDE8A,#DA9A28);border-radius:4px 4px 2px 2px;box-shadow:0 0 14px rgba(255,222,138,.5)"></span><span style="flex:1;height:34%;background:rgba(237,234,251,.12);border-radius:4px 4px 2px 2px"></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font:700 10px/1 Nunito,sans-serif;color:rgba(237,234,251,.4)"><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span style="color:#F0CD79">$1K ✓</span><span>Jul</span></div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin:20px 0 12px">
+    <div style="font:800 17px/1 Nunito,sans-serif">Quests</div>
+    <span style="font:800 11px/1 Nunito,sans-serif;background:linear-gradient(180deg,#A493FF,#6A57D4);color:#14102E;border-radius:999px;padding:4px 8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.45)">3</span>
+    <span style="flex:1"></span>
+    <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(237,234,251,.4)">View all ›</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:11px">
+    <div style="background:linear-gradient(135deg,#3A3068,#2F2756);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 18px -6px rgba(0,0,0,.5);border:1px solid rgba(164,147,255,.3)">
+      <span style="flex:none;width:44px;height:44px;background:linear-gradient(160deg,#FFE08A,#DA9A28 65%,#B07A18);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#2A1F0C;font:900 15px/1 Nunito,sans-serif;filter:drop-shadow(0 3px 6px rgba(218,154,40,.5))">34</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ship one piece of content · TikTok</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(237,234,251,.5);margin:2px 0 0">Daily habit · day 34</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#C9BDFF;background:rgba(201,189,255,.13);border-radius:999px;padding:6px 9px;flex:none">+15</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(237,234,251,.3);flex:none">⋯</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#1F3450,#1A2B42);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 18px -6px rgba(0,0,0,.5);border:1px solid rgba(110,180,220,.25)">
+      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#8ED2E8,#4A9CBE 60%,#2E6A86);border:3px solid rgba(237,234,251,.2);display:flex;align-items:center;justify-content:center;color:#0C222E;font:900 16px/1 Nunito,sans-serif;box-shadow:inset 0 1px 2px rgba(255,255,255,.4)">R</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ask 3 past clients for a referral</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#F0CD79;margin:2px 0 0">Revenue is lagging — boost quest</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#A9DCEE;background:rgba(142,210,232,.13);border-radius:999px;padding:6px 9px;flex:none">+25</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(237,234,251,.3);flex:none">⋯</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#46264E,#38203F);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 18px -6px rgba(0,0,0,.5);border:1px solid rgba(220,130,200,.25)">
+      <span style="flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(160deg,#E89CD4,#B45C9E 65%,#7E3A6E);display:flex;align-items:center;justify-content:center;color:#2E0F26;font:900 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.4)">◆</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Fix one reason customers don&rsquo;t return</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(237,234,251,.5);margin:2px 0 0">Chapter quest · advances objective</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#F2BBE4;background:rgba(232,156,212,.13);border-radius:999px;padding:6px 9px;flex:none">+20</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(237,234,251,.3);flex:none">⋯</span>
+    </div>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#231E42,#181432);border-top:1px solid rgba(237,234,251,.1);padding:10px 22px 30px">
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#B4A6FF,#7C68E8 65%,#4F3EAE);color:#14102E;display:flex;align-items:center;justify-content:center;font:800 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.45),0 6px 16px -3px rgba(124,104,232,.6)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(237,234,251,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="6c" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#6c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">6c</a>Sage &amp; Clay — warm light</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Palette — Sage &amp; Clay light" style="height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#EFECE0,#F7F5EC 30%);font-family:Nunito,-apple-system,sans-serif;color:#3A4034">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#C77E52,#A85A32 60%,#7E3E1E);color:#FBF7EE;display:flex;align-items:center;justify-content:center;font:800 19px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 5px 12px -2px rgba(168,90,50,.45)">W</div>
+    <div style="display:flex;gap:8px;background:linear-gradient(180deg,#FFFFFF,#F3EFE3);border:1px solid rgba(58,64,52,.09);border-radius:999px;padding:7px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 10px -2px rgba(58,64,52,.15)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:linear-gradient(135deg,#B4CBA0,#7A8B6F 55%,#54644A);border-radius:3px;transform:rotate(45deg);box-shadow:inset 0 1px 1px rgba(255,255,255,.6)"></span><span style="font:800 13px/1 Nunito,sans-serif">2,340</span></span>
+      <span style="width:1px;background:rgba(58,64,52,.1)"></span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:radial-gradient(circle at 35% 28%,#FFE9A0,#F2C94C 50%,#C8861B);border-radius:50%;box-shadow:inset 0 1px 2px rgba(255,255,255,.8),inset 0 -2px 3px rgba(122,80,10,.5)"></span><span style="font:800 13px/1 Nunito,sans-serif">34</span></span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 0">
+    <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 1px 0 rgba(255,255,255,.7)">Complete<br>today&rsquo;s quests</div>
+    <div style="text-align:right">
+      <div style="font:900 30px/1 Nunito,sans-serif;background:linear-gradient(180deg,#A85A32,#6E3A1C);-webkit-background-clip:text;background-clip:text;color:transparent">33<span style="font:800 18px/1 Nunito,sans-serif">%</span></div>
+      <div style="display:inline-flex;align-items:center;gap:4px;font:800 11px/1 Nunito,sans-serif;color:#A85A32;margin:4px 0 0"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:6px solid #A85A32"></span>1 of 3 done</div>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(180deg,#FFFFFF,#F6F2E6);border:1px solid rgba(58,64,52,.09);border-radius:20px;padding:16px 18px 14px;margin:16px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 14px 30px -10px rgba(58,64,52,.22)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font:800 15px/1.2 Nunito,sans-serif">Revenue climb</div>
+      <div style="font:800 11px/1 Nunito,sans-serif;color:#6E7B62;border-radius:999px;padding:6px 11px;background:linear-gradient(180deg,#EDF1E4,#E0E7D4);box-shadow:inset 0 1px 0 rgba(255,255,255,.8)">Chapter 3 · 4/7</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:4px;height:64px;margin:12px 0 6px">
+      <span style="flex:1;height:22%;background:linear-gradient(180deg,#DDE4D0,#CBD5BA);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:30%;background:linear-gradient(180deg,#DDE4D0,#CBD5BA);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:26%;background:linear-gradient(180deg,#C2CFAC,#ABBC92);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:44%;background:linear-gradient(180deg,#C2CFAC,#ABBC92);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:38%;background:linear-gradient(180deg,#9FB284,#87A06A);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:58%;background:linear-gradient(180deg,#9FB284,#87A06A);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:52%;background:linear-gradient(180deg,#7A8B6F,#657858);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:72%;background:linear-gradient(180deg,#7A8B6F,#657858);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:66%;background:linear-gradient(180deg,#5E7052,#4A5C40);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:88%;background:linear-gradient(180deg,#5E7052,#4A5C40);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:100%;background:linear-gradient(180deg,#FFDE8A,#DA9A28);border-radius:4px 4px 2px 2px;box-shadow:0 0 0 1px rgba(200,134,27,.35),0 4px 10px -2px rgba(200,134,27,.6)"></span><span style="flex:1;height:34%;background:rgba(58,64,52,.08);border-radius:4px 4px 2px 2px"></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font:700 10px/1 Nunito,sans-serif;color:rgba(58,64,52,.4)"><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span style="color:#B8860B">$1K ✓</span><span>Jul</span></div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin:20px 0 12px">
+    <div style="font:800 17px/1 Nunito,sans-serif">Quests</div>
+    <span style="font:800 11px/1 Nunito,sans-serif;background:linear-gradient(180deg,#8A9C77,#5E7052);color:#fff;border-radius:999px;padding:4px 8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 4px rgba(58,64,52,.3)">3</span>
+    <span style="flex:1"></span>
+    <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(58,64,52,.45)">View all ›</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:11px">
+    <div style="background:linear-gradient(135deg,#F7EBD2,#F0DFB6);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 18px -6px rgba(200,154,40,.4);border:1px solid rgba(200,154,40,.25)">
+      <span style="flex:none;width:44px;height:44px;background:linear-gradient(160deg,#FFE08A,#DA9A28 65%,#B07A18);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#fff;font:900 15px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.5);filter:drop-shadow(0 3px 4px rgba(176,122,24,.5))">34</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ship one piece of content · TikTok</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(58,64,52,.5);margin:2px 0 0">Daily habit · day 34</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#8A6A2A;background:linear-gradient(180deg,#FFFFFF,#F5EEDC);border-radius:999px;padding:6px 9px;flex:none;box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(122,80,10,.25)">+15</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(58,64,52,.35);flex:none">⋯</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#F2E2D6,#EAD0BC);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 18px -6px rgba(168,90,50,.4);border:1px solid rgba(168,90,50,.25)">
+      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#C77E52,#A85A32 60%,#7E3E1E);border:3px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;color:#fff;font:900 16px/1 Nunito,sans-serif;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 4px 8px -1px rgba(126,62,30,.5)">R</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ask 3 past clients for a referral</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#A85A32;margin:2px 0 0">Revenue is lagging — boost quest</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#A85A32;background:linear-gradient(180deg,#FFFFFF,#F5E8DE);border-radius:999px;padding:6px 9px;flex:none;box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(126,62,30,.25)">+25</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(58,64,52,.35);flex:none">⋯</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#E8EDDC,#D6E0C4);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 18px -6px rgba(94,112,82,.4);border:1px solid rgba(94,112,82,.25)">
+      <span style="flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(160deg,#8A9C77,#5E7052 65%,#42513A);display:flex;align-items:center;justify-content:center;color:#fff;font:900 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -1px rgba(66,81,58,.5)">◆</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Fix one reason customers don&rsquo;t return</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(58,64,52,.5);margin:2px 0 0">Chapter quest · advances objective</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#5E7052;background:linear-gradient(180deg,#FFFFFF,#EEF2E4);border-radius:999px;padding:6px 9px;flex:none;box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(66,81,58,.25)">+20</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(58,64,52,.35);flex:none">⋯</span>
+    </div>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#FFFFFF,#F1EDE0);border-top:1px solid rgba(58,64,52,.07);padding:10px 22px 30px;box-shadow:0 -6px 16px -8px rgba(58,64,52,.15)">
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#5E7052,#3A4034 65%,#272B23);color:#fff;display:flex;align-items:center;justify-content:center;font:800 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.3),0 6px 14px -3px rgba(39,43,35,.6)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(58,64,52,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(58,64,52,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(58,64,52,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p style="margin:26px 0 0;font:12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.5);max-width:720px">Try: "apply <a href="#6a">6a</a> to all screens" · "6b but with the gold accent everywhere" · "a colder slate-blue dark option".</p>
+</section>
+<section style="padding:44px 48px 56px;border-bottom:1px solid rgba(29,26,21,.1)">
+<div style="margin:0 0 8px;font:600 13px/1.2 -apple-system,system-ui,sans-serif">Turn 5 — Stripe unlock, journal &amp; the quest-complete moment</div>
+<div style="margin:0 0 28px;max-width:720px;font:400 12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)">Onboarding 3/3 frames Stripe as unlocking the gold tier, never as a chore (<a href="#5a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">5a</a>). The journal auto-writes each day from completed quests — the record too valuable to abandon (<a href="#5b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">5b</a>). And the quest-complete moment is live-animated: check pop, XP float-up, counter glow (<a href="#5c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">5c</a>).</div>
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<div id="5a" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#5a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">5a</a>Onboarding 3/3 — unlock the gold tier</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Onboarding — verification" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(120% 80% at 50% 20%,#2C5563,#1E3A44 60%,#122730);font-family:Nunito,-apple-system,sans-serif;color:#FBFAF6;position:relative;overflow:hidden">
+<div style="position:absolute;top:8%;left:50%;transform:translateX(-50%);width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(232,197,102,.22),transparent 65%)"></div>
+<div style="flex:1;overflow:hidden;padding:62px 26px 0;position:relative">
+  <div style="display:flex;gap:5px;margin:8px 0 26px">
+    <span style="flex:1;height:5px;border-radius:3px;background:rgba(251,250,246,.85)"></span>
+    <span style="flex:1;height:5px;border-radius:3px;background:rgba(251,250,246,.85)"></span>
+    <span style="flex:1;height:5px;border-radius:3px;background:rgba(251,250,246,.85)"></span>
+  </div>
+  <div style="width:96px;height:96px;margin:6px auto 18px;border-radius:50%;background:radial-gradient(circle at 50% 38%,rgba(251,250,246,.14),rgba(251,250,246,.05));display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.15)">
+    <span style="width:66px;height:66px;background:linear-gradient(160deg,#F8DD8E,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 22px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.6);filter:drop-shadow(0 5px 8px rgba(138,98,36,.6))">$</span>
+  </div>
+  <div style="text-align:center;font:800 25px/1.25 Nunito,sans-serif;text-shadow:0 2px 8px rgba(0,0,0,.4)">Unlock the<br>gold tier</div>
+  <div style="text-align:center;font:700 13px/1.55 Nunito,sans-serif;color:rgba(251,250,246,.65);margin:10px 0 22px">Money milestones verified from real revenue can&rsquo;t be faked — and they look it.</div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="background:rgba(251,250,246,.08);border:1px solid rgba(251,250,246,.12);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)">
+      <span style="flex:none;width:30px;height:30px;background:linear-gradient(160deg,#F5D687,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 12px/1 Nunito,sans-serif">✓</span>
+      <div style="flex:1;font:700 12.5px/1.4 Nunito,sans-serif">Gold-sealed milestones on your founder card</div>
+    </div>
+    <div style="background:rgba(251,250,246,.08);border:1px solid rgba(251,250,246,.12);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)">
+      <span style="flex:none;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#5D97A9,#3D8098 60%,#26616F);display:flex;align-items:center;justify-content:center;color:#fff;font:900 12px/1 Nunito,sans-serif">◆</span>
+      <div style="flex:1;font:700 12.5px/1.4 Nunito,sans-serif">Revenue chart on your quest board, auto-updated</div>
+    </div>
+    <div style="background:rgba(251,250,246,.08);border:1px solid rgba(251,250,246,.12);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)">
+      <span style="flex:none;width:30px;height:30px;border-radius:10px;background:linear-gradient(160deg,#5F9C71,#3E7C52 65%,#2A5A3A);display:flex;align-items:center;justify-content:center;color:#fff;font:900 12px/1 Nunito,sans-serif">✦</span>
+      <div style="flex:1;font:700 12.5px/1.4 Nunito,sans-serif">Read-only. We never touch your money.</div>
+    </div>
+  </div>
+</div>
+<div style="flex:none;padding:20px 26px 40px;display:flex;flex-direction:column;gap:12px;position:relative">
+  <div style="height:54px;border-radius:999px;background:linear-gradient(180deg,#F0CD79,#C89441);color:#FFFDF5;display:flex;align-items:center;justify-content:center;gap:8px;font:800 15px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.5);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),0 4px 0 #8A6224,0 14px 24px -6px rgba(138,98,36,.6)">Connect Stripe</div>
+  <div style="height:48px;display:flex;align-items:center;justify-content:center;font:800 13px/1 Nunito,sans-serif;color:rgba(251,250,246,.65)">Later — start with self-report</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="5b" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#5b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">5b</a>Journal — the auto-written record</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Journal" style="height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#F6F3EB,#FBFAF6 30%);font-family:Nunito,-apple-system,sans-serif;color:#1E3A44">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 1px 0 rgba(255,255,255,.7);margin:8px 0 14px">Journal</div>
+  <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.08);border-radius:18px;padding:14px 16px;margin:0 0 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 18px -8px rgba(30,58,68,.25)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin:0 0 10px">
+      <span style="font:800 13px/1 Nunito,sans-serif">July</span>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E">34-day streak</span>
+    </div>
+    <div style="display:flex;gap:5px">
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(160deg,#F5D687,#C89441);box-shadow:inset 0 1px 0 rgba(255,255,255,.5)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(180deg,#5D97A9,#3D8098)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(180deg,#5D97A9,#3D8098)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(160deg,#F5D687,#C89441);box-shadow:inset 0 1px 0 rgba(255,255,255,.5)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:linear-gradient(180deg,#5D97A9,#3D8098)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;background:rgba(30,58,68,.1)"></span>
+      <span style="flex:1;aspect-ratio:1;border-radius:7px;border:2px dashed rgba(30,58,68,.25);background:#fff"></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font:700 9.5px/1 Nunito,sans-serif;color:rgba(30,58,68,.4);margin:6px 2px 0"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.08);border-radius:18px;padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 18px -8px rgba(30,58,68,.25)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(30,58,68,.45)">Sat, Jul 18</span>
+        <span style="flex:1"></span>
+        <span style="font:800 9.5px/1 Nunito,sans-serif;letter-spacing:.08em;color:#8A6A2A;background:linear-gradient(120deg,#FDF5DC,#F3E1AC);border:1px solid #DFC383;border-radius:7px;padding:4px 7px">PERFECT DAY</span>
+      </div>
+      <div style="font:italic 400 15px/1.5 Newsreader,Georgia,serif;color:rgba(30,58,68,.85);margin:9px 0 10px">Shipped a glaze-day reel, asked three past clients for referrals — one said yes on the spot — and rewrote the care card that ships with every mug.</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#B0642E;background:#F8ECE0;border-radius:999px;padding:5px 8px">+15 Marketing</span>
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#B5651D;background:#F8EDDE;border-radius:999px;padding:5px 8px">+25 Revenue</span>
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#2E5E8C;background:#E3EEF8;border-radius:999px;padding:5px 8px">+20 Product</span>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(120deg,#FDF5DC,#F3E1AC);border:1.5px solid #DFC383;border-radius:18px;padding:15px 16px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 10px 22px -8px rgba(168,124,46,.5)">
+      <span style="flex:none;width:40px;height:40px;background:linear-gradient(160deg,#F5D687,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 15px/1 Nunito,sans-serif;filter:drop-shadow(0 3px 4px rgba(138,98,36,.5))">✓</span>
+      <div style="flex:1">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Milestone: First $1,000 month</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#8A6A2A;margin:2px 0 0">Verified · founder card saved to journal</div>
+      </div>
+      <span style="font:800 12px/1 Nunito,sans-serif;color:#8A6A2A">›</span>
+    </div>
+
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.08);border-radius:18px;padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 18px -8px rgba(30,58,68,.25)">
+      <div style="font:800 12px/1 Nunito,sans-serif;color:rgba(30,58,68,.45)">Fri, Jul 17</div>
+      <div style="font:italic 400 15px/1.5 Newsreader,Georgia,serif;color:rgba(30,58,68,.85);margin:9px 0 10px">Slow day — one quest done between kiln loads. Kept the streak alive, and that was the win.</div>
+      <div style="display:flex;gap:6px">
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#B0642E;background:#F8ECE0;border-radius:999px;padding:5px 8px">+15 Marketing</span>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;font:italic 400 13px/1.5 Newsreader,Georgia,serif;color:rgba(30,58,68,.4);margin:16px 0 0">Day 114 of Willow &amp; Sage. Every day is written down.</div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#FFFFFF,#F6F2E9);border-top:1px solid rgba(30,58,68,.07);padding:10px 22px 30px;box-shadow:0 -6px 16px -8px rgba(30,58,68,.15)">
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✦</span>
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#3A6472,#1E3A44 65%,#122730);color:#fff;display:flex;align-items:center;justify-content:center;font:800 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.3),0 6px 14px -3px rgba(18,39,48,.6)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="5c" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#5c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">5c</a>Quest complete — the dopamine moment (animated)</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Quest complete" style="height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#F6F3EB,#FBFAF6 30%);font-family:Nunito,-apple-system,sans-serif;color:#1E3A44">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#4E96AA,#2E6E7E 60%,#1D4B58);color:#FBFAF6;display:flex;align-items:center;justify-content:center;font:800 19px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 5px 12px -2px rgba(30,58,68,.45)">W</div>
+    <div style="display:flex;gap:8px;background:linear-gradient(180deg,#FFFFFF,#F7F4EC);border:1px solid rgba(30,58,68,.08);border-radius:999px;padding:7px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 10px -2px rgba(30,58,68,.14),0 0 0 3px rgba(200,148,65,.25)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:linear-gradient(135deg,#A9E0F2,#3D8FA8 55%,#1F5C72);border-radius:3px;transform:rotate(45deg);box-shadow:inset 0 1px 1px rgba(255,255,255,.6),0 2px 3px rgba(31,92,114,.4)"></span><span style="font:800 13px/1 Nunito,sans-serif;color:#8A6A2A">2,355</span></span>
+      <span style="width:1px;background:rgba(30,58,68,.1)"></span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:radial-gradient(circle at 35% 28%,#FFE9A0,#F2C94C 50%,#C8861B);border-radius:50%;box-shadow:inset 0 1px 2px rgba(255,255,255,.8),inset 0 -2px 3px rgba(122,80,10,.5),0 2px 3px rgba(122,80,10,.35)"></span><span style="font:800 13px/1 Nunito,sans-serif">34</span></span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 0">
+    <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 1px 0 rgba(255,255,255,.7)">Complete<br>today&rsquo;s quests</div>
+    <div style="text-align:right">
+      <div style="font:900 30px/1 Nunito,sans-serif;background:linear-gradient(180deg,#2E6E7E,#1E3A44);-webkit-background-clip:text;background-clip:text;color:transparent">67<span style="font:800 18px/1 Nunito,sans-serif">%</span></div>
+      <div style="display:inline-flex;align-items:center;gap:4px;font:800 11px/1 Nunito,sans-serif;color:#3D8FA8;margin:4px 0 0"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:6px solid #3D8FA8"></span>2 of 3 done</div>
+    </div>
+  </div>
+
+  <div style="margin:22px 0 12px;font:800 17px/1 Nunito,sans-serif">Quests</div>
+  <div style="display:flex;flex-direction:column;gap:11px;position:relative">
+    <div style="background:linear-gradient(135deg,#FDF4D8,#F8E8B4);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 18px -6px rgba(200,154,40,.45);border:1px solid rgba(200,154,40,.25);opacity:.62">
+      <span style="flex:none;width:44px;height:44px;background:linear-gradient(160deg,#FFE08A,#DA9A28 65%,#B07A18);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#fff;font:900 17px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.5)">✓</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif;text-decoration:line-through;text-decoration-color:rgba(30,58,68,.35)">Ship one piece of content · TikTok</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:2px 0 0">Done · 9:12 AM</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:rgba(30,58,68,.4);flex:none">+15 ✓</span>
+    </div>
+
+    <div style="position:relative;background:linear-gradient(135deg,#E7F4E6,#CBE7CE);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;border:2px solid #3E7C52;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 10px 24px -6px rgba(62,124,82,.55);animation:ringPulse 1.6s ease-out infinite">
+      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#6FA97E,#3E7C52 60%,#2A5A3A);border:3px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;color:#fff;font:900 19px/1 Nunito,sans-serif;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 4px 8px -1px rgba(42,90,58,.5);animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both">✓</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ask 3 past clients for a referral</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#3E7C52;margin:2px 0 0">Quest complete!</div>
+      </div>
+      <span style="position:absolute;top:-14px;right:14px;font:800 12px/1 Nunito,sans-serif;color:#fff;background:linear-gradient(180deg,#5F9C71,#3E7C52);border-radius:999px;padding:8px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 6px 14px -3px rgba(42,90,58,.6);animation:floatUp 2.4s ease-in-out infinite">+25 Revenue XP</span>
+      <span style="position:absolute;top:-6px;left:38px;color:#C89441;font:800 13px/1 Nunito,sans-serif;animation:twinkle 1.8s ease-in-out infinite">✦</span>
+      <span style="position:absolute;bottom:-4px;right:70px;color:#3E7C52;font:800 10px/1 Nunito,sans-serif;animation:twinkle 1.8s ease-in-out .6s infinite">✦</span>
+      <span style="position:absolute;top:12px;right:-6px;color:#C89441;font:800 9px/1 Nunito,sans-serif;animation:twinkle 1.8s ease-in-out 1.1s infinite">✦</span>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#E3EEF8,#C9DEF0);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 18px -6px rgba(46,94,140,.4);border:1px solid rgba(46,94,140,.22)">
+      <span style="flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(160deg,#4B7FB0,#2E5E8C 65%,#1F4266);display:flex;align-items:center;justify-content:center;color:#fff;font:900 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -1px rgba(31,66,102,.5)">◆</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Fix one reason customers don&rsquo;t return</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:2px 0 0">One left — finish for a perfect day</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;background:linear-gradient(180deg,#FFFFFF,#E8EFF6);border-radius:999px;padding:6px 9px;flex:none;box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(31,66,102,.25)">+20</span>
+    </div>
+  </div>
+
+  <div style="margin:18px 0 0;background:linear-gradient(180deg,#EAF3F6,#DDEBF1);border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.7)">
+    <div style="flex:1">
+      <div style="font:800 12px/1.3 Nunito,sans-serif;color:#2E6E7E">Revenue stat</div>
+      <div style="height:7px;border-radius:4px;background:rgba(30,58,68,.12);margin:7px 0 0;overflow:hidden;box-shadow:inset 0 1px 2px rgba(30,58,68,.2)"><div style="height:100%;width:43%;border-radius:4px;background:linear-gradient(180deg,#D68A3E,#B5651D);box-shadow:inset 0 1px 0 rgba(255,255,255,.45)"></div></div>
+    </div>
+    <span style="font:800 11px/1 Nunito,sans-serif;color:#B5651D">415 / 1,000 → LV.5</span>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#FFFFFF,#F6F2E9);border-top:1px solid rgba(30,58,68,.07);padding:10px 22px 30px;box-shadow:0 -6px 16px -8px rgba(30,58,68,.15)">
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#3A6472,#1E3A44 65%,#122730);color:#fff;display:flex;align-items:center;justify-content:center;font:800 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.3),0 6px 14px -3px rgba(18,39,48,.6)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p style="margin:26px 0 0;font:12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.5);max-width:720px">Try: "perfect-day end state" · "broken-streak recovery screen" · "9:16 story founder card export".</p>
+</section>
+<section style="padding:44px 48px 56px;border-bottom:1px solid rgba(29,26,21,.1)">
+<div style="margin:0 0 8px;font:600 13px/1.2 -apple-system,system-ui,sans-serif">Turn 4 — onboarding &amp; the questline map</div>
+<div style="margin:0 0 28px;max-width:720px;font:400 12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)">Same polished language as turn 3. Onboarding does two jobs: business type seeds quest templates + the <em>customer noun</em> (<a href="#4a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">4a</a>), and self-reported early milestones seed the starting stats — zero friction, we take your word (<a href="#4b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">4b</a>). The Questline tab (<a href="#4c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:2px 6px;background:rgba(29,26,21,.08);border-radius:5px">4c</a>) is the slow arc: authored chapters on a path, with revenue-verified gold gates.</div>
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<div id="4a" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#4a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">4a</a>Onboarding 1/3 — what are you building?</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Onboarding — business type" style="height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#F6F3EB,#FBFAF6 30%);font-family:Nunito,-apple-system,sans-serif;color:#1E3A44">
+<div style="flex:1;overflow:hidden;padding:62px 22px 0">
+  <div style="display:flex;gap:5px;margin:8px 0 22px">
+    <span style="flex:1;height:5px;border-radius:3px;background:linear-gradient(180deg,#3D8098,#245666)"></span>
+    <span style="flex:1;height:5px;border-radius:3px;background:rgba(30,58,68,.12)"></span>
+    <span style="flex:1;height:5px;border-radius:3px;background:rgba(30,58,68,.12)"></span>
+  </div>
+  <div style="font:800 26px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 1px 0 rgba(255,255,255,.7)">What are you<br>building?</div>
+  <div style="font:700 13px/1.5 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:8px 0 20px">This shapes your quests — the work is different for a studio than a shop.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:2px solid #2E6E7E;border-radius:18px;padding:16px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 22px -8px rgba(46,110,126,.45)">
+      <span style="display:flex;width:42px;height:42px;border-radius:13px;background:linear-gradient(160deg,#4B7FB0,#2E5E8C 65%,#1F4266);align-items:center;justify-content:center;color:#fff;font:900 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -2px rgba(31,66,102,.5);margin:0 0 10px">S</span>
+      <div style="font:800 14px/1.25 Nunito,sans-serif">Services &amp; freelance</div>
+      <div style="font:700 11px/1.4 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:4px 0 0">You have <em>clients</em></div>
+    </div>
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.1);border-radius:18px;padding:16px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 14px -8px rgba(30,58,68,.25)">
+      <span style="display:flex;width:42px;height:42px;border-radius:13px;background:linear-gradient(160deg,#D08A4E,#B0642E 65%,#824718);align-items:center;justify-content:center;color:#fff;font:900 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -2px rgba(130,71,24,.5);margin:0 0 10px">E</span>
+      <div style="font:800 14px/1.25 Nunito,sans-serif">E-commerce</div>
+      <div style="font:700 11px/1.4 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:4px 0 0">You have <em>customers</em></div>
+    </div>
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.1);border-radius:18px;padding:16px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 14px -8px rgba(30,58,68,.25)">
+      <span style="display:flex;width:42px;height:42px;border-radius:13px;background:linear-gradient(160deg,#8F6DAF,#6E4E8C 65%,#4E3466);align-items:center;justify-content:center;color:#fff;font:900 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -2px rgba(78,52,102,.5);margin:0 0 10px">C</span>
+      <div style="font:800 14px/1.25 Nunito,sans-serif">Content &amp; audience</div>
+      <div style="font:700 11px/1.4 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:4px 0 0">You have <em>followers</em></div>
+    </div>
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.1);border-radius:18px;padding:16px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 14px -8px rgba(30,58,68,.25)">
+      <span style="display:flex;width:42px;height:42px;border-radius:13px;background:linear-gradient(160deg,#5F9C71,#3E7C52 65%,#2A5A3A);align-items:center;justify-content:center;color:#fff;font:900 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -2px rgba(42,90,58,.5);margin:0 0 10px">L</span>
+      <div style="font:800 14px/1.25 Nunito,sans-serif">Local &amp; in-person</div>
+      <div style="font:700 11px/1.4 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:4px 0 0">You have <em>regulars</em></div>
+    </div>
+    <div style="grid-column:1/3;background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.1);border-radius:18px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 14px -8px rgba(30,58,68,.25)">
+      <span style="display:flex;width:42px;height:42px;border-radius:13px;background:linear-gradient(160deg,#5D97A9,#3D8098 65%,#26616F);align-items:center;justify-content:center;color:#fff;font:900 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -2px rgba(38,97,111,.5)">?</span>
+      <div>
+        <div style="font:800 14px/1.25 Nunito,sans-serif">Something else / not sure yet</div>
+        <div style="font:700 11px/1.4 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:3px 0 0">You can change this anytime</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="flex:none;padding:16px 22px 40px">
+  <div style="height:54px;border-radius:999px;background:linear-gradient(180deg,#3A7D8E,#245666);color:#fff;display:flex;align-items:center;justify-content:center;font:800 15px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(18,39,48,.5);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),0 4px 0 #16303A,0 14px 24px -6px rgba(18,39,48,.5)">Continue</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="4b" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#4b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">4b</a>Onboarding 2/3 — self-report your starting point</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Onboarding — starting point" style="height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#F6F3EB,#FBFAF6 30%);font-family:Nunito,-apple-system,sans-serif;color:#1E3A44">
+<div style="flex:1;overflow:hidden;padding:62px 22px 0">
+  <div style="display:flex;gap:5px;margin:8px 0 22px">
+    <span style="flex:1;height:5px;border-radius:3px;background:linear-gradient(180deg,#3D8098,#245666)"></span>
+    <span style="flex:1;height:5px;border-radius:3px;background:linear-gradient(180deg,#3D8098,#245666)"></span>
+    <span style="flex:1;height:5px;border-radius:3px;background:rgba(30,58,68,.12)"></span>
+  </div>
+  <div style="font:800 26px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 1px 0 rgba(255,255,255,.7)">Mark how far<br>you&rsquo;ve come</div>
+  <div style="font:700 13px/1.5 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:8px 0 20px">We take your word for the early stuff. Money milestones get verified later — that&rsquo;s where the gold is.</div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.1);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 14px -8px rgba(30,58,68,.25)">
+      <span style="flex:none;width:28px;height:28px;border-radius:9px;background:linear-gradient(180deg,#3A7D8E,#245666);color:#fff;display:flex;align-items:center;justify-content:center;font:800 14px/1 Nunito,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 4px rgba(18,39,48,.35)">✓</span>
+      <div style="flex:1;font:800 14px/1.3 Nunito,sans-serif">I&rsquo;ve told people about my idea</div>
+      <span style="font:800 10.5px/1 Nunito,sans-serif;color:#2E6E7E">+Grit</span>
+    </div>
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.1);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 14px -8px rgba(30,58,68,.25)">
+      <span style="flex:none;width:28px;height:28px;border-radius:9px;background:linear-gradient(180deg,#3A7D8E,#245666);color:#fff;display:flex;align-items:center;justify-content:center;font:800 14px/1 Nunito,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 4px rgba(18,39,48,.35)">✓</span>
+      <div style="flex:1;font:800 14px/1.3 Nunito,sans-serif">I have something I could sell today</div>
+      <span style="font:800 10.5px/1 Nunito,sans-serif;color:#2E6E7E">+Product</span>
+    </div>
+    <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.1);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 14px -8px rgba(30,58,68,.25)">
+      <span style="flex:none;width:28px;height:28px;border-radius:9px;background:linear-gradient(180deg,#3A7D8E,#245666);color:#fff;display:flex;align-items:center;justify-content:center;font:800 14px/1 Nunito,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 2px 4px rgba(18,39,48,.35)">✓</span>
+      <div style="flex:1;font:800 14px/1.3 Nunito,sans-serif">I&rsquo;ve made my first sale</div>
+      <span style="font:800 10.5px/1 Nunito,sans-serif;color:#2E6E7E">+Revenue</span>
+    </div>
+    <div style="background:rgba(255,255,255,.55);border:1.5px dashed rgba(30,58,68,.22);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center">
+      <span style="flex:none;width:28px;height:28px;border-radius:9px;border:2px solid rgba(30,58,68,.2)"></span>
+      <div style="flex:1;font:800 14px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.55)">I&rsquo;ve sold to a stranger</div>
+      <span style="font:800 10.5px/1 Nunito,sans-serif;color:rgba(30,58,68,.35)">+Marketing</span>
+    </div>
+    <div style="background:rgba(255,255,255,.55);border:1.5px dashed rgba(30,58,68,.22);border-radius:16px;padding:13px 15px;display:flex;gap:12px;align-items:center">
+      <span style="flex:none;width:28px;height:28px;border-radius:9px;border:2px solid rgba(30,58,68,.2)"></span>
+      <div style="flex:1;font:800 14px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.55)">I&rsquo;ve had a repeat customer</div>
+      <span style="font:800 10.5px/1 Nunito,sans-serif;color:rgba(30,58,68,.35)">+Revenue</span>
+    </div>
+  </div>
+  <div style="margin:16px 0 0;background:linear-gradient(180deg,#EAF3F6,#DDEBF1);border-radius:14px;padding:12px 15px;display:flex;align-items:center;gap:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.7)">
+    <span style="flex:none;width:10px;height:10px;background:linear-gradient(135deg,#A9E0F2,#3D8FA8 55%,#1F5C72);border-radius:3px;transform:rotate(45deg);box-shadow:inset 0 1px 1px rgba(255,255,255,.6)"></span>
+    <div style="font:700 11.5px/1.4 Nunito,sans-serif;color:#2E6E7E">Your character starts at <strong>Level 2</strong> — Product 2 · Revenue 1 · Grit 2</div>
+  </div>
+</div>
+<div style="flex:none;padding:16px 22px 40px">
+  <div style="height:54px;border-radius:999px;background:linear-gradient(180deg,#3A7D8E,#245666);color:#fff;display:flex;align-items:center;justify-content:center;font:800 15px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(18,39,48,.5);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.35),0 4px 0 #16303A,0 14px 24px -6px rgba(18,39,48,.5)">Create my character</div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="4c" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#4c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">4c</a>Questline — the authored chapter map</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Questline" style="height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#F6F3EB,#FBFAF6 30%);font-family:Nunito,-apple-system,sans-serif;color:#1E3A44">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 1px 0 rgba(255,255,255,.7);margin:8px 0 2px">Questline</div>
+  <div style="font:700 12.5px/1.4 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:0 0 18px">Act I — Proof it works</div>
+  <div style="position:relative;padding:0 0 0 26px">
+    <span style="position:absolute;left:9px;top:10px;bottom:10px;width:4px;border-radius:2px;background:linear-gradient(180deg,#3E7C52 0%,#3E7C52 34%,#C89441 34%,#C89441 40%,#3D8098 40%,#3D8098 58%,rgba(30,58,68,.12) 58%)"></span>
+
+    <div style="position:relative;margin:0 0 14px">
+      <span style="position:absolute;left:-26px;top:8px;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#6FA97E,#3E7C52 60%,#2A5A3A);border:3px solid #FBFAF6;display:flex;align-items:center;justify-content:center;color:#fff;font:900 10px/1 Nunito,sans-serif;box-shadow:0 3px 6px -1px rgba(42,90,58,.5)">✓</span>
+      <div style="background:rgba(255,255,255,.6);border:1px solid rgba(30,58,68,.08);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><div style="font:800 13px/1.2 Nunito,sans-serif;color:rgba(30,58,68,.6)">Ch. 1 · First Sale</div></div>
+        <span style="font:800 10px/1 Nunito,sans-serif;color:#3E7C52">DONE · MAR</span>
+      </div>
+    </div>
+
+    <div style="position:relative;margin:0 0 14px">
+      <span style="position:absolute;left:-29px;top:6px;width:28px;height:28px;background:linear-gradient(160deg,#F5D687,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 11px/1 Nunito,sans-serif;filter:drop-shadow(0 3px 4px rgba(138,98,36,.55))">✓</span>
+      <div style="background:linear-gradient(120deg,#FDF5DC,#F3E1AC);border:1.5px solid #DFC383;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 6px 14px -6px rgba(168,124,46,.5)">
+        <div style="flex:1">
+          <div style="font:800 13px/1.2 Nunito,sans-serif">Ch. 2 · First $1,000 month</div>
+          <div style="font:700 10.5px/1.3 Nunito,sans-serif;color:#8A6A2A;margin:2px 0 0">Verified via Stripe</div>
+        </div>
+        <span style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.1em;color:#8A6A2A;border:1.5px solid #C9A35C;padding:5px 7px;border-radius:7px;background:linear-gradient(180deg,#FFFDF5,#F6ECD2)">VERIFIED</span>
+      </div>
+    </div>
+
+    <div style="position:relative;margin:0 0 14px">
+      <span style="position:absolute;left:-31px;top:14px;width:32px;height:32px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#5D97A9,#3D8098 60%,#26616F);border:3px solid #FBFAF6;display:flex;align-items:center;justify-content:center;color:#fff;font:900 12px/1 Nunito,sans-serif;box-shadow:0 4px 10px -1px rgba(38,97,111,.6),0 0 0 5px rgba(61,128,152,.18)">3</span>
+      <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:2px solid #3D8098;border-radius:18px;padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 12px 26px -8px rgba(38,97,111,.45)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1;font:800 15px/1.2 Nunito,sans-serif">Ch. 3 · First Repeat Customer</div>
+          <span style="font:800 10.5px/1 Nunito,sans-serif;color:#2E6E7E;background:linear-gradient(180deg,#EAF3F6,#D9E9EF);border-radius:999px;padding:5px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8)">4/7</span>
+        </div>
+        <div style="font:700 12px/1.45 Nunito,sans-serif;color:rgba(30,58,68,.55);margin:6px 0 10px;font-style:italic">&ldquo;Make your offer worth coming back for.&rdquo;</div>
+        <div style="height:8px;border-radius:4px;background:rgba(30,58,68,.1);overflow:hidden;box-shadow:inset 0 1px 2px rgba(30,58,68,.2)"><div style="height:100%;width:57%;border-radius:4px;background:linear-gradient(180deg,#5D97A9,#2E6E7E);box-shadow:inset 0 1px 0 rgba(255,255,255,.45)"></div></div>
+        <div style="display:flex;align-items:center;gap:8px;margin:10px 0 0">
+          <span style="width:6px;height:6px;background:#2E5E8C;transform:rotate(45deg)"></span>
+          <div style="font:700 11.5px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.6)">Today&rsquo;s chapter quest: <strong>fix one reason customers don&rsquo;t return</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative;margin:0 0 14px">
+      <span style="position:absolute;left:-26px;top:8px;width:22px;height:22px;border-radius:50%;background:rgba(30,58,68,.1);border:3px solid #FBFAF6;display:flex;align-items:center;justify-content:center;color:rgba(30,58,68,.4);font:900 10px/1 Nunito,sans-serif">4</span>
+      <div style="background:rgba(255,255,255,.45);border:1.5px dashed rgba(30,58,68,.18);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><div style="font:800 13px/1.2 Nunito,sans-serif;color:rgba(30,58,68,.45)">Ch. 4 · A Week That Runs Itself</div><div style="font:700 10.5px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.35);margin:2px 0 0">Systemize one recurring task</div></div>
+        <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">🔒</span>
+      </div>
+    </div>
+
+    <div style="position:relative">
+      <span style="position:absolute;left:-29px;top:6px;width:28px;height:28px;background:rgba(200,148,65,.25);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#A87C2E;font:900 11px/1 Nunito,sans-serif">$</span>
+      <div style="background:rgba(253,245,220,.5);border:1.5px dashed #DFC383;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px">
+        <div style="flex:1"><div style="font:800 13px/1.2 Nunito,sans-serif;color:rgba(30,58,68,.45)">Ch. 5 · First $10,000 month</div><div style="font:700 10.5px/1.3 Nunito,sans-serif;color:#A88A4A;margin:2px 0 0">Revenue-verified · gold tier</div></div>
+        <span style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.1em;color:#A88A4A;border:1.5px dashed #C9A35C;padding:5px 7px;border-radius:7px">GATE</span>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;font:700 11.5px/1.5 Nunito,sans-serif;color:rgba(30,58,68,.4);margin:16px 0 0">Act II unlocks at Chapter 5 · 3 acts authored</div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#FFFFFF,#F6F2E9);border-top:1px solid rgba(30,58,68,.07);padding:10px 22px 30px;box-shadow:0 -6px 16px -8px rgba(30,58,68,.15)">
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">⌂</span>
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#3A6472,#1E3A44 65%,#122730);color:#fff;display:flex;align-items:center;justify-content:center;font:800 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.3),0 6px 14px -3px rgba(18,39,48,.6)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p style="margin:26px 0 0;font:12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.5);max-width:720px">Try: "onboarding step 3 — connect Stripe as unlocking gold tier" · "design the journal tab" · "animate the quest-complete moment".</p>
+</section>
+<section style="padding:44px 48px 56px;border-bottom:1px solid rgba(29,26,21,.1)">
+<div style="margin:0 0 8px;font:600 13px/1.2 -apple-system,system-ui,sans-serif">Turn 3 — depth &amp; eye-candy pass on turn 2</div>
+<div style="margin:0 0 28px;max-width:720px;font:400 12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)">Same layout as turn 2, un-flattened: beveled coins and gems, glossy hex badges, layered card shadows with inset highlights, gradient progress fills, a pressed-3D gold button, and a glowing celebration seal.</div>
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<div id="3a" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#3a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">3a</a>Today — quest board, polished</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Today v3" style="height:100%;display:flex;flex-direction:column;background:linear-gradient(180deg,#F6F3EB,#FBFAF6 30%);font-family:Nunito,-apple-system,sans-serif;color:#1E3A44">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#4E96AA,#2E6E7E 60%,#1D4B58);color:#FBFAF6;display:flex;align-items:center;justify-content:center;font:800 19px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 5px 12px -2px rgba(30,58,68,.45)">W</div>
+    <div style="display:flex;gap:8px;background:linear-gradient(180deg,#FFFFFF,#F7F4EC);border:1px solid rgba(30,58,68,.08);border-radius:999px;padding:7px 12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 4px 10px -2px rgba(30,58,68,.14)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:12px;background:linear-gradient(135deg,#A9E0F2,#3D8FA8 55%,#1F5C72);border-radius:3px;transform:rotate(45deg);box-shadow:inset 0 1px 1px rgba(255,255,255,.6),0 2px 3px rgba(31,92,114,.4)"></span><span style="font:800 13px/1 Nunito,sans-serif">2,340</span></span>
+      <span style="width:1px;background:rgba(30,58,68,.1)"></span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:14px;background:radial-gradient(circle at 35% 28%,#FFE9A0,#F2C94C 50%,#C8861B);border-radius:50%;box-shadow:inset 0 1px 2px rgba(255,255,255,.8),inset 0 -2px 3px rgba(122,80,10,.5),0 2px 3px rgba(122,80,10,.35)"></span><span style="font:800 13px/1 Nunito,sans-serif">34</span></span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 0">
+    <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em;text-shadow:0 1px 0 rgba(255,255,255,.7)">Complete<br>today&rsquo;s quests</div>
+    <div style="text-align:right">
+      <div style="font:900 30px/1 Nunito,sans-serif;background:linear-gradient(180deg,#2E6E7E,#1E3A44);-webkit-background-clip:text;background-clip:text;color:transparent">33<span style="font:800 18px/1 Nunito,sans-serif">%</span></div>
+      <div style="display:inline-flex;align-items:center;gap:4px;font:800 11px/1 Nunito,sans-serif;color:#3D8FA8;margin:4px 0 0"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:6px solid #3D8FA8"></span>1 of 3 done</div>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.08);border-radius:20px;padding:16px 18px 14px;margin:16px 0 0;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 4px rgba(30,58,68,.05),0 14px 30px -10px rgba(30,58,68,.22)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font:800 15px/1.2 Nunito,sans-serif">Revenue climb</div>
+      <div style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;border-radius:999px;padding:6px 11px;background:linear-gradient(180deg,#EAF3F6,#D9E9EF);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 1px 2px rgba(30,58,68,.12)">Chapter 3 · 4/7</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:4px;height:64px;margin:12px 0 6px">
+      <span style="flex:1;height:22%;background:linear-gradient(180deg,#CFE3EA,#B4D2DD);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:30%;background:linear-gradient(180deg,#CFE3EA,#B4D2DD);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:26%;background:linear-gradient(180deg,#AECDD9,#8FBACA);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:44%;background:linear-gradient(180deg,#AECDD9,#8FBACA);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:38%;background:linear-gradient(180deg,#84B4C4,#5F9CB0);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:58%;background:linear-gradient(180deg,#84B4C4,#5F9CB0);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:52%;background:linear-gradient(180deg,#5D97A9,#3D8098);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:72%;background:linear-gradient(180deg,#5D97A9,#3D8098);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:66%;background:linear-gradient(180deg,#3A7D8E,#26616F);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:88%;background:linear-gradient(180deg,#3A7D8E,#26616F);border-radius:4px 4px 2px 2px"></span><span style="flex:1;height:100%;background:linear-gradient(180deg,#FFDE8A,#DA9A28);border-radius:4px 4px 2px 2px;box-shadow:0 0 0 1px rgba(200,134,27,.35),0 4px 10px -2px rgba(200,134,27,.6)"></span><span style="flex:1;height:34%;background:rgba(30,58,68,.08);border-radius:4px 4px 2px 2px"></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font:700 10px/1 Nunito,sans-serif;color:rgba(30,58,68,.4)"><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span style="color:#B8860B">$1K ✓</span><span>Jul</span></div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin:20px 0 12px">
+    <div style="font:800 17px/1 Nunito,sans-serif">Quests</div>
+    <span style="font:800 11px/1 Nunito,sans-serif;background:linear-gradient(180deg,#3D8098,#245666);color:#fff;border-radius:999px;padding:4px 8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 2px 4px rgba(30,58,68,.3)">3</span>
+    <span style="flex:1"></span>
+    <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(30,58,68,.45)">View all ›</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:11px">
+    <div style="background:linear-gradient(135deg,#FDF4D8,#F8E8B4);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 18px -6px rgba(200,154,40,.45);border:1px solid rgba(200,154,40,.25)">
+      <span style="flex:none;width:44px;height:44px;background:linear-gradient(160deg,#FFE08A,#DA9A28 65%,#B07A18);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#fff;font:900 15px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.5);filter:drop-shadow(0 3px 4px rgba(176,122,24,.5))">34</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ship one piece of content · TikTok</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:2px 0 0">Daily habit · day 34</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;background:linear-gradient(180deg,#FFFFFF,#F3EEDF);border-radius:999px;padding:6px 9px;flex:none;box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(122,80,10,.25)">+15</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(30,58,68,.35);flex:none">⋯</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#E7F4E6,#CBE7CE);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 18px -6px rgba(62,124,82,.4);border:1px solid rgba(62,124,82,.22)">
+      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#6FA97E,#3E7C52 60%,#2A5A3A);border:3px solid rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;color:#fff;font:900 16px/1 Nunito,sans-serif;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 4px 8px -1px rgba(42,90,58,.5)">R</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ask 3 past clients for a referral</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#B5651D;margin:2px 0 0">Revenue is lagging — boost quest</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;background:linear-gradient(180deg,#FFFFFF,#EAF2E8);border-radius:999px;padding:6px 9px;flex:none;box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(42,90,58,.25)">+25</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(30,58,68,.35);flex:none">⋯</span>
+    </div>
+    <div style="background:linear-gradient(135deg,#E3EEF8,#C9DEF0);border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 18px -6px rgba(46,94,140,.4);border:1px solid rgba(46,94,140,.22)">
+      <span style="flex:none;width:44px;height:44px;border-radius:14px;background:linear-gradient(160deg,#4B7FB0,#2E5E8C 65%,#1F4266);display:flex;align-items:center;justify-content:center;color:#fff;font:900 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -1px rgba(31,66,102,.5)">◆</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Fix one reason customers don&rsquo;t return</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:2px 0 0">Chapter quest · advances objective</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;background:linear-gradient(180deg,#FFFFFF,#E8EFF6);border-radius:999px;padding:6px 9px;flex:none;box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(31,66,102,.25)">+20</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(30,58,68,.35);flex:none">⋯</span>
+    </div>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#FFFFFF,#F6F2E9);border-top:1px solid rgba(30,58,68,.07);padding:10px 22px 30px;box-shadow:0 -6px 16px -8px rgba(30,58,68,.15)">
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#3A6472,#1E3A44 65%,#122730);color:#fff;display:flex;align-items:center;justify-content:center;font:800 18px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.3),0 6px 14px -3px rgba(18,39,48,.6)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="3b" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#3b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">3b</a>Character — stats, polished</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Character v3" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(140% 90% at 50% -10%,#2C5563,#1E3A44 55%,#16303A);font-family:Nunito,-apple-system,sans-serif">
+<div style="flex:none;text-align:center;padding:66px 20px 18px;color:#FBFAF6">
+  <div style="width:78px;height:78px;margin:0 auto 10px;border-radius:50%;background:radial-gradient(circle at 32% 26%,#9AD4E6,#3D8FA8 55%,#1F5C72);border:3px solid rgba(251,250,246,.95);display:flex;align-items:center;justify-content:center;font:900 30px/1 Nunito,sans-serif;color:#fff;box-shadow:inset 0 2px 3px rgba(255,255,255,.4),0 10px 24px -6px rgba(0,0,0,.55),0 0 0 6px rgba(251,250,246,.08);text-shadow:0 1px 2px rgba(31,92,114,.6)">W</div>
+  <div style="font:800 19px/1.2 Nunito,sans-serif;text-shadow:0 2px 6px rgba(0,0,0,.35)">Willow &amp; Sage Ceramics</div>
+  <div style="font:800 12px/1 Nunito,sans-serif;color:rgba(251,250,246,.65);margin:5px 0 0">Level 7 · Journeyman Merchant</div>
+  <div style="display:inline-flex;gap:4px;background:rgba(0,0,0,.22);border-radius:999px;padding:4px;margin:14px 0 0;box-shadow:inset 0 2px 4px rgba(0,0,0,.35)">
+    <span style="font:800 11.5px/1 Nunito,sans-serif;background:linear-gradient(180deg,#FFFFFF,#EDE9DE);color:#1E3A44;border-radius:999px;padding:7px 14px;box-shadow:0 2px 5px rgba(0,0,0,.35),inset 0 1px 0 #fff">Stats</span>
+    <span style="font:800 11.5px/1 Nunito,sans-serif;color:rgba(251,250,246,.7);padding:7px 14px">Milestones</span>
+    <span style="font:800 11.5px/1 Nunito,sans-serif;color:rgba(251,250,246,.7);padding:7px 14px">Journal</span>
+  </div>
+</div>
+<div style="flex:1;overflow:hidden;background:linear-gradient(180deg,#FDFCF9,#F6F2E9);border-radius:28px 28px 0 0;padding:18px 18px 0;color:#1E3A44;box-shadow:0 -12px 30px -10px rgba(0,0,0,.5)">
+  <div style="display:flex;flex-direction:column;gap:9px">
+    <sc-for list="{{ stats3 }}" as="s" hint-placeholder-count="5">
+      <div style="background:linear-gradient(180deg,#FFFFFF,#FAF7F0);border:1px solid rgba(30,58,68,.08);border-radius:16px;padding:11px 14px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 2px 4px rgba(30,58,68,.05),0 10px 20px -10px rgba(30,58,68,.25)">
+        <span style="flex:none;width:40px;height:40px;border-radius:13px;background:{{ s.grad }};display:flex;align-items:center;justify-content:center;color:#fff;font:900 15px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.35),0 4px 8px -2px {{ s.glow }};text-shadow:0 1px 2px rgba(0,0,0,.3)">{{ s.initial }}</span>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="font:800 13.5px/1.2 Nunito,sans-serif">{{ s.name }}</span>
+            <span style="font:800 9.5px/1 Nunito,sans-serif;color:{{ s.tile }};border:1.5px solid {{ s.chipBorder }};border-radius:6px;padding:3px 5px;background:rgba(255,255,255,.7)">LV.{{ s.level }}</span>
+          </div>
+          <div style="height:7px;border-radius:4px;background:rgba(30,58,68,.1);margin:7px 0 0;overflow:hidden;box-shadow:inset 0 1px 2px rgba(30,58,68,.2)"><div style="height:100%;border-radius:4px;background:{{ s.grad }};width:{{ s.pct }};box-shadow:inset 0 1px 0 rgba(255,255,255,.45)"></div></div>
+        </div>
+        <span style="flex:none;font:800 11px/1 Nunito,sans-serif;color:rgba(30,58,68,.4)">{{ s.xp }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin:18px 0 10px">
+    <div style="font:800 15px/1 Nunito,sans-serif">Latest milestone</div>
+    <span style="flex:1"></span>
+    <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(30,58,68,.45)">View all ›</span>
+  </div>
+  <div style="background:linear-gradient(120deg,#FDF5DC,#F3E1AC);border:1.5px solid #DFC383;border-radius:18px;padding:13px 15px;display:flex;gap:12px;align-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 10px 22px -8px rgba(168,124,46,.55)">
+    <span style="flex:none;width:44px;height:44px;background:linear-gradient(160deg,#F5D687,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 18px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.6);filter:drop-shadow(0 3px 5px rgba(138,98,36,.55))">✓</span>
+    <div style="flex:1">
+      <div style="font:800 14px/1.3 Nunito,sans-serif">First $1,000 month</div>
+      <div style="font:700 11px/1.3 Nunito,sans-serif;color:#8A6A2A;margin:2px 0 0">Verified via Stripe · June 2026</div>
+    </div>
+    <span style="font:800 9.5px/1 Nunito,sans-serif;letter-spacing:.1em;color:#8A6A2A;border:1.5px solid #C9A35C;padding:6px 8px;border-radius:8px;background:linear-gradient(180deg,#FFFDF5,#F6ECD2);box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(138,98,36,.3)">VERIFIED</span>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:linear-gradient(180deg,#FFFFFF,#F6F2E9);border-top:1px solid rgba(30,58,68,.07);padding:10px 22px 30px;box-shadow:0 -6px 16px -8px rgba(30,58,68,.3)">
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">◆</span>
+  <span style="width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#3A6472,#1E3A44 65%,#122730);color:#fff;display:flex;align-items:center;justify-content:center;font:800 17px/1 Nunito,sans-serif;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.3),0 6px 14px -3px rgba(18,39,48,.6)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="3c" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#3c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">3c</a>Verified milestone — celebration, polished</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Milestone v3" style="height:100%;display:flex;flex-direction:column;background:radial-gradient(120% 80% at 50% 28%,#2C5563,#1E3A44 60%,#122730);font-family:Nunito,-apple-system,sans-serif;position:relative;overflow:hidden">
+<div style="position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 32%,rgba(251,250,246,.06) 0deg 11deg,transparent 11deg 22deg)"></div>
+<div style="position:absolute;top:16%;left:50%;transform:translateX(-50%);width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(232,197,102,.28),transparent 65%)"></div>
+<span style="position:absolute;top:120px;left:44px;color:rgba(251,250,246,.55);font:800 16px/1 Nunito,sans-serif;text-shadow:0 0 8px rgba(251,250,246,.6)">✦</span>
+<span style="position:absolute;top:200px;right:38px;color:rgba(251,250,246,.4);font:800 11px/1 Nunito,sans-serif;text-shadow:0 0 6px rgba(251,250,246,.5)">✦</span>
+<span style="position:absolute;bottom:220px;left:30px;color:rgba(251,250,246,.35);font:800 12px/1 Nunito,sans-serif">✦</span>
+<span style="position:absolute;top:340px;right:52px;color:rgba(232,197,102,.6);font:800 13px/1 Nunito,sans-serif;text-shadow:0 0 8px rgba(232,197,102,.7)">✦</span>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:54px 26px 0;position:relative">
+  <div style="text-align:center;color:#FBFAF6;font:800 21px/1.35 Nunito,sans-serif;margin:0 0 20px;text-shadow:0 2px 8px rgba(0,0,0,.4)">You just hit a<br>verified milestone!</div>
+  <div style="background:linear-gradient(180deg,#FFFFFF,#F8F5EC);border-radius:24px;padding:26px 22px 20px;text-align:center;color:#1E3A44;box-shadow:inset 0 1px 0 #fff,0 2px 0 rgba(255,255,255,.25),0 30px 70px -12px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.12)">
+    <div style="width:92px;height:92px;margin:0 auto 4px;border-radius:50%;background:radial-gradient(circle at 50% 38%,#F6ECD2,#EADFC0);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 2px 5px rgba(138,98,36,.25),0 1px 0 #fff">
+      <span style="width:64px;height:64px;background:linear-gradient(160deg,#F8DD8E,#C89441 60%,#8A6224);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 16px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.6);filter:drop-shadow(0 4px 6px rgba(138,98,36,.6))">$1K</span>
+    </div>
+    <div style="font:800 10px/1 Nunito,sans-serif;letter-spacing:.16em;color:#8A6A2A;margin:8px 0 8px">VERIFIED · STRIPE</div>
+    <div style="font:900 24px/1.2 Nunito,sans-serif;background:linear-gradient(180deg,#2E6E7E,#1E3A44);-webkit-background-clip:text;background-clip:text;color:transparent">First $1,000 month</div>
+    <div style="font:800 14px/1 Nunito,sans-serif;color:#3E7C52;margin:8px 0 0;text-shadow:0 1px 0 #fff">+250 Revenue XP</div>
+    <div style="display:flex;justify-content:center;gap:16px;margin:18px 0 0;padding:14px 0 0;border-top:1px solid rgba(30,58,68,.08)">
+      <div><div style="font:900 15px/1 Nunito,sans-serif">Lv 7</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(30,58,68,.4);margin:5px 0 0">FOUNDER</div></div>
+      <div style="width:1px;background:rgba(30,58,68,.08)"></div>
+      <div><div style="font:900 15px/1 Nunito,sans-serif">34</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(30,58,68,.4);margin:5px 0 0">DAY STREAK</div></div>
+      <div style="width:1px;background:rgba(30,58,68,.08)"></div>
+      <div><div style="font:900 15px/1 Nunito,sans-serif">217</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(30,58,68,.4);margin:5px 0 0">QUESTS</div></div>
+    </div>
+    <div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.14em;color:rgba(30,58,68,.3);margin:14px 0 0">WILLOW &amp; SAGE CERAMICS · JUNE 2026</div>
+  </div>
+</div>
+<div style="flex:none;padding:22px 26px 40px;display:flex;flex-direction:column;gap:12px;position:relative">
+  <div style="height:52px;border-radius:999px;background:linear-gradient(180deg,#F0CD79,#C89441);color:#FFFDF5;display:flex;align-items:center;justify-content:center;font:800 15px/1 Nunito,sans-serif;text-shadow:0 1px 2px rgba(122,80,10,.5);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),0 4px 0 #8A6224,0 14px 24px -6px rgba(138,98,36,.6)">Share founder card</div>
+  <div style="height:48px;display:flex;align-items:center;justify-content:center;font:800 13px/1 Nunito,sans-serif;color:rgba(251,250,246,.7)">Keep it in the journal</div>
+</div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p style="margin:26px 0 0;font:12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.5);max-width:720px">Try: "animate the celebration screen" · "even more toy-like, chunkier bevels" · "apply this polish to onboarding".</p>
+</section>
+<section style="padding:44px 48px 56px;border-bottom:1px solid rgba(29,26,21,.1)">
+<div style="margin:0 0 8px;font:600 13px/1.2 -apple-system,system-ui,sans-serif">Turn 2 — richer, gamified direction (from your references)</div>
+<div style="margin:0 0 28px;max-width:720px;font:400 12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)">Rounded playful type (Nunito), pastel-tinted quest cards with badge icons, XP + streak currency pills in the header, a revenue mini-chart, and a celebratory rays screen for verified milestones. Deep-teal ink replaces near-black; gold still means <em>verified</em>.</div>
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<div id="2a" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#2a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">2a</a>Today — quest board</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Today v2" style="height:100%;display:flex;flex-direction:column;background:#FBFAF6;font-family:Nunito,-apple-system,sans-serif;color:#1E3A44">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="width:46px;height:46px;border-radius:50%;background:#2E6E7E;color:#FBFAF6;display:flex;align-items:center;justify-content:center;font:800 19px/1 Nunito,sans-serif;box-shadow:0 3px 10px rgba(46,110,126,.3)">W</div>
+    <div style="display:flex;gap:8px;background:#fff;border:1px solid rgba(30,58,68,.07);border-radius:999px;padding:7px 12px;box-shadow:0 2px 8px rgba(30,58,68,.05)">
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:linear-gradient(135deg,#7FC3D8,#3D8FA8);border-radius:3px;transform:rotate(45deg)"></span><span style="font:800 13px/1 Nunito,sans-serif">2,340</span></span>
+      <span style="width:1px;background:rgba(30,58,68,.1)"></span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:13px;height:13px;background:linear-gradient(135deg,#F2C94C,#DA9A28);border-radius:50%;box-shadow:inset 0 -1px 2px rgba(122,80,10,.4)"></span><span style="font:800 13px/1 Nunito,sans-serif">34</span></span>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin:18px 0 0">
+    <div style="font:800 24px/1.2 Nunito,sans-serif;letter-spacing:-.01em">Complete<br>today&rsquo;s quests</div>
+    <div style="text-align:right">
+      <div style="font:900 30px/1 Nunito,sans-serif">33<span style="font:800 18px/1 Nunito,sans-serif">%</span></div>
+      <div style="display:inline-flex;align-items:center;gap:4px;font:800 11px/1 Nunito,sans-serif;color:#3D8FA8;margin:4px 0 0"><span style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:6px solid #3D8FA8"></span>1 of 3 done</div>
+    </div>
+  </div>
+
+  <div style="background:#fff;border:1px solid rgba(30,58,68,.07);border-radius:20px;padding:16px 18px 14px;margin:16px 0 0;box-shadow:0 2px 10px rgba(30,58,68,.05)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font:800 15px/1.2 Nunito,sans-serif">Revenue climb</div>
+      <div style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;border:1.5px solid rgba(46,110,126,.35);border-radius:999px;padding:6px 11px">Chapter 3 · 4/7</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:4px;height:64px;margin:12px 0 6px">
+      <span style="flex:1;height:22%;background:#BFD9E2;border-radius:3px"></span><span style="flex:1;height:30%;background:#BFD9E2;border-radius:3px"></span><span style="flex:1;height:26%;background:#9CC4D2;border-radius:3px"></span><span style="flex:1;height:44%;background:#9CC4D2;border-radius:3px"></span><span style="flex:1;height:38%;background:#6FA9BC;border-radius:3px"></span><span style="flex:1;height:58%;background:#6FA9BC;border-radius:3px"></span><span style="flex:1;height:52%;background:#4A8CA1;border-radius:3px"></span><span style="flex:1;height:72%;background:#4A8CA1;border-radius:3px"></span><span style="flex:1;height:66%;background:#2E6E7E;border-radius:3px"></span><span style="flex:1;height:88%;background:#2E6E7E;border-radius:3px"></span><span style="flex:1;height:100%;background:linear-gradient(180deg,#F2C94C,#DA9A28);border-radius:3px"></span><span style="flex:1;height:34%;background:rgba(30,58,68,.1);border-radius:3px"></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font:700 10px/1 Nunito,sans-serif;color:rgba(30,58,68,.4)"><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span style="color:#B8860B">$1K ✓</span><span>Jul</span></div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin:20px 0 12px">
+    <div style="font:800 17px/1 Nunito,sans-serif">Quests</div>
+    <span style="font:800 11px/1 Nunito,sans-serif;background:#2E6E7E;color:#fff;border-radius:999px;padding:4px 8px">3</span>
+    <span style="flex:1"></span>
+    <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(30,58,68,.45)">View all ›</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="background:#FDF3D4;border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center">
+      <span style="flex:none;width:44px;height:44px;background:linear-gradient(135deg,#F2C94C,#DA9A28);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#fff;font:900 15px/1 Nunito,sans-serif">34</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ship one piece of content · TikTok</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:2px 0 0">Daily habit · day 34</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;background:#fff;border-radius:999px;padding:6px 9px;flex:none">+15</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(30,58,68,.35);flex:none">⋯</span>
+    </div>
+    <div style="background:#E3F2E4;border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center">
+      <span style="flex:none;width:44px;height:44px;border-radius:50%;background:#3E7C52;border:3px solid #A8D3B2;display:flex;align-items:center;justify-content:center;color:#fff;font:900 16px/1 Nunito,sans-serif">R</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Ask 3 past clients for a referral</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:#B5651D;margin:2px 0 0">Revenue is lagging — boost quest</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;background:#fff;border-radius:999px;padding:6px 9px;flex:none">+25</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(30,58,68,.35);flex:none">⋯</span>
+    </div>
+    <div style="background:#E0ECF6;border-radius:18px;padding:13px 14px;display:flex;gap:12px;align-items:center">
+      <span style="flex:none;width:44px;height:44px;border-radius:14px;background:#2E5E8C;display:flex;align-items:center;justify-content:center;color:#fff;font:900 18px/1 Nunito,sans-serif">◆</span>
+      <div style="flex:1;min-width:0">
+        <div style="font:800 13.5px/1.3 Nunito,sans-serif">Fix one reason customers don&rsquo;t return</div>
+        <div style="font:700 11px/1.3 Nunito,sans-serif;color:rgba(30,58,68,.5);margin:2px 0 0">Chapter quest · advances objective</div>
+      </div>
+      <span style="font:800 11px/1 Nunito,sans-serif;color:#2E6E7E;background:#fff;border-radius:999px;padding:6px 9px;flex:none">+20</span>
+      <span style="font:800 14px/1 Nunito,sans-serif;color:rgba(30,58,68,.35);flex:none">⋯</span>
+    </div>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:#fff;border-top:1px solid rgba(30,58,68,.06);padding:10px 22px 30px">
+  <span style="width:46px;height:46px;border-radius:50%;background:#1E3A44;color:#fff;display:flex;align-items:center;justify-content:center;font:800 18px/1 Nunito,sans-serif;box-shadow:0 4px 12px rgba(30,58,68,.3)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">◆</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="2b" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#2b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">2b</a>Character — stats &amp; milestones</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Character v2" style="height:100%;display:flex;flex-direction:column;background:#1E3A44;font-family:Nunito,-apple-system,sans-serif">
+<div style="flex:none;text-align:center;padding:66px 20px 18px;color:#FBFAF6">
+  <div style="width:74px;height:74px;margin:0 auto 10px;border-radius:50%;background:linear-gradient(135deg,#7FC3D8,#2E6E7E);border:3px solid rgba(251,250,246,.9);display:flex;align-items:center;justify-content:center;font:900 28px/1 Nunito,sans-serif;color:#fff">W</div>
+  <div style="font:800 19px/1.2 Nunito,sans-serif">Willow &amp; Sage Ceramics</div>
+  <div style="font:800 12px/1 Nunito,sans-serif;color:rgba(251,250,246,.65);margin:5px 0 0">Level 7 · Journeyman Merchant</div>
+  <div style="display:inline-flex;gap:4px;background:rgba(251,250,246,.12);border-radius:999px;padding:4px;margin:14px 0 0">
+    <span style="font:800 11.5px/1 Nunito,sans-serif;background:#FBFAF6;color:#1E3A44;border-radius:999px;padding:7px 14px">Stats</span>
+    <span style="font:800 11.5px/1 Nunito,sans-serif;color:rgba(251,250,246,.7);padding:7px 14px">Milestones</span>
+    <span style="font:800 11.5px/1 Nunito,sans-serif;color:rgba(251,250,246,.7);padding:7px 14px">Journal</span>
+  </div>
+</div>
+<div style="flex:1;overflow:hidden;background:#FBFAF6;border-radius:28px 28px 0 0;padding:18px 18px 0;color:#1E3A44">
+  <div style="display:flex;flex-direction:column;gap:9px">
+    <sc-for list="{{ stats2 }}" as="s" hint-placeholder-count="5">
+      <div style="background:#fff;border:1px solid rgba(30,58,68,.07);border-radius:16px;padding:11px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 2px 8px rgba(30,58,68,.04)">
+        <span style="flex:none;width:40px;height:40px;border-radius:13px;background:{{ s.tile }};display:flex;align-items:center;justify-content:center;color:#fff;font:900 15px/1 Nunito,sans-serif">{{ s.initial }}</span>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="font:800 13.5px/1.2 Nunito,sans-serif">{{ s.name }}</span>
+            <span style="font:800 9.5px/1 Nunito,sans-serif;color:{{ s.tile }};border:1.5px solid {{ s.chipBorder }};border-radius:6px;padding:3px 5px">LV.{{ s.level }}</span>
+          </div>
+          <div style="height:6px;border-radius:3px;background:rgba(30,58,68,.08);margin:7px 0 0;overflow:hidden"><div style="height:100%;border-radius:3px;background:{{ s.tile }};width:{{ s.pct }}"></div></div>
+        </div>
+        <span style="flex:none;font:800 11px/1 Nunito,sans-serif;color:rgba(30,58,68,.4)">{{ s.xp }}</span>
+      </div>
+    </sc-for>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;margin:18px 0 10px">
+    <div style="font:800 15px/1 Nunito,sans-serif">Latest milestone</div>
+    <span style="flex:1"></span>
+    <span style="font:800 12px/1 Nunito,sans-serif;color:rgba(30,58,68,.45)">View all ›</span>
+  </div>
+  <div style="background:linear-gradient(120deg,#FBF2DC,#F5E5BC);border:1.5px solid #DFC383;border-radius:18px;padding:13px 15px;display:flex;gap:12px;align-items:center">
+    <span style="flex:none;width:44px;height:44px;background:linear-gradient(135deg,#E8C566,#A87C2E);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 18px/1 Nunito,sans-serif">✓</span>
+    <div style="flex:1">
+      <div style="font:800 14px/1.3 Nunito,sans-serif">First $1,000 month</div>
+      <div style="font:700 11px/1.3 Nunito,sans-serif;color:#8A6A2A;margin:2px 0 0">Verified via Stripe · June 2026</div>
+    </div>
+    <span style="font:800 9.5px/1 Nunito,sans-serif;letter-spacing:.1em;color:#8A6A2A;border:1.5px solid #C9A35C;padding:6px 8px;border-radius:8px;background:rgba(255,253,245,.7)">VERIFIED</span>
+  </div>
+</div>
+<div style="flex:none;display:flex;align-items:center;justify-content:space-around;background:#fff;border-top:1px solid rgba(30,58,68,.06);padding:10px 22px 30px">
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">⌂</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">◆</span>
+  <span style="width:46px;height:46px;border-radius:50%;background:#1E3A44;color:#fff;display:flex;align-items:center;justify-content:center;font:800 17px/1 Nunito,sans-serif;box-shadow:0 4px 12px rgba(30,58,68,.3)">✦</span>
+  <span style="font:800 17px/1 Nunito,sans-serif;color:rgba(30,58,68,.3)">✎</span>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="2c" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#2c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">2c</a>Verified milestone — celebration + founder card</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Milestone v2" style="height:100%;display:flex;flex-direction:column;background:#1E3A44;background-image:repeating-conic-gradient(from 0deg at 50% 32%,rgba(251,250,246,.05) 0deg 11deg,transparent 11deg 22deg);font-family:Nunito,-apple-system,sans-serif;position:relative;overflow:hidden">
+<span style="position:absolute;top:120px;left:44px;color:rgba(251,250,246,.5);font:800 16px/1 Nunito,sans-serif">✦</span>
+<span style="position:absolute;top:200px;right:38px;color:rgba(251,250,246,.35);font:800 11px/1 Nunito,sans-serif">✦</span>
+<span style="position:absolute;bottom:220px;left:30px;color:rgba(251,250,246,.3);font:800 12px/1 Nunito,sans-serif">✦</span>
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:54px 26px 0">
+  <div style="text-align:center;color:#FBFAF6;font:800 21px/1.35 Nunito,sans-serif;margin:0 0 20px">You just hit a<br>verified milestone!</div>
+  <div style="background:#FBFAF6;border-radius:24px;padding:26px 22px 20px;text-align:center;color:#1E3A44;box-shadow:0 24px 60px rgba(0,0,0,.45)">
+    <div style="width:88px;height:88px;margin:0 auto 4px;border-radius:50%;background:#EAF3F6;display:flex;align-items:center;justify-content:center">
+      <span style="width:62px;height:62px;background:linear-gradient(135deg,#E8C566,#A87C2E);clip-path:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);display:flex;align-items:center;justify-content:center;color:#FFFDF5;font:900 15px/1 Nunito,sans-serif">$1K</span>
+    </div>
+    <div style="font:800 10px/1 Nunito,sans-serif;letter-spacing:.16em;color:#8A6A2A;margin:8px 0 8px">VERIFIED · STRIPE</div>
+    <div style="font:900 24px/1.2 Nunito,sans-serif">First $1,000 month</div>
+    <div style="font:800 14px/1 Nunito,sans-serif;color:#3E7C52;margin:8px 0 0">+250 Revenue XP</div>
+    <div style="display:flex;justify-content:center;gap:16px;margin:18px 0 0;padding:14px 0 0;border-top:1px solid rgba(30,58,68,.08)">
+      <div><div style="font:900 15px/1 Nunito,sans-serif">Lv 7</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(30,58,68,.4);margin:5px 0 0">FOUNDER</div></div>
+      <div style="width:1px;background:rgba(30,58,68,.08)"></div>
+      <div><div style="font:900 15px/1 Nunito,sans-serif">34</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(30,58,68,.4);margin:5px 0 0">DAY STREAK</div></div>
+      <div style="width:1px;background:rgba(30,58,68,.08)"></div>
+      <div><div style="font:900 15px/1 Nunito,sans-serif">217</div><div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.08em;color:rgba(30,58,68,.4);margin:5px 0 0">QUESTS</div></div>
+    </div>
+    <div style="font:800 9px/1 Nunito,sans-serif;letter-spacing:.14em;color:rgba(30,58,68,.3);margin:14px 0 0">WILLOW &amp; SAGE CERAMICS · JUNE 2026</div>
+  </div>
+</div>
+<div style="flex:none;padding:22px 26px 40px;display:flex;flex-direction:column;gap:10px">
+  <div style="height:52px;border-radius:999px;background:linear-gradient(135deg,#E8C566,#A87C2E);color:#FFFDF5;display:flex;align-items:center;justify-content:center;font:800 15px/1 Nunito,sans-serif;box-shadow:0 4px 16px rgba(168,124,46,.4)">Share founder card</div>
+  <div style="height:48px;display:flex;align-items:center;justify-content:center;font:800 13px/1 Nunito,sans-serif;color:rgba(251,250,246,.7)">Keep it in the journal</div>
+</div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p style="margin:26px 0 0;font:12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.5);max-width:720px">Try: "more color, closer to the yellow/green reference" · "apply this style to onboarding" · "mix <a href="#1c">1c</a>&rsquo;s serif card into <a href="#2c">2c</a>".</p>
+</section>
+<section style="padding:44px 48px 56px">
+<div style="margin:0 0 8px;font:600 13px/1.2 -apple-system,system-ui,sans-serif">Founder RPG — core loop, one direction</div>
+<div style="margin:0 0 28px;max-width:720px;font:400 12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)">Premium minimal, light, warm paper tones. Serif (Newsreader) carries the RPG flavor — chapter names, lore lines — while the UI stays clean iOS. One accent: bronze-gold, reserved almost exclusively for <em>verified</em> money milestones so prestige reads instantly. Stats proposed: Product · Marketing · Revenue · Operations · Grit.</div>
+<div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+
+<div id="1a" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#1a" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">1a</a>Today — quest board (home)</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Today" style="height:100%;display:flex;flex-direction:column;background:#FAF9F5">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="display:flex;align-items:baseline;justify-content:space-between;padding:8px 0 2px">
+    <div style="font:700 28px/1.1 -apple-system,system-ui,sans-serif;letter-spacing:-.02em">Today</div>
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:#fff;border:1px solid rgba(29,26,21,.08);border-radius:999px">
+      <span style="width:8px;height:8px;background:#C9812E;border-radius:2px;transform:rotate(45deg)"></span>
+      <span style="font:600 13px/1 -apple-system,system-ui,sans-serif">{{ streak }}-day streak</span>
+    </div>
+  </div>
+  <div style="font:400 13px/1.4 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.5);margin:2px 0 16px">Sunday, July 19</div>
+
+  <div style="background:#1D1A15;color:#FAF9F5;border-radius:18px;padding:18px 18px 16px;margin:0 0 18px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font:600 11px/1 -apple-system,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(250,249,245,.55)">Chapter 3</div>
+      <div style="font:500 11px/1 ui-monospace,Menlo,monospace;color:rgba(250,249,245,.55)">4 / 7</div>
+    </div>
+    <div style="font:500 22px/1.2 Newsreader,Georgia,serif;margin:8px 0 4px">First Repeat Customer</div>
+    <div style="font:italic 400 13.5px/1.4 Newsreader,Georgia,serif;color:rgba(250,249,245,.65)">Make your offer worth coming back for.</div>
+    <div style="display:flex;gap:5px;margin:14px 0 0">
+      <span style="flex:1;height:4px;border-radius:2px;background:#C9A35C"></span>
+      <span style="flex:1;height:4px;border-radius:2px;background:#C9A35C"></span>
+      <span style="flex:1;height:4px;border-radius:2px;background:#C9A35C"></span>
+      <span style="flex:1;height:4px;border-radius:2px;background:#C9A35C"></span>
+      <span style="flex:1;height:4px;border-radius:2px;background:rgba(250,249,245,.18)"></span>
+      <span style="flex:1;height:4px;border-radius:2px;background:rgba(250,249,245,.18)"></span>
+      <span style="flex:1;height:4px;border-radius:2px;background:rgba(250,249,245,.18)"></span>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin:0 0 10px">
+    <div style="font:600 15px/1.2 -apple-system,system-ui,sans-serif">Daily quests</div>
+    <div style="font:500 12px/1 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.45)">{{ xpToday }} XP earned today</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <sc-if value="{{ questDone }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff;border:1px solid rgba(29,26,21,.08);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;opacity:.68">
+        <span style="flex:none;width:24px;height:24px;border-radius:8px;background:#1D1A15;color:#FAF9F5;display:flex;align-items:center;justify-content:center;font:700 13px/1 -apple-system,sans-serif;margin-top:1px">✓</span>
+        <div style="flex:1">
+          <div style="font:400 14.5px/1.4 -apple-system,system-ui,sans-serif;text-decoration:line-through;text-decoration-color:rgba(29,26,21,.35)">Ship one piece of content today. Post it to TikTok.</div>
+          <div style="display:flex;gap:8px;margin:8px 0 0;align-items:center">
+            <span style="font:600 10px/1 -apple-system,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(29,26,21,.4)">Daily habit</span>
+            <span style="font:600 11px/1 ui-monospace,Menlo,monospace;color:#1D1A15;background:rgba(29,26,21,.07);padding:4px 8px;border-radius:6px">+15 Marketing</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ questNotDone }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fff;border:1px solid rgba(29,26,21,.08);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+        <span style="flex:none;width:24px;height:24px;border-radius:8px;border:1.5px solid rgba(29,26,21,.25);margin-top:1px"></span>
+        <div style="flex:1">
+          <div style="font:400 14.5px/1.4 -apple-system,system-ui,sans-serif">Ship one piece of content today. Post it to TikTok.</div>
+          <div style="display:flex;gap:8px;margin:8px 0 0;align-items:center">
+            <span style="font:600 10px/1 -apple-system,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(29,26,21,.4)">Daily habit</span>
+            <span style="font:600 11px/1 ui-monospace,Menlo,monospace;color:#1D1A15;background:rgba(29,26,21,.07);padding:4px 8px;border-radius:6px">+15 Marketing</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="background:#fff;border:1px solid rgba(29,26,21,.08);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+      <span style="flex:none;width:24px;height:24px;border-radius:8px;border:1.5px solid rgba(29,26,21,.25);margin-top:1px"></span>
+      <div style="flex:1">
+        <div style="font:400 14.5px/1.4 -apple-system,system-ui,sans-serif">Reach out to 3 past clients and ask for a referral or repeat order.</div>
+        <div style="display:flex;gap:8px;margin:8px 0 0;align-items:center">
+          <span style="font:600 10px/1 -apple-system,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#B5651D">Revenue is lagging</span>
+          <span style="font:600 11px/1 ui-monospace,Menlo,monospace;color:#1D1A15;background:rgba(29,26,21,.07);padding:4px 8px;border-radius:6px">+25 Revenue</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid rgba(29,26,21,.16);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:0 2px 8px rgba(29,26,21,.05)">
+      <span style="flex:none;width:24px;height:24px;border-radius:8px;border:1.5px solid rgba(29,26,21,.25);margin-top:1px"></span>
+      <div style="flex:1">
+        <div style="font:400 14.5px/1.4 -apple-system,system-ui,sans-serif">Identify one reason a customer wouldn't return, and fix it today.</div>
+        <div style="display:flex;gap:8px;margin:8px 0 0;align-items:center;flex-wrap:wrap">
+          <span style="display:flex;align-items:center;gap:5px;font:600 10px/1 -apple-system,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(29,26,21,.55)"><span style="width:6px;height:6px;background:#1D1A15;transform:rotate(45deg)"></span>Chapter quest</span>
+          <span style="font:600 11px/1 ui-monospace,Menlo,monospace;color:#1D1A15;background:rgba(29,26,21,.07);padding:4px 8px;border-radius:6px">+20 Product</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;font:italic 400 13px/1.5 Newsreader,Georgia,serif;color:rgba(29,26,21,.4);margin:18px 0 0">Quests refresh at dawn. Finish all three to bank a perfect day.</div>
+</div>
+<div style="flex:none;display:flex;border-top:1px solid rgba(29,26,21,.08);background:rgba(250,249,245,.94);padding:10px 8px 30px">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:#1D1A15"></span><span style="font:600 11px/1 -apple-system,sans-serif">Today</span></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:transparent"></span><span style="font:500 11px/1 -apple-system,sans-serif;color:rgba(29,26,21,.4)">Questline</span></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:transparent"></span><span style="font:500 11px/1 -apple-system,sans-serif;color:rgba(29,26,21,.4)">Character</span></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:transparent"></span><span style="font:500 11px/1 -apple-system,sans-serif;color:rgba(29,26,21,.4)">Journal</span></div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="1b" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#1b" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">1b</a>Character sheet — stats &amp; milestones</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
+<div data-screen-label="Character" style="height:100%;display:flex;flex-direction:column;background:#FAF9F5">
+<div style="flex:1;overflow:hidden;padding:62px 20px 0">
+  <div style="text-align:center;padding:14px 0 4px">
+    <div style="width:64px;height:64px;margin:0 auto 10px;border-radius:20px;background:#1D1A15;color:#FAF9F5;display:flex;align-items:center;justify-content:center;font:500 26px/1 Newsreader,Georgia,serif">W</div>
+    <div style="font:500 24px/1.2 Newsreader,Georgia,serif">Willow &amp; Sage Ceramics</div>
+    <div style="font:italic 400 14px/1.4 Newsreader,Georgia,serif;color:rgba(29,26,21,.5);margin:3px 0 0">Level 7 · Journeyman Merchant</div>
+    <div style="display:inline-flex;align-items:center;gap:8px;margin:12px 0 0;padding:6px 12px;background:#fff;border:1px solid rgba(29,26,21,.08);border-radius:999px">
+      <span style="font:600 11px/1 ui-monospace,Menlo,monospace;color:rgba(29,26,21,.55)">2,340 / 3,000 XP</span>
+      <span style="width:72px;height:4px;border-radius:2px;background:rgba(29,26,21,.1);overflow:hidden;display:inline-block"><span style="display:block;width:78%;height:100%;background:#1D1A15"></span></span>
+    </div>
+  </div>
+
+  <div style="font:600 11px/1 -apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(29,26,21,.4);margin:20px 0 10px">Stats</div>
+  <div style="background:#fff;border:1px solid rgba(29,26,21,.08);border-radius:16px;padding:6px 16px">
+    <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5">
+      <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(29,26,21,.06)">
+        <div style="width:88px;font:600 13px/1.2 -apple-system,system-ui,sans-serif">{{ s.name }}</div>
+        <div style="flex:1;height:6px;border-radius:3px;background:rgba(29,26,21,.07);overflow:hidden"><div style="height:100%;border-radius:3px;background:{{ s.barColor }};width:{{ s.pct }}"></div></div>
+        <div style="width:30px;text-align:right;font:600 13px/1 ui-monospace,Menlo,monospace">{{ s.level }}</div>
+      </div>
+    </sc-for>
+    <div style="display:flex;align-items:center;gap:6px;padding:10px 0 12px;font:400 11.5px/1.4 -apple-system,sans-serif;color:#B5651D"><span style="width:6px;height:6px;background:#B5651D;transform:rotate(45deg);flex:none"></span>Revenue is your thinnest stat — today's board is favoring it.</div>
+  </div>
+
+  <div style="font:600 11px/1 -apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(29,26,21,.4);margin:20px 0 10px">Milestones</div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="position:relative;background:linear-gradient(120deg,#FBF4E3,#F6E9C8);border:1px solid #D9BE85;border-radius:16px;padding:13px 16px;display:flex;gap:12px;align-items:center;overflow:hidden">
+      <span style="flex:none;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#E0BE72,#9A7430);color:#FFFDF5;display:flex;align-items:center;justify-content:center;font:700 15px/1 -apple-system,sans-serif;box-shadow:0 1px 4px rgba(154,116,48,.35)">✓</span>
+      <div style="flex:1">
+        <div style="font:600 14px/1.3 -apple-system,system-ui,sans-serif">First $1,000 month</div>
+        <div style="font:500 11px/1.3 -apple-system,sans-serif;color:#8A6A2A;margin:2px 0 0">Verified via Stripe · June 2026</div>
+      </div>
+      <span style="font:600 9.5px/1 -apple-system,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8A6A2A;border:1px solid #C9A35C;padding:5px 8px;border-radius:6px;background:rgba(255,253,245,.6)">Verified</span>
+    </div>
+    <div style="background:#fff;border:1px solid rgba(29,26,21,.08);border-radius:16px;padding:13px 16px;display:flex;gap:12px;align-items:center">
+      <span style="flex:none;width:32px;height:32px;border-radius:50%;background:rgba(29,26,21,.08);color:#1D1A15;display:flex;align-items:center;justify-content:center;font:700 14px/1 -apple-system,sans-serif">✓</span>
+      <div style="flex:1">
+        <div style="font:600 14px/1.3 -apple-system,system-ui,sans-serif">First sale</div>
+        <div style="font:400 11px/1.3 -apple-system,sans-serif;color:rgba(29,26,21,.45);margin:2px 0 0">Self-reported · March 2026</div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1px dashed rgba(29,26,21,.2);border-radius:16px;padding:13px 16px;display:flex;gap:12px;align-items:center">
+      <span style="flex:none;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(29,26,21,.2)"></span>
+      <div style="flex:1">
+        <div style="font:600 14px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.6)">First repeat customer</div>
+        <div style="font:400 11px/1.3 -apple-system,sans-serif;color:rgba(29,26,21,.45);margin:2px 0 0">In progress · Chapter 3 objective</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="flex:none;display:flex;border-top:1px solid rgba(29,26,21,.08);background:rgba(250,249,245,.94);padding:10px 8px 30px">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:transparent"></span><span style="font:500 11px/1 -apple-system,sans-serif;color:rgba(29,26,21,.4)">Today</span></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:transparent"></span><span style="font:500 11px/1 -apple-system,sans-serif;color:rgba(29,26,21,.4)">Questline</span></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:#1D1A15"></span><span style="font:600 11px/1 -apple-system,sans-serif">Character</span></div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:transparent"></span><span style="font:500 11px/1 -apple-system,sans-serif;color:rgba(29,26,21,.4)">Journal</span></div>
+</div>
+</div>
+</x-import>
+</div>
+
+<div id="1c" style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.55)"><a href="#1c" style="font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(29,26,21,.08);color:#1D1A15;border-radius:5px">1c</a>Milestone moment — shareable founder card</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="390px,844px">
+<div data-screen-label="Founder card" style="height:100%;display:flex;flex-direction:column;background:#141210">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:54px 24px 0">
+  <div style="text-align:center;margin:0 0 18px">
+    <div style="font:600 11px/1 -apple-system,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(250,249,245,.45)">Milestone reached</div>
+  </div>
+  <div style="background:#FAF9F5;border-radius:20px;padding:26px 24px 22px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5)">
+    <div style="width:54px;height:54px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#E0BE72,#9A7430);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(154,116,48,.4)">
+      <span style="color:#FFFDF5;font:700 22px/1 -apple-system,sans-serif">✓</span>
+    </div>
+    <div style="font:600 10px/1 -apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#8A6A2A;margin:0 0 10px">Verified · Stripe</div>
+    <div style="font:500 30px/1.15 Newsreader,Georgia,serif;letter-spacing:-.01em">First $1,000 month</div>
+    <div style="font:italic 400 14px/1.4 Newsreader,Georgia,serif;color:rgba(29,26,21,.5);margin:8px 0 0">Willow &amp; Sage Ceramics · 114 days in</div>
+    <div style="display:flex;justify-content:center;gap:14px;margin:20px 0 0;padding:14px 0 0;border-top:1px solid rgba(29,26,21,.08)">
+      <div><div style="font:600 15px/1 ui-monospace,Menlo,monospace">Lv 7</div><div style="font:500 9.5px/1 -apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(29,26,21,.4);margin:5px 0 0">Founder</div></div>
+      <div style="width:1px;background:rgba(29,26,21,.08)"></div>
+      <div><div style="font:600 15px/1 ui-monospace,Menlo,monospace">34</div><div style="font:500 9.5px/1 -apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(29,26,21,.4);margin:5px 0 0">Day streak</div></div>
+      <div style="width:1px;background:rgba(29,26,21,.08)"></div>
+      <div><div style="font:600 15px/1 ui-monospace,Menlo,monospace">217</div><div style="font:500 9.5px/1 -apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:rgba(29,26,21,.4);margin:5px 0 0">Quests done</div></div>
+    </div>
+    <div style="font:500 9px/1 ui-monospace,Menlo,monospace;letter-spacing:.14em;color:rgba(29,26,21,.3);margin:16px 0 0">FOUNDER RPG · JUNE 2026</div>
+  </div>
+  <div style="text-align:center;font:italic 400 13px/1.5 Newsreader,Georgia,serif;color:rgba(250,249,245,.5);margin:18px 0 0">Un-fakeable. Pulled straight from your revenue.</div>
+</div>
+<div style="flex:none;padding:0 24px 40px;display:flex;flex-direction:column;gap:10px">
+  <div style="height:52px;border-radius:999px;background:linear-gradient(135deg,#E0BE72,#9A7430);color:#FFFDF5;display:flex;align-items:center;justify-content:center;font:600 16px/1 -apple-system,system-ui,sans-serif;box-shadow:0 4px 16px rgba(154,116,48,.35)">Share founder card</div>
+  <div style="height:52px;border-radius:999px;border:1px solid rgba(250,249,245,.2);color:rgba(250,249,245,.75);display:flex;align-items:center;justify-content:center;font:600 15px/1 -apple-system,system-ui,sans-serif">Keep it in the journal</div>
+</div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p style="margin:26px 0 0;font:12px/1.6 -apple-system,system-ui,sans-serif;color:rgba(29,26,21,.5);max-width:720px">Next steps: onboarding (pick business type → seeds quest templates + stat baseline) · Questline tab (chapter map) · Journal (auto-written daily log of completed quests). Try: "show the quest-complete XP animation" · "design the questline chapter map" · "make the founder card in story 9:16".</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;questDone&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Quest board&quot;},&quot;streak&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:34,&quot;min&quot;:0,&quot;max&quot;:365,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Quest board&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const done = this.props.questDone ?? true;
+    const stats = [
+      { name: "Product", level: 8, pct: "80%", barColor: "#1D1A15" },
+      { name: "Marketing", level: 6, pct: "60%", barColor: "#1D1A15" },
+      { name: "Revenue", level: 4, pct: "40%", barColor: "#B5651D" },
+      { name: "Operations", level: 5, pct: "50%", barColor: "#1D1A15" },
+      { name: "Grit", level: 7, pct: "70%", barColor: "#1D1A15" },
+    ];
+    const stats2 = [
+      { name: "Product", initial: "P", level: 8, pct: "80%", xp: "820/1k", tile: "#2E5E8C", chipBorder: "rgba(46,94,140,.35)" },
+      { name: "Marketing", initial: "M", level: 6, pct: "60%", xp: "610/1k", tile: "#B0642E", chipBorder: "rgba(176,100,46,.35)" },
+      { name: "Revenue", initial: "R", level: 4, pct: "40%", xp: "390/1k", tile: "#B5651D", chipBorder: "rgba(181,101,29,.35)" },
+      { name: "Operations", initial: "O", level: 5, pct: "50%", xp: "505/1k", tile: "#3E7C52", chipBorder: "rgba(62,124,82,.35)" },
+      { name: "Grit", initial: "G", level: 7, pct: "70%", xp: "715/1k", tile: "#6E4E8C", chipBorder: "rgba(110,78,140,.35)" },
+    ];
+    const grads = {
+      Product: ["linear-gradient(160deg,#4B7FB0,#2E5E8C 65%,#1F4266)", "rgba(31,66,102,.5)"],
+      Marketing: ["linear-gradient(160deg,#D08A4E,#B0642E 65%,#824718)", "rgba(130,71,24,.5)"],
+      Revenue: ["linear-gradient(160deg,#D68A3E,#B5651D 65%,#854A13)", "rgba(133,74,19,.5)"],
+      Operations: ["linear-gradient(160deg,#5F9C71,#3E7C52 65%,#2A5A3A)", "rgba(42,90,58,.5)"],
+      Grit: ["linear-gradient(160deg,#8F6DAF,#6E4E8C 65%,#4E3466)", "rgba(78,52,102,.5)"],
+    };
+    const stats3 = stats2.map((s) => ({ ...s, grad: grads[s.name][0], glow: grads[s.name][1] }));
+    const arcane = {
+      Product: ["linear-gradient(160deg,#9D8CF2,#7C68E8 65%,#4F3EAE)", "rgba(124,104,232,.5)", "#A493FF"],
+      Marketing: ["linear-gradient(160deg,#E89CD4,#B45C9E 65%,#7E3A6E)", "rgba(180,92,158,.5)", "#E89CD4"],
+      Revenue: ["linear-gradient(160deg,#F0B865,#D68A3E 65%,#9A5F1E)", "rgba(214,138,62,.5)", "#F0B865"],
+      Operations: ["linear-gradient(160deg,#8ED2E8,#4A9CBE 65%,#2E6A86)", "rgba(74,156,190,.5)", "#8ED2E8"],
+      Grit: ["linear-gradient(160deg,#7FD0A0,#3FA46C 65%,#276A44)", "rgba(63,164,108,.5)", "#7FD0A0"],
+    };
+    const stats7 = stats2.map((s) => ({ ...s, grad: arcane[s.name][0], glow: arcane[s.name][1], tint: arcane[s.name][2] }));
+    return {
+      stats,
+      stats2,
+      stats3,
+      stats7,
+      questDone: done,
+      questNotDone: !done,
+      xpToday: done ? "15" : "0",
+      streak: this.props.streak ?? 34,
+    };
+  }
+}
+</script>
+</body>
+</html>

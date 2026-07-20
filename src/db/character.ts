@@ -1,5 +1,6 @@
 import { type SQLiteDatabase } from 'expo-sqlite';
 import { type StatKey } from '@/theme/tokens';
+import { overallLevel, rankTitle, statLevel } from '@/logic/leveling';
 
 export type BusinessType =
   | 'digital_product'
@@ -42,29 +43,65 @@ export async function createCharacter(
     businessType: BusinessType;
     startingXp?: Partial<Record<StatKey, number>>;
   }
-) {
+): Promise<CharacterRow> {
   const initial = (input.businessName.trim()[0] ?? 'F').toUpperCase();
   const xp = input.startingXp ?? {};
+  const get = (s: StatKey) => xp[s] ?? 0;
+  const total =
+    get('product') + get('marketing') + get('revenue') + get('operations') + get('finance');
+  const level = overallLevel(total);
+
   await db.runAsync(
     `INSERT INTO character
       (id, business_name, business_initial, business_type,
-       product_xp, marketing_xp, revenue_xp, operations_xp, finance_xp)
-     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       overall_level, rank_title, gems,
+       product_xp, product_level, marketing_xp, marketing_level,
+       revenue_xp, revenue_level, operations_xp, operations_level,
+       finance_xp, finance_level)
+     VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     input.businessName.trim(),
     initial,
     input.businessType,
-    xp.product ?? 0,
-    xp.marketing ?? 0,
-    xp.revenue ?? 0,
-    xp.operations ?? 0,
-    xp.finance ?? 0
+    level,
+    rankTitle(level),
+    total,
+    get('product'),
+    statLevel(get('product')),
+    get('marketing'),
+    statLevel(get('marketing')),
+    get('revenue'),
+    statLevel(get('revenue')),
+    get('operations'),
+    statLevel(get('operations')),
+    get('finance'),
+    statLevel(get('finance'))
   );
+  return (await getCharacter(db))!;
 }
 
-export async function grantStatXp(db: SQLiteDatabase, stat: StatKey, amount: number) {
+/**
+ * Grant stat XP + matching gems, keeping the derived level columns and
+ * overall level/rank in sync. Returns the fresh row.
+ */
+export async function grantStatXp(
+  db: SQLiteDatabase,
+  stat: StatKey,
+  amount: number
+): Promise<CharacterRow> {
   await db.runAsync(
     `UPDATE character SET ${stat}_xp = ${stat}_xp + ?, gems = gems + ? WHERE id = 1`,
     amount,
     amount
   );
+  const c = (await getCharacter(db))!;
+  const total =
+    c.product_xp + c.marketing_xp + c.revenue_xp + c.operations_xp + c.finance_xp;
+  const level = overallLevel(total);
+  await db.runAsync(
+    `UPDATE character SET ${stat}_level = ?, overall_level = ?, rank_title = ? WHERE id = 1`,
+    statLevel(c[`${stat}_xp`]),
+    level,
+    rankTitle(level)
+  );
+  return (await getCharacter(db))!;
 }

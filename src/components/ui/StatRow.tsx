@@ -1,13 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, fonts, radius, stats, type StatKey } from '@/theme/tokens';
-
-/** XP needed per level; placeholder curve until the leveling pass (SPEC §13). */
-export const XP_PER_LEVEL = 1000;
-
-function formatXp(n: number) {
-  return n >= 1000 ? `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : String(n);
-}
+import { formatXp, statProgress, XP_PER_LEVEL } from '@/logic/leveling';
 
 /**
  * Character-sheet stat row (SPEC §5): jewel-tone initial tile, name,
@@ -15,7 +9,7 @@ function formatXp(n: number) {
  */
 export function StatRow({ stat, level, xp }: { stat: StatKey; level: number; xp: number }) {
   const { label, initial, tone } = stats[stat];
-  const progress = Math.min(1, (xp % XP_PER_LEVEL) / XP_PER_LEVEL);
+  const progress = Math.min(1, statProgress(xp));
 
   return (
     <View style={styles.row}>

@@ -205,14 +205,14 @@ Bundle at `/mnt/user-data/uploads/`: `Founder_RPG_dc.html` (the canvas — read 
 - [x] Establish the Arcane design system (§11a): theme tokens (colors/gradients/jewel tones), Nunito + Newsreader fonts, shared card/badge/hexagon-seal components, the 5 named animations, 4-tab bottom nav shell
 
 ### Phase 1 — Character & daily loop (free tier, no integrations)
-- [ ] 3-step onboarding per §8 (business type grid → self-report starting-point checklist that live-computes starting level/stats → verification pitch with "Later" path)
-- [ ] Character-sheet screen (§11b #2): avatar, name, level + rank title, Stats/Milestones/Journal tabs, 5 jewel-tone stat rows, latest-milestone card
-- [ ] **Today / quest board** screen (§11b #1): avatar + XP gem counter + streak flame, "Complete today's quests," completion ring, 3 quest cards, stat progress bar
-- [ ] Daily quest template pool (seed authored templates, tagged **business_type** + stat/chapter/effort)
-- [ ] Model-specific Revenue/Marketing pools for each business type (see §6 table)
-- [ ] On-device daily-quest selection engine (filter by business_type → weakest-stat + chapter-pull + habit; respect effort tiers)
-- [ ] Quest completion → stat XP + gems → persist; streak + "perfect day" (all 3) tracking in `quest_log`
-- [ ] Quest-complete celebration animations (popIn / floatUp XP chip / twinkle / ringPulse) per §11a
+- [x] 3-step onboarding per §8 (business type grid → self-report starting-point checklist that live-computes starting level/stats → verification pitch with "Later" path). _Note: a business-name field was added to step 2 (the design omits it, but the character sheet needs a name/initial)._
+- [x] Character-sheet screen (§11b #2): avatar, name, level + rank title, Stats/Milestones/Journal tabs, 5 jewel-tone stat rows, latest-milestone card (empty state until Phase 2 milestones)
+- [x] **Today / quest board** screen (§11b #1): avatar + XP gem counter + streak flame, "Complete today's quests," completion %, 3 quest cards, stat progress bar
+- [x] Daily quest template pool (seed authored templates, tagged **business_type** + stat/chapter/effort) — `src/content/questTemplates.ts`; full per-chapter/per-type authoring pass still open (§13)
+- [x] Model-specific Revenue/Marketing pools for each business type (see §6 table)
+- [x] On-device daily-quest selection engine (filter by business_type → weakest-stat + chapter-pull + habit; respect effort tiers) — deterministic per-day seed, `src/logic/dailyQuests.ts`
+- [x] Quest completion → stat XP + gems → persist; streak + "perfect day" (all 3) tracking in `quest_log`
+- [x] Quest-complete celebration animations (popIn / floatUp XP chip / twinkle / ringPulse) per §11a
 
 ### Phase 2 — Authored questline
 - [ ] Encode Acts → Chapters → Objectives as structured content (universal spine, parameterized flavor text)
