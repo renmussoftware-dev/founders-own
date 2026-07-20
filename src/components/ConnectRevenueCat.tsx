@@ -3,6 +3,7 @@ import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-nat
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Clipboard from 'expo-clipboard';
 import { HexSeal } from '@/components/ui/HexSeal';
+import { recordConnectedAppCount } from '@/integrations/appAnalytics';
 import { saveRcCredentials } from '@/integrations/rcCredentials';
 import { getOverview, validateKey, RcError, type RcProject } from '@/integrations/revenuecat';
 import { useStore } from '@/store/useStore';
@@ -56,6 +57,9 @@ export function ConnectRevenueCat({
     setError(null);
     try {
       const found = await validateKey(apiKey);
+      // Portfolio-size signal (see appAnalytics) — recorded once the key resolves,
+      // regardless of which project they then pick.
+      if (found.length > 0) void recordConnectedAppCount(found.length);
       if (found.length === 0) {
         setError('That key can’t see any projects. Use a read-only key with metrics access.');
       } else if (found.length === 1) {
