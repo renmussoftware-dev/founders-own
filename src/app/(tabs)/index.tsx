@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSQLiteContext } from 'expo-sqlite';
 import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
 import { QuestCard } from '@/components/QuestCard';
+import { RevenueDashboard } from '@/components/RevenueDashboard';
+import { devSeedSampleMetrics } from '@/db/dev';
+import { getSnapshots, recordSnapshot, type MetricSnapshot } from '@/db/metrics';
 import {
   completeQuest,
   ensureTodayQuests,
@@ -13,19 +17,28 @@ import {
 } from '@/logic/dailyQuests';
 import { statLevel, statProgress, statXp, XP_PER_LEVEL } from '@/logic/leveling';
 import { upsertDailyEntry } from '@/logic/journal';
+import { nextMoneyMilestone, type NextMilestone } from '@/logic/verification';
+import { useRevenueData } from '@/hooks/useRevenueData';
 import { useStore } from '@/store/useStore';
 import { colors, fonts, stats } from '@/theme/tokens';
 
-/** Today / quest board (design 7d). */
+/** Today / quest board (design 7d) + live revenue dashboard (value item #1). */
 export default function TodayScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const db = useSQLiteContext();
   const character = useStore(s => s.character);
   const setCharacter = useStore(s => s.setCharacter);
+  const setRcConnection = useStore(s => s.setRcConnection);
+  const setRcOverview = useStore(s => s.setRcOverview);
 
   const [quests, setQuests] = useState<QuestLogRow[]>([]);
   const [celebratingId, setCelebratingId] = useState<number | null>(null);
   const celebrationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { connected, projectName, overview, loading } = useRevenueData();
+  const [snapshots, setSnapshots] = useState<MetricSnapshot[]>([]);
+  const [next, setNext] = useState<NextMilestone | null>(null);
 
   useEffect(() => {
     if (character) {
@@ -34,6 +47,25 @@ export default function TodayScreen() {
     // Issue once per mount; quest rows for today are stable afterwards.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db]);
+
+  // Snapshot live metrics daily + recompute the next milestone whenever metrics load.
+  useEffect(() => {
+    if (!overview) return;
+    (async () => {
+      await recordSnapshot(db, overview);
+      setSnapshots(await getSnapshots(db));
+      const verified = await db.getAllAsync<{ chapter_id: string }>(
+        "SELECT chapter_id FROM chapter_progress WHERE status = 'verified'"
+      );
+      setNext(nextMoneyMilestone(overview, new Set(verified.map(v => v.chapter_id))));
+    })();
+  }, [db, overview]);
+
+  async function onDevSample() {
+    const fixture = await devSeedSampleMetrics(db);
+    setRcConnection({ connected: true, projectName: 'Fretionary (sample)' });
+    setRcOverview(fixture);
+  }
 
   const onComplete = useCallback(
     async (quest: QuestLogRow) => {
@@ -82,6 +114,24 @@ export default function TodayScreen() {
               <Text style={styles.counterText}>{character.streak}</Text>
             </View>
           </View>
+        </View>
+
+        <View style={styles.dashboard}>
+          <RevenueDashboard
+            connected={connected}
+            projectName={projectName}
+            overview={overview}
+            loading={loading}
+            snapshots={snapshots}
+            next={next}
+            onConnect={() => router.push('/connect')}
+            onVerifyNext={id => router.push(`/verify/${id}`)}
+          />
+          {__DEV__ && !connected ? (
+            <Pressable onPress={onDevSample} style={styles.devSample}>
+              <Text style={styles.devSampleText}>load sample metrics (dev)</Text>
+            </Pressable>
+          ) : null}
         </View>
 
         <View style={styles.headingRow}>
@@ -196,6 +246,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     backgroundColor: 'rgba(237,234,251,0.14)',
   },
+  dashboard: { marginTop: 16 },
+  devSample: { alignSelf: 'center', paddingVertical: 8 },
+  devSampleText: { fontFamily: fonts.uiBold, fontSize: 10, color: colors.textFaint },
   headingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

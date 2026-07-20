@@ -1,5 +1,5 @@
 import { type SQLiteDatabase } from 'expo-sqlite';
-import { CHAPTERS_BY_ID, type Chapter, type VerifyMetric } from '@/content/questline';
+import { CHAPTERS, CHAPTERS_BY_ID, type Chapter, type VerifyMetric } from '@/content/questline';
 import { unlockNext } from '@/db/chapters';
 import { writeMilestoneEntry } from '@/logic/journal';
 import { type RcOverview } from '@/integrations/revenuecat';
@@ -79,4 +79,28 @@ export function formatMetric(metric: VerifyMetric, value: number): string {
     return `$${Math.round(value).toLocaleString()}`;
   }
   return value.toLocaleString();
+}
+
+export interface NextMilestone {
+  chapter: Chapter;
+  current: number;
+  pct: number;
+}
+
+/**
+ * The next revenue milestone the founder is working toward — the lowest-index
+ * verifiable chapter not yet verified — with progress against the live metric.
+ * Powers the "next milestone" block on the revenue dashboard.
+ */
+export function nextMoneyMilestone(
+  overview: RcOverview | null,
+  verifiedIds: Set<string>
+): NextMilestone | null {
+  const pending = CHAPTERS.filter(c => c.verify && !verifiedIds.has(c.id)).sort(
+    (a, b) => a.index - b.index
+  );
+  const chapter = pending[0];
+  if (!chapter?.verify) return null;
+  const current = metricValue(overview, chapter.verify.metric);
+  return { chapter, current, pct: Math.min(1, current / chapter.verify.threshold) };
 }

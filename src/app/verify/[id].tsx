@@ -41,7 +41,7 @@ export default function VerifyChapter() {
     if (!chapter || !verify || !id) return;
     setBusy(true);
     setShortfall(false);
-    const fresh = await refresh(); // returns the freshly-fetched metrics
+    const fresh = (await refresh()) ?? overview; // fresh fetch, else cached
     if (chapterMet(fresh, chapter)) {
       await markChapterVerified(db, id, 'revenuecat', {
         metric: verify.metric,

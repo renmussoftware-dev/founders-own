@@ -84,6 +84,18 @@ const MIGRATIONS: string[] = [
     value TEXT NOT NULL
   );
   `,
+
+  // v3 — daily RevenueCat metric snapshots (powers the revenue sparkline + trend)
+  `
+  CREATE TABLE metric_snapshots (
+    snapshot_date TEXT PRIMARY KEY,
+    mrr REAL NOT NULL DEFAULT 0,
+    revenue REAL NOT NULL DEFAULT 0,
+    active_subscriptions INTEGER NOT NULL DEFAULT 0,
+    active_users INTEGER NOT NULL DEFAULT 0,
+    captured_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  `,
 ];
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {

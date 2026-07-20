@@ -20,9 +20,11 @@ export function useRevenueData() {
   const refresh = useCallback(async () => {
     const cred = await getRcCredentials();
     if (!cred) {
-      setRcConnection({ connected: false, projectName: null });
-      setRcOverview(null);
-      return null;
+      // No stored key. Don't clobber an already-loaded overview (e.g. the dev
+      // sample); only mark disconnected on a truly empty state.
+      const current = useStore.getState().rcOverview;
+      if (!current) setRcConnection({ connected: false, projectName: null });
+      return current;
     }
     setRcConnection({ connected: true, projectName: cred.projectName });
     setLoading(true);
