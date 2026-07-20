@@ -15,6 +15,9 @@ import { colors } from '@/theme/tokens';
 import { migrateDbIfNeeded } from '@/db/migrations';
 import { initAnalytics } from '@/utils/analytics';
 import { bootstrapRevenueCat } from '@/hooks/useRevenueCat';
+import { initFeedback, setSoundOn } from '@/utils/feedback';
+import { loadSoundEnabled } from '@/integrations/settings';
+import { useStore } from '@/store/useStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,9 +33,15 @@ export default function RootLayout() {
   // Initialize Meta advertiser-tracking on launch (SDK auto-inits natively).
   // Configure RevenueCat and sync the Pro entitlement before any screen reads
   // `isPro` — gating must be correct app-wide, not just after the paywall opens.
+  // Preload UI sound effects and apply the saved mute preference.
   useEffect(() => {
     initAnalytics();
     bootstrapRevenueCat();
+    initFeedback();
+    loadSoundEnabled().then(enabled => {
+      setSoundOn(enabled);
+      useStore.setState({ soundEnabled: enabled });
+    });
   }, []);
 
   useEffect(() => {

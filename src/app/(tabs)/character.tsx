@@ -13,6 +13,7 @@ import { CHAPTERS_BY_ID } from '@/content/questline';
 import { colors, fonts, statOrder } from '@/theme/tokens';
 import { statXp } from '@/logic/leveling';
 import { useStore } from '@/store/useStore';
+import { feedback } from '@/utils/feedback';
 
 type SheetTab = 'Stats' | 'Milestones' | 'Journal';
 
@@ -23,6 +24,8 @@ export default function CharacterScreen() {
   const db = useSQLiteContext();
   const character = useStore(s => s.character);
   const setCharacter = useStore(s => s.setCharacter);
+  const soundEnabled = useStore(s => s.soundEnabled);
+  const setSoundEnabled = useStore(s => s.setSoundEnabled);
   const [tab, setTab] = useState<SheetTab>('Stats');
   const [milestones, setMilestones] = useState<MilestoneItem[]>([]);
 
@@ -130,6 +133,24 @@ export default function CharacterScreen() {
                   </Text>
                 </View>
               )}
+
+              <Text style={[styles.milestoneTitle, styles.settingsHeading]}>Settings</Text>
+              <Pressable
+                onPress={() => {
+                  const next = !soundEnabled;
+                  setSoundEnabled(next);
+                  if (next) feedback('tap'); // let them hear it come on
+                }}
+                style={styles.settingRow}
+              >
+                <View style={styles.settingBody}>
+                  <Text style={styles.settingLabel}>Sound effects</Text>
+                  <Text style={styles.settingSub}>Chimes for quests, level-ups & milestones</Text>
+                </View>
+                <View style={[styles.switch, soundEnabled && styles.switchOn]}>
+                  <View style={[styles.knob, soundEnabled && styles.knobOn]} />
+                </View>
+              </Pressable>
             </>
           )}
         </ScrollView>
@@ -284,6 +305,43 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     padding: 15,
   },
+  settingsHeading: { marginTop: 22, marginBottom: 10 },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceBottom,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    gap: 12,
+  },
+  settingBody: { flex: 1 },
+  settingLabel: { fontFamily: fonts.uiExtraBold, fontSize: 14, color: colors.textPrimary },
+  settingSub: {
+    fontFamily: fonts.uiBold,
+    fontSize: 11,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  switch: {
+    width: 46,
+    height: 28,
+    borderRadius: 999,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    padding: 3,
+    justifyContent: 'center',
+  },
+  switchOn: { backgroundColor: colors.violetBright },
+  knob: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#EDEAFB',
+    alignSelf: 'flex-start',
+  },
+  knobOn: { alignSelf: 'flex-end' },
   milestoneEmptyText: {
     fontFamily: fonts.uiBold,
     fontSize: 12,

@@ -43,7 +43,13 @@
       "expo-sqlite",
       "expo-font",
       "expo-sharing",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

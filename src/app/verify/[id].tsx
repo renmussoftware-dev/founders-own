@@ -18,6 +18,7 @@ import {
   metricValue,
 } from '@/logic/verification';
 import { proLocked } from '@/config/pro';
+import { feedback } from '@/utils/feedback';
 import { useStore } from '@/store/useStore';
 import { colors, fonts } from '@/theme/tokens';
 
@@ -47,6 +48,7 @@ export default function VerifyChapter() {
       router.replace('/paywall');
       return;
     }
+    feedback('tap');
     setBusy(true);
     setShortfall(false);
     const fresh = (await refresh()) ?? overview; // fresh fetch, else cached

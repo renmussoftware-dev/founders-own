@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -11,6 +11,7 @@ import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { buildFounderCardData, type FounderCardData } from '@/logic/founderCard';
 import { useEnsureCharacter } from '@/hooks/useEnsureCharacter';
 import { usePopIn, useTwinkle } from '@/theme/motion';
+import { feedback } from '@/utils/feedback';
 import { colors, fonts } from '@/theme/tokens';
 
 /** Verified-milestone celebration takeover (design 7e). Fires on chapter completion. */
@@ -21,6 +22,7 @@ export default function MilestoneCelebration() {
   const db = useSQLiteContext();
   const { character, loaded } = useEnsureCharacter();
   const [data, setData] = useState<FounderCardData | null>(null);
+  const celebrated = useRef(false);
 
   const cardPop = usePopIn(120);
   const t1 = useTwinkle(0);
@@ -31,6 +33,14 @@ export default function MilestoneCelebration() {
   useEffect(() => {
     if (id && character) buildFounderCardData(db, character, id).then(setData);
   }, [db, id, character]);
+
+  // Sound the triumphant cue once, when the celebration first appears.
+  useEffect(() => {
+    if (data && !celebrated.current) {
+      celebrated.current = true;
+      feedback('milestone');
+    }
+  }, [data]);
 
   // Reached without a character (deep link before onboarding) → send them there.
   if (loaded && !character) return <Redirect href="/onboarding" />;
@@ -84,7 +94,12 @@ export default function MilestoneCelebration() {
       </View>
 
       <View style={[styles.actions, { paddingBottom: Math.max(insets.bottom, 32) }]}>
-        <Pressable onPress={() => router.replace(`/founder-card/${id}`)}>
+        <Pressable
+          onPress={() => {
+            feedback('tap');
+            router.replace(`/founder-card/${id}`);
+          }}
+        >
           <LinearGradient colors={[colors.gold, colors.goldMid]} style={styles.shareBtn}>
             <Text style={styles.shareText}>Share founder card</Text>
           </LinearGradient>

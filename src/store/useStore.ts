@@ -1,11 +1,17 @@
 import { create } from 'zustand';
 import { type CharacterRow } from '@/db/character';
 import { type RcOverview } from '@/integrations/revenuecat';
+import { saveSoundEnabled } from '@/integrations/settings';
+import { setSoundOn } from '@/utils/feedback';
 
 interface AppState {
   /** Pro subscription (annual/monthly) entitlement, synced by useRevenueCat. */
   isPro: boolean;
   setIsPro: (isPro: boolean) => void;
+
+  /** UI sound effects (achievements, level-ups, taps). Persisted; default on. */
+  soundEnabled: boolean;
+  setSoundEnabled: (enabled: boolean) => void;
 
   /** In-memory snapshot of the character row; SQLite is the source of truth. */
   character: CharacterRow | null;
@@ -23,6 +29,13 @@ interface AppState {
 export const useStore = create<AppState>(set => ({
   isPro: false,
   setIsPro: isPro => set({ isPro }),
+
+  soundEnabled: true,
+  setSoundEnabled: enabled => {
+    setSoundOn(enabled); // keep the audio layer in sync immediately
+    void saveSoundEnabled(enabled); // persist for next launch
+    set({ soundEnabled: enabled });
+  },
 
   character: null,
   characterLoaded: false,

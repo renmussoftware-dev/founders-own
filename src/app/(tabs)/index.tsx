@@ -28,6 +28,7 @@ import { upsertDailyEntry } from '@/logic/journal';
 import { questContext } from '@/logic/questContext';
 import { nextMoneyMilestone, type NextMilestone } from '@/logic/verification';
 import { proLocked } from '@/config/pro';
+import { feedback } from '@/utils/feedback';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { useRevenueData } from '@/hooks/useRevenueData';
 import { useStore } from '@/store/useStore';
@@ -125,6 +126,10 @@ export default function TodayScreen() {
     async (quest: QuestLogRow) => {
       const fresh = await completeQuest(db, quest);
       await upsertDailyEntry(db);
+      // Level-up when this quest's XP pushed its stat across a level boundary.
+      const afterXp = statXp(fresh, quest.stat);
+      const leveled = statLevel(afterXp - quest.xp) < statLevel(afterXp);
+      feedback(leveled ? 'levelUp' : 'questComplete');
       setCharacter(fresh);
       const updated = await db.getAllAsync<QuestLogRow>(
         'SELECT * FROM quest_log WHERE quest_date = ? ORDER BY id',
