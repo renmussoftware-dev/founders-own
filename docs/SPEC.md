@@ -212,7 +212,7 @@ Bundle at `/mnt/user-data/uploads/`: `Founder_RPG_dc.html` (the canvas — read 
 - [x] **Today / quest board** screen (§11b #1): avatar + XP gem counter + streak flame, "Complete today's quests," completion %, 3 quest cards, stat progress bar
 - [x] Daily quest template pool (seed authored templates, tagged **business_type** + stat/chapter/effort) — `src/content/questTemplates.ts`; full per-chapter/per-type authoring pass still open (§13)
 - [x] Model-specific Revenue/Marketing pools for each business type (see §6 table)
-- [x] On-device daily-quest selection engine (filter by business_type → weakest-stat + chapter-pull + habit; respect effort tiers) — deterministic per-day seed, `src/logic/dailyQuests.ts`
+- [x] On-device daily-quest selection engine (filter by business_type → weakest-stat + chapter-pull + habit; respect effort tiers) — deterministic per-day seed, `src/logic/dailyQuests.ts`. **Stage-aware:** each template carries a journey `stage` (foundation/early/growth/scale) derived from the active chapter; the engine prefers a quest that is both business-type-specific AND stage-appropriate, then relaxes (type any-stage → universal at-stage → universal any-stage). Keeps "run an existing business" quests away from foundation founders who haven't started.
 - [x] Quest completion → stat XP + gems → persist; streak + "perfect day" (all 3) tracking in `quest_log`
 - [x] Quest-complete celebration animations (popIn / floatUp XP chip / twinkle / ringPulse) per §11a
 

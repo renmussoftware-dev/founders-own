@@ -3,13 +3,24 @@ import { type StatKey } from '@/theme/tokens';
 
 export type Effort = 'light' | 'medium' | 'heavy';
 
+/**
+ * Journey stage (SPEC §6 — "where they are in their journey"). Derived from the
+ * founder's active chapter in logic/dailyQuests. A template with no `stages`
+ * applies at every stage; otherwise it only surfaces at a matching stage. This
+ * is what keeps "automate a manual task" or "recover an abandoned cart" away
+ * from someone who hasn't shipped or sold anything yet.
+ */
+export type Stage = 'foundation' | 'early' | 'growth' | 'scale';
+
 export interface QuestTemplate {
   id: string;
-  /** 'any' templates serve every business type. */
+  /** 'any' templates serve every business type; otherwise type-specific. */
   type: BusinessType | 'any';
   stat: StatKey;
   effort: Effort;
   title: string;
+  /** Journey stages this fits; omit for "all stages". */
+  stages?: Stage[];
   /** Tag habit-pool templates; the engine's third slot draws only from these. */
   habit?: boolean;
   /** Chapter-pull templates tied to an authored chapter (SPEC §6). */
@@ -23,90 +34,191 @@ export const XP_BY_EFFORT: Record<Effort, number> = {
 };
 
 /**
- * v1 authored pool (SPEC §6). Revenue/Marketing diverge per business type;
- * Product/Operations/Finance are near-universal. Habit quests are light.
- * The full per-chapter/per-type authoring pass is an open item (SPEC §13).
+ * Authored pool (SPEC §6). Two axes of personalization:
+ *  - business_type: revenue/marketing motions diverge hard; the engine prefers
+ *    a type-specific quest and falls back to a universal ('any') one.
+ *  - stage: foundation founders get "get onto the path" actions; operating-
+ *    business quests are gated to later stages.
+ * Digital product / app is authored in depth (the anonymous-download case);
+ * other types get type-specific revenue/marketing/foundation coverage and lean
+ * on the stage-tagged 'any' pool for the rest.
  */
 export const QUEST_TEMPLATES: QuestTemplate[] = [
-  // ---- Revenue — Digital product / app ----
-  { id: 'rev_app_funnel', type: 'digital_product', stat: 'revenue', effort: 'medium', title: 'Check yesterday’s install → trial conversion, note one drop-off point' },
-  { id: 'rev_app_adhook', type: 'digital_product', stat: 'revenue', effort: 'medium', title: 'Write one new ad hook to test' },
-  { id: 'rev_app_reviews', type: 'digital_product', stat: 'revenue', effort: 'light', title: 'Reply to 3 App Store reviews' },
-  { id: 'rev_app_paywall', type: 'digital_product', stat: 'revenue', effort: 'heavy', title: 'Change one thing on your paywall and note the before/after' },
-  { id: 'rev_app_price', type: 'digital_product', stat: 'revenue', effort: 'medium', title: 'Compare your price against 3 competing apps' },
+  // =========================================================================
+  // UNIVERSAL ('any') — stage-tagged so every type has a sane fallback per stat
+  // =========================================================================
 
-  // ---- Revenue — E-commerce ----
-  { id: 'rev_ecom_cart', type: 'ecommerce', stat: 'revenue', effort: 'medium', title: 'Recover one abandoned cart' },
-  { id: 'rev_ecom_list', type: 'ecommerce', stat: 'revenue', effort: 'medium', title: 'Email your list one restock or offer' },
-  { id: 'rev_ecom_page', type: 'ecommerce', stat: 'revenue', effort: 'heavy', title: 'Improve one product page' },
-  { id: 'rev_ecom_bundle', type: 'ecommerce', stat: 'revenue', effort: 'medium', title: 'Sketch one bundle or upsell you could offer this week' },
+  // ---- Product ----
+  { id: 'any_prod_f1', type: 'any', stat: 'product', effort: 'light', stages: ['foundation'], title: 'Write the single most important thing your product must do well' },
+  { id: 'any_prod_f2', type: 'any', stat: 'product', effort: 'heavy', stages: ['foundation'], title: 'Ship the smallest version a real person could use today' },
+  { id: 'any_prod_e1', type: 'any', stat: 'product', effort: 'medium', stages: ['early'], title: 'Fix the one thing customers complain about most' },
+  { id: 'any_prod_e2', type: 'any', stat: 'product', effort: 'medium', stages: ['early', 'growth'], title: 'Cut or simplify one thing nobody uses' },
+  { id: 'any_prod_g1', type: 'any', stat: 'product', effort: 'heavy', stages: ['growth', 'scale'], title: 'Spend 45 focused minutes making the core experience better' },
+  { id: 'any_prod_g2', type: 'any', stat: 'product', effort: 'medium', stages: ['growth', 'scale'], title: 'Ask one recent customer what almost stopped them from buying' },
 
-  // ---- Revenue — Services & freelance ----
-  { id: 'rev_svc_past', type: 'services', stat: 'revenue', effort: 'medium', title: 'Reach out to 3 past clients for a referral or repeat order' },
-  { id: 'rev_svc_proposal', type: 'services', stat: 'revenue', effort: 'light', title: 'Follow up one open proposal' },
-  { id: 'rev_svc_offer', type: 'services', stat: 'revenue', effort: 'heavy', title: 'Rewrite your core offer in one sentence a stranger would understand' },
-  { id: 'rev_svc_raise', type: 'services', stat: 'revenue', effort: 'medium', title: 'Price your next project 10% higher and write the justification' },
+  // ---- Marketing ----
+  { id: 'any_mkt_f1', type: 'any', stat: 'marketing', effort: 'light', stages: ['foundation'], title: 'Write your one-sentence pitch: who it’s for and the problem you solve' },
+  { id: 'any_mkt_f2', type: 'any', stat: 'marketing', effort: 'medium', stages: ['foundation'], title: 'Tell 5 people who have this problem what you’re building' },
+  { id: 'any_mkt_e1', type: 'any', stat: 'marketing', effort: 'medium', stages: ['early', 'growth'], title: 'Do the one marketing activity that’s worked best — again' },
+  { id: 'any_mkt_e2', type: 'any', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Write 3 hooks for the same message; keep the best' },
+  { id: 'any_mkt_g1', type: 'any', stat: 'marketing', effort: 'medium', stages: ['growth', 'scale'], title: 'Show up once where your buyers already gather' },
 
-  // ---- Revenue — Local & in-person ----
-  { id: 'rev_loc_review', type: 'local', stat: 'revenue', effort: 'light', title: 'Ask one completed customer for a Google review' },
-  { id: 'rev_loc_gbp', type: 'local', stat: 'revenue', effort: 'light', title: 'Check your Google Business ranking for one keyword' },
-  { id: 'rev_loc_repeat', type: 'local', stat: 'revenue', effort: 'medium', title: 'Text one past customer a seasonal offer' },
-  { id: 'rev_loc_partner', type: 'local', stat: 'revenue', effort: 'heavy', title: 'Pitch one nearby business on referring each other' },
+  // ---- Revenue ----
+  { id: 'any_rev_f1', type: 'any', stat: 'revenue', effort: 'medium', stages: ['foundation'], title: 'Decide exactly what you’ll charge for, and how much' },
+  { id: 'any_rev_f2', type: 'any', stat: 'revenue', effort: 'medium', stages: ['foundation'], title: 'Make your first direct ask for money or a signup' },
+  { id: 'any_rev_e1', type: 'any', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Follow up with everyone who showed interest but didn’t buy' },
+  { id: 'any_rev_e2', type: 'any', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Write down the #1 thing blocking your next sale — and one fix' },
+  { id: 'any_rev_g1', type: 'any', stat: 'revenue', effort: 'medium', stages: ['growth', 'scale'], title: 'Raise the value of each customer by one concrete step' },
 
-  // ---- Revenue — Content & audience ----
-  { id: 'rev_con_offer', type: 'content', stat: 'revenue', effort: 'medium', title: 'Mention your paid thing in today’s content — once, naturally' },
-  { id: 'rev_con_sponsor', type: 'content', stat: 'revenue', effort: 'heavy', title: 'Draft one sponsor or affiliate pitch' },
-  { id: 'rev_con_product', type: 'content', stat: 'revenue', effort: 'medium', title: 'List 3 things your audience asks for that they’d pay for' },
+  // ---- Operations ----
+  { id: 'any_ops_f1', type: 'any', stat: 'operations', effort: 'medium', stages: ['foundation'], title: 'Set up the one tool you need to see whether it’s working' },
+  { id: 'any_ops_f2', type: 'any', stat: 'operations', effort: 'light', stages: ['foundation', 'early'], title: 'Write today’s single most important task and do it first' },
+  { id: 'any_ops_e1', type: 'any', stat: 'operations', effort: 'medium', stages: ['early', 'growth'], title: 'Turn one repeating task into a checklist' },
+  { id: 'any_ops_g1', type: 'any', stat: 'operations', effort: 'heavy', stages: ['growth', 'scale'], title: 'Automate or delegate one thing you did manually this week' },
+  { id: 'any_ops_g2', type: 'any', stat: 'operations', effort: 'medium', stages: ['growth', 'scale'], title: 'Name this week’s bottleneck and one way around it' },
 
-  // ---- Revenue — generic fallback ('other') ----
-  { id: 'rev_any_ask', type: 'any', stat: 'revenue', effort: 'medium', title: 'Make one direct ask for money today' },
-  { id: 'rev_any_blocker', type: 'any', stat: 'revenue', effort: 'medium', title: 'Write down the #1 thing blocking your next sale — and one fix' },
+  // ---- Finance ----
+  { id: 'any_fin_f1', type: 'any', stat: 'finance', effort: 'light', stages: ['foundation'], title: 'List your monthly costs so you know your burn' },
+  { id: 'any_fin_f2', type: 'any', stat: 'finance', effort: 'light', stages: ['foundation'], title: 'Set a specific goal for your first paying month' },
+  { id: 'any_fin_e1', type: 'any', stat: 'finance', effort: 'light', stages: ['early', 'growth'], title: 'Compare this week’s money in against money out' },
+  { id: 'any_fin_e2', type: 'any', stat: 'finance', effort: 'light', stages: ['early', 'growth'], title: 'Find one expense to cut or renegotiate' },
+  { id: 'any_fin_g1', type: 'any', stat: 'finance', effort: 'medium', stages: ['growth', 'scale'], title: 'Update your runway — how many months at current burn?' },
 
-  // ---- Marketing — type-specific ----
-  { id: 'mkt_app_aso', type: 'digital_product', stat: 'marketing', effort: 'medium', title: 'Test one new App Store screenshot or subtitle idea' },
-  { id: 'mkt_app_short', type: 'digital_product', stat: 'marketing', effort: 'medium', title: 'Post one short video showing the app solving a real problem' },
-  { id: 'mkt_ecom_ugc', type: 'ecommerce', stat: 'marketing', effort: 'light', title: 'Repost one customer photo or review' },
-  { id: 'mkt_ecom_content', type: 'ecommerce', stat: 'marketing', effort: 'medium', title: 'Ship one piece of content showing the product in use' },
-  { id: 'mkt_svc_proof', type: 'services', stat: 'marketing', effort: 'medium', title: 'Turn one past project into a before/after post' },
-  { id: 'mkt_svc_niche', type: 'services', stat: 'marketing', effort: 'light', title: 'Comment usefully in one place your clients hang out' },
-  { id: 'mkt_loc_photo', type: 'local', stat: 'marketing', effort: 'light', title: 'Post one photo of today’s job with location tagged' },
-  { id: 'mkt_con_study', type: 'content', stat: 'marketing', effort: 'light', title: 'Study one competitor’s top-performing post — note why it worked' },
-  { id: 'mkt_con_post', type: 'content', stat: 'marketing', effort: 'medium', title: 'Post one piece of content in your niche' },
-  { id: 'mkt_any_hook', type: 'any', stat: 'marketing', effort: 'medium', title: 'Write 3 hooks for the same message; keep the best' },
-  { id: 'mkt_any_channel', type: 'any', stat: 'marketing', effort: 'medium', title: 'Show up once today where your buyers already are' },
+  // =========================================================================
+  // DIGITAL PRODUCT / APP (users, downloads, subscriptions)
+  // =========================================================================
 
-  // ---- Product (shared) ----
-  { id: 'prod_any_friction', type: 'any', stat: 'product', effort: 'medium', title: 'Fix one piece of friction a customer hit this week' },
-  { id: 'prod_any_feedback', type: 'any', stat: 'product', effort: 'medium', title: 'Ask one recent customer what almost stopped them from buying' },
-  { id: 'prod_any_polish', type: 'any', stat: 'product', effort: 'heavy', title: 'Spend 45 focused minutes making the thing itself better' },
-  { id: 'prod_any_cut', type: 'any', stat: 'product', effort: 'medium', title: 'Cut or simplify one thing nobody uses' },
+  // ---- Product ----
+  { id: 'app_prod_f1', type: 'digital_product', stat: 'product', effort: 'light', stages: ['foundation'], title: 'Write your app’s one-line pitch: who it’s for and the problem it solves' },
+  { id: 'app_prod_f2', type: 'digital_product', stat: 'product', effort: 'light', stages: ['foundation'], title: 'Pick the single core action your app has to nail' },
+  { id: 'app_prod_f3', type: 'digital_product', stat: 'product', effort: 'heavy', stages: ['foundation'], title: 'Ship the smallest build a real user could try today' },
+  { id: 'app_prod_e1', type: 'digital_product', stat: 'product', effort: 'medium', stages: ['early', 'growth'], title: 'Fix the top crash or bug from this week' },
+  { id: 'app_prod_e2', type: 'digital_product', stat: 'product', effort: 'medium', stages: ['early', 'growth'], title: 'Improve your first-run onboarding by one step' },
+  { id: 'app_prod_g1', type: 'digital_product', stat: 'product', effort: 'medium', stages: ['growth', 'scale'], title: 'Watch a real person use the app; note one friction point' },
+  { id: 'app_prod_g2', type: 'digital_product', stat: 'product', effort: 'heavy', stages: ['growth', 'scale'], title: 'Ship one improvement to your worst drop-off screen' },
 
-  // ---- Operations (shared) ----
-  { id: 'ops_any_checklist', type: 'any', stat: 'operations', effort: 'medium', title: 'Turn one recurring task into a checklist' },
-  { id: 'ops_any_automate', type: 'any', stat: 'operations', effort: 'heavy', title: 'Automate or delegate one thing you did manually this week' },
-  { id: 'ops_any_inbox', type: 'any', stat: 'operations', effort: 'light', title: 'Clear every open customer message' },
-  { id: 'ops_any_bottleneck', type: 'any', stat: 'operations', effort: 'medium', title: 'Name this week’s bottleneck and one way around it' },
+  // ---- Marketing ----
+  { id: 'app_mkt_f1', type: 'digital_product', stat: 'marketing', effort: 'medium', stages: ['foundation'], title: 'Write your store title + subtitle around one target keyword' },
+  { id: 'app_mkt_f2', type: 'digital_product', stat: 'marketing', effort: 'medium', stages: ['foundation', 'early'], title: 'Record a 15-second clip of the app solving the problem' },
+  { id: 'app_mkt_f3', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['foundation', 'early'], title: 'Post one build-in-public update' },
+  { id: 'app_mkt_e1', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Write one new ad hook to test' },
+  { id: 'app_mkt_e2', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Reply to 3 App Store or Play Store reviews' },
+  { id: 'app_mkt_e3', type: 'digital_product', stat: 'marketing', effort: 'medium', stages: ['early', 'growth'], title: 'Post one short video of the app in action' },
+  { id: 'app_mkt_g1', type: 'digital_product', stat: 'marketing', effort: 'light', stages: ['growth', 'scale'], title: 'Study a competitor’s top-performing creative; note why it works' },
+  { id: 'app_mkt_g2', type: 'digital_product', stat: 'marketing', effort: 'medium', stages: ['growth', 'scale'], title: 'Pitch one newsletter or creator in your niche' },
 
-  // ---- Finance (shared) ----
-  { id: 'fin_any_numbers', type: 'any', stat: 'finance', effort: 'light', title: 'Review yesterday’s numbers — money in, money out' },
-  { id: 'fin_any_expense', type: 'any', stat: 'finance', effort: 'light', title: 'Find one expense to cut or renegotiate' },
-  { id: 'fin_any_runway', type: 'any', stat: 'finance', effort: 'medium', title: 'Update your runway — how many months at current burn?' },
-  { id: 'fin_any_invoice', type: 'any', stat: 'finance', effort: 'light', title: 'Chase one unpaid invoice or pending payout' },
+  // ---- Revenue ----
+  { id: 'app_rev_f1', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['foundation'], title: 'Decide what’s free vs paid in your app' },
+  { id: 'app_rev_f2', type: 'digital_product', stat: 'revenue', effort: 'heavy', stages: ['foundation'], title: 'Set up your subscription or one-time purchase in the store' },
+  { id: 'app_rev_f3', type: 'digital_product', stat: 'revenue', effort: 'light', stages: ['foundation', 'early'], title: 'Compare your price against 3 competing apps' },
+  { id: 'app_rev_e1', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Check yesterday’s install → trial conversion; note one drop-off point' },
+  { id: 'app_rev_e2', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Change one thing on your paywall and note the before/after' },
+  { id: 'app_rev_g1', type: 'digital_product', stat: 'revenue', effort: 'heavy', stages: ['growth', 'scale'], title: 'A/B test one element of your paywall' },
+  { id: 'app_rev_g2', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['growth', 'scale'], title: 'Add an annual option or one upsell' },
 
-  // ---- Habits (light, third slot) ----
-  { id: 'hab_any_numbers', type: 'any', stat: 'finance', effort: 'light', habit: true, title: 'Glance at your numbers before noon' },
-  { id: 'hab_any_note', type: 'any', stat: 'operations', effort: 'light', habit: true, title: 'Write tomorrow’s top task before closing the day' },
-  { id: 'hab_any_customer', type: 'any', stat: 'marketing', effort: 'light', habit: true, title: 'Talk to one customer or prospect today' },
-  { id: 'hab_app_metrics', type: 'digital_product', stat: 'revenue', effort: 'light', habit: true, title: 'Check installs and trials — 2 minutes, no rabbit holes' },
-  { id: 'hab_con_engage', type: 'content', stat: 'marketing', effort: 'light', habit: true, title: 'Reply to every comment on your latest post' },
-  { id: 'hab_loc_photos', type: 'local', stat: 'marketing', effort: 'light', habit: true, title: 'Take one job-site photo for the content bank' },
+  // ---- Operations ----
+  { id: 'app_ops_f1', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['foundation'], title: 'Set up analytics so you can see installs and key events' },
+  { id: 'app_ops_f2', type: 'digital_product', stat: 'operations', effort: 'light', stages: ['foundation'], title: 'Turn on crash reporting' },
+  { id: 'app_ops_f3', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['foundation', 'early'], title: 'Draft your store listing (screenshots, description)' },
+  { id: 'app_ops_e1', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['early', 'growth'], title: 'Automate one step of your build or release' },
+  { id: 'app_ops_e2', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['early', 'growth'], title: 'Set up a simple way to collect user feedback in-app' },
+  { id: 'app_ops_g1', type: 'digital_product', stat: 'operations', effort: 'heavy', stages: ['growth', 'scale'], title: 'Automate or delegate one recurring release task' },
 
-  // ---- Chapter-pull — Act I (placeholder set until the authoring pass, SPEC §13) ----
-  { id: 'ch1_any_offer', type: 'any', stat: 'revenue', effort: 'medium', chapter: 'act1_ch1', title: 'Write your offer in one sentence' },
-  { id: 'ch1_any_prospects', type: 'any', stat: 'marketing', effort: 'heavy', chapter: 'act1_ch1', title: 'Put your offer in front of 10 people today' },
-  { id: 'ch1_any_close', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch1', title: 'Ask one warm prospect to buy — today' },
-  { id: 'ch2_any_volume', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch2', title: 'Do the single activity most likely to produce a sale, twice' },
+  // ---- Finance ----
+  { id: 'app_fin_f1', type: 'digital_product', stat: 'finance', effort: 'light', stages: ['foundation'], title: 'Add up your monthly costs (dev accounts, hosting, tools)' },
+  { id: 'app_fin_f2', type: 'digital_product', stat: 'finance', effort: 'light', stages: ['foundation', 'early'], title: 'Set a target for your first paying month' },
+  { id: 'app_fin_e1', type: 'digital_product', stat: 'finance', effort: 'light', stages: ['early', 'growth'], title: 'Compare yesterday’s revenue against your costs' },
+  { id: 'app_fin_g1', type: 'digital_product', stat: 'finance', effort: 'medium', stages: ['growth', 'scale'], title: 'Update your runway — months left at current burn' },
+
+  // ---- Habits ----
+  { id: 'app_hab_metrics', type: 'digital_product', stat: 'revenue', effort: 'light', habit: true, title: 'Check installs and trials — 2 minutes, no rabbit holes' },
+  { id: 'app_hab_review', type: 'digital_product', stat: 'marketing', effort: 'light', habit: true, title: 'Read one new user review' },
+  { id: 'app_hab_dogfood', type: 'digital_product', stat: 'product', effort: 'light', habit: true, title: 'Use your own app for 2 minutes; note one rough edge' },
+
+  // =========================================================================
+  // E-COMMERCE (physical products, customers)
+  // =========================================================================
+  { id: 'ecom_prod_f1', type: 'ecommerce', stat: 'product', effort: 'heavy', stages: ['foundation'], title: 'Get one product ready to sell — photo, price, description' },
+  { id: 'ecom_rev_f1', type: 'ecommerce', stat: 'revenue', effort: 'heavy', stages: ['foundation'], title: 'Stand up a way to take payment (a simple store or checkout link)' },
+  { id: 'ecom_mkt_f1', type: 'ecommerce', stat: 'marketing', effort: 'medium', stages: ['foundation'], title: 'Show your product to 5 people who’d actually buy it' },
+  { id: 'ecom_rev_e1', type: 'ecommerce', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Recover one abandoned cart' },
+  { id: 'ecom_rev_e2', type: 'ecommerce', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Email your list one restock or offer' },
+  { id: 'ecom_prod_e1', type: 'ecommerce', stat: 'product', effort: 'heavy', stages: ['early', 'growth'], title: 'Improve one product page' },
+  { id: 'ecom_mkt_e1', type: 'ecommerce', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Repost one customer photo or review' },
+  { id: 'ecom_rev_g1', type: 'ecommerce', stat: 'revenue', effort: 'medium', stages: ['growth', 'scale'], title: 'Sketch one bundle or upsell you could offer this week' },
+  { id: 'ecom_hab', type: 'ecommerce', stat: 'operations', effort: 'light', habit: true, title: 'Check orders and messages; clear anything waiting' },
+
+  // =========================================================================
+  // SERVICES & FREELANCE (few named clients)
+  // =========================================================================
+  { id: 'svc_rev_f1', type: 'services', stat: 'revenue', effort: 'medium', stages: ['foundation'], title: 'Write your offer in one sentence a stranger would understand' },
+  { id: 'svc_mkt_f1', type: 'services', stat: 'marketing', effort: 'medium', stages: ['foundation'], title: 'Reach out to 5 people who might need what you do' },
+  { id: 'svc_rev_f2', type: 'services', stat: 'revenue', effort: 'medium', stages: ['foundation', 'early'], title: 'Send one real proposal or price to a prospect' },
+  { id: 'svc_rev_e1', type: 'services', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Reach out to 3 past clients for a referral or repeat order' },
+  { id: 'svc_rev_e2', type: 'services', stat: 'revenue', effort: 'light', stages: ['early', 'growth'], title: 'Follow up on one open proposal' },
+  { id: 'svc_mkt_e1', type: 'services', stat: 'marketing', effort: 'medium', stages: ['early', 'growth'], title: 'Turn one past project into a before/after post' },
+  { id: 'svc_rev_g1', type: 'services', stat: 'revenue', effort: 'medium', stages: ['growth', 'scale'], title: 'Price your next project 10% higher and write the justification' },
+  { id: 'svc_hab', type: 'services', stat: 'marketing', effort: 'light', habit: true, title: 'Send one thoughtful message to a past or potential client' },
+
+  // =========================================================================
+  // LOCAL & IN-PERSON (physical, local demand)
+  // =========================================================================
+  { id: 'loc_rev_f1', type: 'local', stat: 'revenue', effort: 'medium', stages: ['foundation'], title: 'Offer your service to 5 people or businesses nearby' },
+  { id: 'loc_ops_f1', type: 'local', stat: 'operations', effort: 'medium', stages: ['foundation'], title: 'Set up your Google Business Profile' },
+  { id: 'loc_rev_e1', type: 'local', stat: 'revenue', effort: 'light', stages: ['early', 'growth'], title: 'Ask one completed customer for a Google review' },
+  { id: 'loc_mkt_e1', type: 'local', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Check your Google Business ranking for one keyword' },
+  { id: 'loc_rev_e2', type: 'local', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Text one past customer a seasonal offer' },
+  { id: 'loc_rev_g1', type: 'local', stat: 'revenue', effort: 'heavy', stages: ['growth', 'scale'], title: 'Pitch one nearby business on referring each other' },
+  { id: 'loc_hab', type: 'local', stat: 'marketing', effort: 'light', habit: true, title: 'Take one job-site photo for your content bank' },
+
+  // =========================================================================
+  // CONTENT & AUDIENCE (monetize attention)
+  // =========================================================================
+  { id: 'con_prod_f1', type: 'content', stat: 'product', effort: 'medium', stages: ['foundation'], title: 'Define your niche and who you’re for in one line' },
+  { id: 'con_mkt_f1', type: 'content', stat: 'marketing', effort: 'medium', stages: ['foundation', 'early'], title: 'Post one piece of content in your niche' },
+  { id: 'con_rev_f1', type: 'content', stat: 'revenue', effort: 'medium', stages: ['foundation', 'early'], title: 'List 3 things your audience asks for that they’d pay for' },
+  { id: 'con_mkt_e1', type: 'content', stat: 'marketing', effort: 'light', stages: ['early', 'growth'], title: 'Study one competitor’s top-performing post; note why it worked' },
+  { id: 'con_rev_e1', type: 'content', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Mention your paid thing in today’s content — once, naturally' },
+  { id: 'con_rev_g1', type: 'content', stat: 'revenue', effort: 'heavy', stages: ['growth', 'scale'], title: 'Draft one sponsor or affiliate pitch' },
+  { id: 'con_hab', type: 'content', stat: 'marketing', effort: 'light', habit: true, title: 'Reply to every comment on your latest post' },
+
+  // =========================================================================
+  // UNIVERSAL HABITS (all stages, all types — third-slot fallback)
+  // =========================================================================
+  { id: 'any_hab_numbers', type: 'any', stat: 'finance', effort: 'light', habit: true, title: 'Review your numbers before noon' },
+  { id: 'any_hab_task', type: 'any', stat: 'operations', effort: 'light', habit: true, title: 'Write tomorrow’s top task before you close the day' },
+  { id: 'any_hab_talk', type: 'any', stat: 'marketing', effort: 'light', habit: true, title: 'Talk to one customer or prospect today' },
+
+  // =========================================================================
+  // CHAPTER-PULL — tied to authored chapters (Act I). Type-specific first,
+  // 'any' as fallback. Chapters are inherently stage-appropriate.
+  // =========================================================================
+
+  // Ch.1 First Sale
+  { id: 'ch1_any_offer', type: 'any', stat: 'revenue', effort: 'light', chapter: 'act1_ch1', title: 'Write your offer in one sentence' },
+  { id: 'ch1_any_reach', type: 'any', stat: 'marketing', effort: 'heavy', chapter: 'act1_ch1', title: 'Get your offer in front of 10 people who have the problem' },
+  { id: 'ch1_any_close', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch1', title: 'Ask one interested person to buy or sign up — today' },
+  { id: 'ch1_app_who', type: 'digital_product', stat: 'product', effort: 'light', chapter: 'act1_ch1', title: 'Write who your app is for and the one problem it solves' },
+  { id: 'ch1_app_reach', type: 'digital_product', stat: 'marketing', effort: 'heavy', chapter: 'act1_ch1', title: 'Get your app in front of 10 people who have that problem' },
+  { id: 'ch1_app_watch', type: 'digital_product', stat: 'product', effort: 'medium', chapter: 'act1_ch1', title: 'Get 5 target users to try it and watch what they do' },
+
+  // Ch.2 First $1,000 month
+  { id: 'ch2_any_volume', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch2', title: 'Do the single most sale-producing activity, twice' },
   { id: 'ch2_any_pipeline', type: 'any', stat: 'operations', effort: 'medium', chapter: 'act1_ch2', title: 'List every open lead and its next step' },
+  { id: 'ch2_app_channel', type: 'digital_product', stat: 'marketing', effort: 'medium', chapter: 'act1_ch2', title: 'Double down on the channel bringing the most installs' },
+  { id: 'ch2_app_conv', type: 'digital_product', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch2', title: 'Find and fix your biggest trial → paid drop-off' },
+
+  // Ch.3 First Repeat Customer
   { id: 'ch3_any_return', type: 'any', stat: 'product', effort: 'medium', chapter: 'act1_ch3', title: 'Fix one reason customers don’t return' },
   { id: 'ch3_any_followup', type: 'any', stat: 'marketing', effort: 'medium', chapter: 'act1_ch3', title: 'Follow up with every past buyer you haven’t talked to in 30 days' },
+  { id: 'ch3_app_retain', type: 'digital_product', stat: 'product', effort: 'medium', chapter: 'act1_ch3', title: 'Add one reason for users to come back tomorrow' },
+  { id: 'ch3_app_winback', type: 'digital_product', stat: 'marketing', effort: 'medium', chapter: 'act1_ch3', title: 'Message lapsed users about one improvement you shipped' },
+
+  // Ch.4 A Week That Runs Itself
+  { id: 'ch4_any_systemize', type: 'any', stat: 'operations', effort: 'medium', chapter: 'act1_ch4', title: 'List your recurring tasks and mark the one to systemize first' },
+  { id: 'ch4_any_automate', type: 'any', stat: 'operations', effort: 'heavy', chapter: 'act1_ch4', title: 'Automate or hand off one recurring task end to end' },
+
+  // Ch.5 First $10,000 month
+  { id: 'ch5_any_price', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch5', title: 'Raise price or widen the offer, and measure the effect' },
+  { id: 'ch5_any_channel', type: 'any', stat: 'marketing', effort: 'heavy', chapter: 'act1_ch5', title: 'Build one repeatable acquisition channel you can turn up' },
 ];

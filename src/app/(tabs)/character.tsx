@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSQLiteContext } from 'expo-sqlite';
 import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
 import { StatRow } from '@/components/ui/StatRow';
+import { devResetAll } from '@/db/dev';
 import { colors, fonts, statOrder } from '@/theme/tokens';
 import { statXp } from '@/logic/leveling';
 import { useStore } from '@/store/useStore';
@@ -13,8 +16,17 @@ type SheetTab = 'Stats' | 'Milestones' | 'Journal';
 /** Character sheet (design 7a). */
 export default function CharacterScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const db = useSQLiteContext();
   const character = useStore(s => s.character);
+  const setCharacter = useStore(s => s.setCharacter);
   const [tab, setTab] = useState<SheetTab>('Stats');
+
+  async function onDevReset() {
+    await devResetAll(db);
+    setCharacter(null);
+    router.replace('/onboarding');
+  }
 
   if (!character) return <ArcaneBackground />;
 
@@ -31,6 +43,11 @@ export default function CharacterScreen() {
         <Text style={styles.rank}>
           Level {character.overall_level} · {character.rank_title}
         </Text>
+        {__DEV__ ? (
+          <Pressable onPress={onDevReset} style={styles.devReset}>
+            <Text style={styles.devResetText}>reset (dev)</Text>
+          </Pressable>
+        ) : null}
         <View style={styles.tabPill}>
           {(['Stats', 'Milestones', 'Journal'] as SheetTab[]).map(t => (
             <Pressable key={t} onPress={() => setTab(t)}>
@@ -124,6 +141,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.textSecondary,
     marginTop: 5,
+  },
+  devReset: {
+    marginTop: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: 'rgba(237,234,251,0.2)',
+  },
+  devResetText: {
+    fontFamily: fonts.uiBold,
+    fontSize: 10,
+    color: colors.textFaint,
   },
   tabPill: {
     flexDirection: 'row',
