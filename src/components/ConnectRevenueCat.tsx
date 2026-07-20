@@ -13,10 +13,10 @@ const DASHBOARD_URL = 'https://app.revenuecat.com/';
 
 const STEPS = [
   'Open RevenueCat and pick the project you want to track.',
-  'Go to Project settings → API keys.',
-  'Create a new v2 (secret) key.',
-  'Set it to read-only: grant Read on Projects and Charts & metrics — no write access.',
-  'Copy the key and paste it here.',
+  'In the left sidebar (near the bottom), open API keys → New secret API key.',
+  'Choose API version V2 and give it any name.',
+  'Set permissions — Charts metrics: Read only · Customer information: No access · Project configuration: Read only.',
+  'Generate, then copy the key and paste it here.',
 ];
 
 /**
