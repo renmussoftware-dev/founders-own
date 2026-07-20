@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Founder RPG",
-    "slug": "founder-rpg",
+    "name": "Founders Own",
+    "slug": "founders-own",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "founderrpg",
+    "scheme": "foundersown",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#120F26",
     "ios": {

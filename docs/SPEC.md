@@ -1,4 +1,6 @@
-# Founder RPG — Build Spec & Handoff
+# Founders Own — Build Spec & Handoff
+
+_(Formerly "Founder RPG" — renamed to **Founders Own**. The repo directory, dev DB filename, and the design-canvas file keep the old `founder-rpg` name.)_
 
 _Solo RPG that maps a real business onto a persistent character sheet. The player IS the character; their actual business is the campaign. Vendor-agnostic, universal for entrepreneurs, engineered for TikTok/Reels shareability._
 
@@ -141,7 +143,7 @@ After onboarding: straight into the Today/quest board (dark Arcane). Verificatio
 
 ## 10. Shareable Founder Cards (marketing engine)
 
-Every chapter completion + level-up generates a shareable trophy card. **Design detail:** the card is deliberately **cream/light** (`#FAF9F5`) — a bright artifact that pops against the dark Arcane app and reads well in a feed. Milestone title is set in **Newsreader serif**; a gold circular seal + "Verified · Stripe" caps sit above it; below, business name + "N days in," then a 3-stat monospace footer (e.g. `Lv 7 Founder` · `34 Day streak` · `217 Quests done`), a `FOUNDER RPG · [MONTH YEAR]` wordmark, and the tagline **"Un-fakeable. Pulled straight from your revenue."** Actions: **"Share founder card"** (gold) / **"Keep it in the journal."** Verified cards carry credibility — the antidote to fake-guru screenshots. Concept itself is a hook: "I turned my business into a video game." Author a **9:16 story variant** for Reels/TikTok.
+Every chapter completion + level-up generates a shareable trophy card. **Design detail:** the card is deliberately **cream/light** (`#FAF9F5`) — a bright artifact that pops against the dark Arcane app and reads well in a feed. Milestone title is set in **Newsreader serif**; a gold circular seal + "Verified · Stripe" caps sit above it; below, business name + "N days in," then a 3-stat monospace footer (e.g. `Lv 7 Founder` · `34 Day streak` · `217 Quests done`), a `FOUNDERS OWN · [MONTH YEAR]` wordmark, and the tagline **"Un-fakeable. Pulled straight from your revenue."** Actions: **"Share founder card"** (gold) / **"Keep it in the journal."** Verified cards carry credibility — the antidote to fake-guru screenshots. Concept itself is a hook: "I turned my business into a video game." Author a **9:16 story variant** for Reels/TikTok.
 
 **Margin note:** journal entries in the design read as written prose ("Shipped a glaze-day reel, asked three past clients for referrals — one said yes on the spot…"). Per §3, do **not** LLM-generate this per user per day on the free tier — assemble from the day's completed-quest data via templates, and reserve true prose generation for the premium tier.
 

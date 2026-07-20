@@ -7,11 +7,11 @@ import Purchases, {
 } from 'react-native-purchases';
 import { useStore } from '@/store/useStore';
 
-// TODO: replace with the Founder RPG app keys once the RevenueCat project exists.
+// TODO: replace with the Founders Own app keys once the RevenueCat project exists.
 // Offering: lifetime "Founder's Edition" $44.99 hero + monthly price anchor (SPEC §9).
 const REVENUECAT_API_KEY_IOS = '';
 const REVENUECAT_API_KEY_ANDROID = '';
-const ENTITLEMENT_ID = 'Founder RPG Pro';
+const ENTITLEMENT_ID = 'Founders Own Pro';
 
 export interface PurchaseState {
   isLoading: boolean;

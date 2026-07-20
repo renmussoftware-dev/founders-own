@@ -34,7 +34,7 @@ export function FounderCard({ data, story }: { data: FounderCardData; story?: bo
         <Stat value={String(data.questsDone)} label="Quests done" />
       </View>
 
-      <Text style={styles.wordmark}>FOUNDER RPG · {data.monthYear}</Text>
+      <Text style={styles.wordmark}>FOUNDERS OWN · {data.monthYear}</Text>
     </View>
   );
 }
