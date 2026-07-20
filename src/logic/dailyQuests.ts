@@ -8,7 +8,7 @@ import {
 } from '@/content/questTemplates';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { grantStatXp, type CharacterRow } from '@/db/character';
-import { weakestStat } from '@/logic/leveling';
+import { weakestStat, weakestStatAmong } from '@/logic/leveling';
 import { type RcOverview } from '@/integrations/revenuecat';
 import { type StatKey } from '@/theme/tokens';
 
@@ -61,20 +61,45 @@ function stageMatches(t: QuestTemplate, stage: Stage): boolean {
   return !t.stages || t.stages.includes(stage);
 }
 
+// Thresholds that map live metrics onto stat signals (SPEC #2). Placeholders —
+// tune once we see real founder data (cf. the pricing-formula tuning note).
+const REACH_FLOOR = 50; // active users below this = a reach/marketing problem
+const TRIAL_CONVERSION_FLOOR = 0.4; // paid / (trials + paid) below this = a product problem
+const REVENUE_PER_SUB_FLOOR = 3; // MRR per subscriber below this = a pricing problem
+const OPERATIONS_SCALE = 100; // active subs at/above this = run-the-business stage
+const FINANCE_MRR = 1000; // MRR at/above this = pricing/margins/runway deserve attention
+
 /**
  * The stat to prioritize for today's weakest-stat slot. When RevenueCat is
- * connected, real metrics override the XP-based signal — a founder with users
- * but no revenue should be pushed on Revenue regardless of stat XP (SPEC #2:
- * smart quests from real data). Falls back to the weakest XP stat.
+ * connected, live metrics decide which stats are *relevant* and stat XP decides
+ * which of those to push today — so a metric signal steers the founder without
+ * pegging one stat forever (SPEC #2: smart quests from real data). Two hard
+ * funnel blockers still win outright; otherwise we XP-balance within the set of
+ * metric-flagged stats. Falls back to the weakest XP stat with no data.
  */
 export function priorityStat(c: CharacterRow, overview: RcOverview | null): StatKey {
   if (overview) {
-    const users = overview.metrics.active_users ?? 0;
-    const subs = overview.metrics.active_subscriptions ?? 0;
-    const mrr = overview.metrics.mrr ?? 0;
-    if (users < 50) return 'marketing'; // not enough reach yet
+    const m = overview.metrics;
+    const users = m.active_users ?? 0;
+    const subs = m.active_subscriptions ?? 0;
+    const trials = m.active_trials ?? 0;
+    const mrr = m.mrr ?? 0;
+    const newCustomers = m.new_customers ?? 0;
+
+    // Hard funnel blockers — nothing else matters until these clear.
+    if (users < REACH_FLOOR) return 'marketing'; // not enough reach yet
     if (subs === 0) return 'revenue'; // users but no monetization
-    if (mrr / Math.max(1, subs) < 3) return 'revenue'; // weak revenue per subscriber
+
+    // Otherwise flag every stat the metrics say deserves attention…
+    const flagged = new Set<StatKey>();
+    if (trials > 0 && subs / (trials + subs) < TRIAL_CONVERSION_FLOOR) flagged.add('product'); // leaky trial→paid
+    if (mrr / Math.max(1, subs) < REVENUE_PER_SUB_FLOOR) flagged.add('revenue'); // weak revenue per subscriber
+    if (newCustomers === 0) flagged.add('marketing'); // growth stalled despite reach
+    if (subs >= OPERATIONS_SCALE) flagged.add('operations'); // real scale = retention/support/infra
+    if (mrr >= FINANCE_MRR) flagged.add('finance'); // real money = pricing/margins/runway
+
+    // …and let XP balancing choose which flagged stat to push today.
+    if (flagged.size > 0) return weakestStatAmong(c, flagged);
   }
   return weakestStat(c);
 }

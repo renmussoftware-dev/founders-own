@@ -58,6 +58,21 @@ export function weakestStat(c: CharacterRow): StatKey {
   return weakest;
 }
 
+/**
+ * The least-XP stat among a candidate set — used by the daily engine so live
+ * metrics decide which stats are *relevant* while XP decides which of those to
+ * push today (keeps a metric signal from pegging one stat forever). Falls back
+ * to the global weakest stat if the set is empty.
+ */
+export function weakestStatAmong(c: CharacterRow, among: Set<StatKey>): StatKey {
+  let weakest: StatKey | null = null;
+  for (const s of statOrder) {
+    if (!among.has(s)) continue;
+    if (weakest === null || statXp(c, s) < statXp(c, weakest)) weakest = s;
+  }
+  return weakest ?? weakestStat(c);
+}
+
 export function formatXp(n: number): string {
   return n >= 1000 ? `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}k` : String(n);
 }
