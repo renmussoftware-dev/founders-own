@@ -97,7 +97,9 @@ export function nextUnmetMoneyTarget(
 ): { chapter: Chapter; current: number; gap: number } | null {
   if (!overview) return null;
   for (const c of CHAPTERS) {
-    if (!c.verify) continue;
+    // Only monetization milestones drive the revenue-gap copy — a pure reach
+    // milestone (active_users) shouldn't caption a revenue quest.
+    if (!c.verify || c.verify.metric === 'active_users') continue;
     const current = metricValue(overview, c.verify.metric);
     if (current < c.verify.threshold) return { chapter: c, current, gap: c.verify.threshold - current };
   }

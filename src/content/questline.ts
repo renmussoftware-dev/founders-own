@@ -66,6 +66,9 @@ export const CHAPTERS: Chapter[] = [
     index: 1,
     title: 'First Real Users',
     tagline: 'Get it in front of people who have the problem.',
+    // Verifiable from RevenueCat's active-users count — "real users" is a metric,
+    // not just self-report. Threshold matches the "10 people" objective; tunable.
+    verify: { metric: 'active_users', threshold: 10, seal: '10' },
     objectives: [
       { id: 'who', label: 'Write who your app is for and the one problem it solves' },
       { id: 'ship', label: 'Get a build live that a stranger could install' },
