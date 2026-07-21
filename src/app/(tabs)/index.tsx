@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -28,6 +28,8 @@ import { upsertDailyEntry } from '@/logic/journal';
 import { questContext } from '@/logic/questContext';
 import { nextMoneyMilestone, type NextMilestone } from '@/logic/verification';
 import { clearGoal, getGoal, setGoal, type MilestoneGoal } from '@/logic/goal';
+import { getPlaybookDone } from '@/logic/playbook';
+import { PLAYBOOK_TOTAL } from '@/content/playbook';
 import { proLocked } from '@/config/pro';
 import { feedback } from '@/utils/feedback';
 import { CHAPTERS_BY_ID } from '@/content/questline';
@@ -57,6 +59,8 @@ export default function TodayScreen() {
   const [next, setNext] = useState<NextMilestone | null>(null);
   const [goal, setGoalState] = useState<MilestoneGoal | null>(null);
   const [activeChapterTitle, setActiveChapterTitle] = useState<string | undefined>();
+  const [activeAct, setActiveAct] = useState<number | null>(null);
+  const [playbookDone, setPlaybookDone] = useState(0);
   const [advice, setAdvice] = useState<AdvisorInsight | null>(null);
   const [deepDiveStatus, setDeepDiveStatus] = useState<string | null>(null);
 
@@ -73,7 +77,11 @@ export default function TodayScreen() {
     }
     db.getFirstAsync<{ chapter_id: string }>(
       "SELECT chapter_id FROM chapter_progress WHERE status = 'active' ORDER BY act, chapter_id LIMIT 1"
-    ).then(r => setActiveChapterTitle(r ? CHAPTERS_BY_ID[r.chapter_id]?.title : undefined));
+    ).then(r => {
+      const ch = r ? CHAPTERS_BY_ID[r.chapter_id] : undefined;
+      setActiveChapterTitle(ch?.title);
+      setActiveAct(ch?.act ?? null);
+    });
     // Issue once per mount; quest rows for today are stable afterwards.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db]);
@@ -90,6 +98,14 @@ export default function TodayScreen() {
       setNext(nextMoneyMilestone(overview, new Set(verified.map(v => v.chapter_id))));
     })();
   }, [db, overview]);
+
+  // Refresh Launch Playbook progress whenever Today regains focus (e.g. after
+  // returning from the playbook screen).
+  useFocusEffect(
+    useCallback(() => {
+      getPlaybookDone(db).then(d => setPlaybookDone(d.size));
+    }, [db])
+  );
 
   // Load any saved milestone goal, and drop it once its milestone is verified
   // (the goal always tracks the current next milestone).
@@ -249,6 +265,27 @@ export default function TodayScreen() {
           ) : null}
         </View>
 
+        {/* Act I blind spot: before there's revenue to read, give concrete steps. */}
+        {activeAct === 1 && playbookDone < PLAYBOOK_TOTAL ? (
+          <Pressable onPress={() => router.push('/playbook')}>
+            <LinearGradient
+              colors={['rgba(124,104,232,0.2)', 'rgba(124,104,232,0.06)']}
+              style={styles.playbookCard}
+            >
+              <View style={styles.playbookIcon}>
+                <Text style={styles.playbookIconText}>⚑</Text>
+              </View>
+              <View style={styles.playbookBody}>
+                <Text style={styles.playbookTitle}>Launch Playbook</Text>
+                <Text style={styles.playbookSub}>
+                  The path to your first paying customer · {playbookDone}/{PLAYBOOK_TOTAL}
+                </Text>
+              </View>
+              <Text style={styles.playbookChevron}>›</Text>
+            </LinearGradient>
+          </Pressable>
+        ) : null}
+
         <View style={styles.headingRow}>
           <Text style={styles.heading}>Complete{'\n'}today&rsquo;s quests</Text>
           <View style={styles.progressBlock}>
@@ -386,6 +423,35 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(237,234,251,0.14)',
   },
   dashboard: { marginTop: 16 },
+  playbookCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(164,147,255,0.35)',
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+  },
+  playbookIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 11,
+    backgroundColor: colors.violet,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  playbookIconText: { fontFamily: fonts.uiBlack, fontSize: 17, color: '#EDEAFB' },
+  playbookBody: { flex: 1 },
+  playbookTitle: { fontFamily: fonts.uiExtraBold, fontSize: 15, color: colors.textPrimary },
+  playbookSub: {
+    fontFamily: fonts.uiBold,
+    fontSize: 11.5,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  playbookChevron: { fontFamily: fonts.uiExtraBold, fontSize: 18, color: colors.violetBright },
   streakSavedBanner: {
     flexDirection: 'row',
     alignItems: 'center',
