@@ -135,6 +135,85 @@
   .q-body .t { font-weight: 800; font-size: 13px; }
   .q-body .s { font-weight: 700; font-size: 11px; color: var(--text-soft); margin-top: 2px; }
 
+  /* phone mockups */
+  .phones { display: flex; gap: 22px; justify-content: center; align-items: flex-start; flex-wrap: wrap; margin-top: 56px; }
+  .phone-wrap { display: flex; flex-direction: column; align-items: center; }
+  .phone {
+    width: 244px; max-width: 80vw;
+    background: #0B0918; border: 1px solid rgba(237,234,251,.14);
+    border-radius: 36px; padding: 9px;
+    box-shadow: 0 40px 80px -30px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .phone.lift { transform: translateY(-18px); }
+  @media (max-width: 820px) { .phone.lift { transform: none; } }
+  .screen {
+    border-radius: 28px; overflow: hidden; text-align: left;
+    background: radial-gradient(120% 360px at 50% -50px, #2A2450, #1C1838 55%, #120F26);
+    padding: 12px 11px 16px; min-height: 462px;
+  }
+  .notch { width: 36%; height: 5px; border-radius: 3px; background: rgba(237,234,251,.16); margin: 2px auto 12px; }
+  .screen-cap { font-size: 12.5px; font-weight: 800; color: var(--text-faint); margin-top: 16px; text-align: center; }
+
+  .p-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .p-av { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 14px; color: #14102E;
+    background: radial-gradient(circle at 32% 28%, #B4A6FF, #7C68E8 60%, #4F3EAE); }
+  .p-pill { display: flex; align-items: center; gap: 9px; background: var(--surface-bottom); border: 1px solid var(--border); border-radius: 999px; padding: 5px 11px; }
+  .p-pill .g { display: flex; align-items: center; gap: 5px; }
+  .p-pill .gem { width: 8px; height: 8px; background: var(--violet); transform: rotate(45deg); border-radius: 2px; }
+  .p-pill .coin { width: 9px; height: 9px; border-radius: 50%; background: #F2C94C; }
+  .p-pill b { font-size: 12px; font-weight: 900; }
+
+  .p-card { background: linear-gradient(180deg, var(--surface-top), var(--surface-bottom)); border: 1px solid var(--border); border-radius: 15px; padding: 12px; }
+  .p-live { display: flex; align-items: center; gap: 6px; font-size: 8.5px; font-weight: 800; letter-spacing: .5px; color: var(--text-soft); text-transform: uppercase; }
+  .p-mrr { font-size: 30px; font-weight: 900; color: var(--gold); margin-top: 6px; line-height: 1; }
+  .p-mrr small { font-size: 8.5px; letter-spacing: 1px; color: var(--text-faint); font-weight: 800; display: block; margin-top: 3px; }
+  .p-spark { height: 34px; margin: 10px 0; background: linear-gradient(180deg, rgba(240,205,121,.28), rgba(240,205,121,0));
+    clip-path: polygon(0 100%, 0 72%, 25% 62%, 50% 50%, 75% 34%, 100% 20%, 100% 100%); }
+  .p-ins { display: flex; gap: 8px; border-top: 1px solid var(--border); padding-top: 10px; }
+  .p-ins > div { flex: 1; }
+  .p-ins .v { font-size: 13px; font-weight: 900; }
+  .p-ins .v.up { color: var(--mint); }
+  .p-ins .l { font-size: 7px; letter-spacing: .5px; color: var(--text-faint); font-weight: 800; margin-top: 3px; }
+  .p-ready { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 10px; }
+  .p-ready .rl { font-size: 7.5px; letter-spacing: 1px; color: var(--mint); font-weight: 800; }
+  .p-ready .rv { font-size: 10.5px; font-weight: 800; color: var(--gold); margin-top: 4px; }
+
+  .p-q { display: flex; align-items: center; gap: 9px; padding: 9px; border-radius: 12px; margin-top: 10px;
+    background: linear-gradient(135deg, #4A3822, #3B2C1B); border: 1px solid rgba(240,184,101,.25); }
+  .p-q .s { width: 30px; height: 30px; border-radius: 9px; flex: none; display: grid; place-items: center; font-weight: 900; font-size: 12px; color: #14102E; background: linear-gradient(160deg,#F0B865,#9A5F1E); }
+  .p-q .t { font-weight: 800; font-size: 10.5px; line-height: 1.3; }
+  .p-q .sub { font-weight: 700; font-size: 8.5px; color: var(--text-soft); margin-top: 2px; }
+
+  /* milestone screen */
+  .p-mile-hed { text-align: center; font-weight: 900; font-size: 15px; margin: 18px 0 16px; line-height: 1.25; }
+  .p-mile { border: 1px solid rgba(240,205,121,.3); border-radius: 20px; padding: 18px 14px 14px;
+    background: linear-gradient(180deg, #2E2758, #1A1436 60%, #120E28); text-align: center;
+    box-shadow: 0 16px 40px -18px rgba(240,205,121,.35); }
+  .p-hex { width: 54px; height: 54px; margin: 0 auto 10px; display: grid; place-items: center; font-weight: 900; font-size: 13px; color: #3A2A0E;
+    background: linear-gradient(160deg,#F8DD8E,#C89441 55%,#8A6224);
+    clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); }
+  .p-badge-v { display: inline-block; font-size: 8px; letter-spacing: 1.2px; font-weight: 800; color: var(--gold);
+    border: 1px solid var(--gold-mid); background: rgba(240,205,121,.1); border-radius: 999px; padding: 3px 9px; }
+  .p-mtitle { font-family: Newsreader, Georgia, serif; font-style: italic; font-size: 21px; color: #F5EFE0; margin-top: 10px; }
+  .p-mstats { display: flex; justify-content: center; gap: 14px; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(240,205,121,.16); }
+  .p-mstats span { font-size: 13px; font-weight: 900; color: var(--text); display: flex; flex-direction: column; align-items: center; }
+  .p-mstats small { font-size: 6.5px; letter-spacing: .6px; color: rgba(240,205,121,.55); font-weight: 800; margin-top: 4px; }
+  .p-share { margin-top: 16px; text-align: center; font-weight: 900; font-size: 12px; color: #3A2A0C;
+    background: linear-gradient(180deg, var(--gold), var(--gold-mid)); border-radius: 999px; padding: 12px;
+    box-shadow: 0 3px 0 var(--gold-deep); }
+
+  /* character stats screen */
+  .p-name { text-align: center; margin-bottom: 4px; }
+  .p-name b { font-weight: 900; font-size: 15px; }
+  .p-name span { display: block; font-size: 9.5px; font-weight: 800; color: var(--text-soft); margin-top: 3px; }
+  .p-stat { display: grid; grid-template-columns: 26px 1fr auto; align-items: center; column-gap: 9px; row-gap: 5px;
+    background: var(--surface-bottom); border: 1px solid var(--border); border-radius: 12px; padding: 9px 11px; margin-top: 8px; }
+  .p-sq { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-weight: 900; font-size: 12px; color: #14102E; grid-row: span 2; }
+  .p-stat b { font-weight: 800; font-size: 12px; }
+  .p-stat i { font-style: normal; font-size: 8.5px; font-weight: 800; color: var(--text-faint); border: 1px solid var(--border); border-radius: 999px; padding: 2px 7px; }
+  .p-track { grid-column: 2 / 4; height: 5px; border-radius: 3px; background: rgba(0,0,0,.35); overflow: hidden; }
+  .p-track > div { height: 100%; border-radius: 3px; }
+
   /* sections */
   section { padding: 64px 0; }
   .section-head { text-align: center; max-width: 640px; margin: 0 auto 44px; }
@@ -209,31 +288,101 @@
       <span>Product</span><span>Marketing</span><span>Revenue</span><span>Operations</span><span>Finance</span>
     </div>
 
-    <div class="mocks">
-      <div class="card mock-dash">
-        <div class="live"><span class="dot"></span> Your app · live</div>
-        <div class="mrr">$526 <small>MRR</small></div>
-        <div class="spark"></div>
-        <div class="next">
-          <div class="lbl">READY TO VERIFY</div>
-          <div class="val">First $1,000 MRR — claim it in gold ›</div>
+    <div class="phones">
+      <!-- Character stats -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="p-name"><b>Keytionary</b><span>Level 4 · Journeyman Merchant</span></div>
+            <div class="p-stat">
+              <div class="p-sq" style="background:linear-gradient(160deg,#9D8CF2,#4F3EAE)">P</div>
+              <b>Product</b><i>LV.3</i>
+              <div class="p-track"><div style="width:62%;background:linear-gradient(90deg,#9D8CF2,#7C68E8)"></div></div>
+            </div>
+            <div class="p-stat">
+              <div class="p-sq" style="background:linear-gradient(160deg,#E89CD4,#7E3A6E)">M</div>
+              <b>Marketing</b><i>LV.2</i>
+              <div class="p-track"><div style="width:40%;background:linear-gradient(90deg,#E89CD4,#B85CA0)"></div></div>
+            </div>
+            <div class="p-stat">
+              <div class="p-sq" style="background:linear-gradient(160deg,#F0B865,#9A5F1E)">R</div>
+              <b>Revenue</b><i>LV.4</i>
+              <div class="p-track"><div style="width:78%;background:linear-gradient(90deg,#F0B865,#C89441)"></div></div>
+            </div>
+            <div class="p-stat">
+              <div class="p-sq" style="background:linear-gradient(160deg,#64C6D6,#2A6A78)">O</div>
+              <b>Operations</b><i>LV.2</i>
+              <div class="p-track"><div style="width:33%;background:linear-gradient(90deg,#64C6D6,#3F98A8)"></div></div>
+            </div>
+            <div class="p-stat">
+              <div class="p-sq" style="background:linear-gradient(160deg,#7FD0A0,#276A44)">F</div>
+              <b>Finance</b><i>LV.2</i>
+              <div class="p-track"><div style="width:28%;background:linear-gradient(90deg,#7FD0A0,#3FA46C)"></div></div>
+            </div>
+          </div>
         </div>
+        <div class="screen-cap">Five stats that level up</div>
       </div>
-      <div class="card mock-quest">
-        <div class="quest q-rev">
-          <div class="q-seal">◆</div>
-          <div class="q-body">
-            <div class="t">Fix your biggest trial → paid drop-off</div>
-            <div class="s">$474 MRR from First $1,000 MRR</div>
+
+      <!-- Today dashboard (center, raised) -->
+      <div class="phone-wrap">
+        <div class="phone lift">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="p-top">
+              <div class="p-av">K</div>
+              <div class="p-pill">
+                <div class="g"><span class="gem"></span><b>45</b></div>
+                <div class="g"><span class="coin"></span><b>12</b></div>
+              </div>
+            </div>
+            <div class="p-card">
+              <div class="p-live"><span class="dot"></span> Fretionary · live</div>
+              <div class="p-mrr">$526 <small>MRR</small></div>
+              <div class="p-spark"></div>
+              <div class="p-ins">
+                <div><div class="v up">▲ 30%</div><div class="l">MRR · 7-DAY</div></div>
+                <div><div class="v">14</div><div class="l">TRIALS</div></div>
+                <div><div class="v">2,522</div><div class="l">NEW · 28D</div></div>
+              </div>
+              <div class="p-ready">
+                <div class="rl">READY TO VERIFY</div>
+                <div class="rv">First $1,000 MRR — claim it in gold ›</div>
+              </div>
+            </div>
+            <div class="p-q">
+              <div class="s">◆</div>
+              <div>
+                <div class="t">Fix your biggest trial → paid drop-off</div>
+                <div class="sub">$474 MRR from First $1,000 MRR</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="quest q-mkt">
-          <div class="q-seal">◆</div>
-          <div class="q-body">
-            <div class="t">Reply to 3 App Store reviews</div>
-            <div class="s">Daily habit — keep the streak alive</div>
+        <div class="screen-cap">Your live revenue, every morning</div>
+      </div>
+
+      <!-- Verified milestone -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="p-mile-hed">You just hit<br>a verified milestone!</div>
+            <div class="p-mile">
+              <div class="p-hex">$1K</div>
+              <div class="p-badge-v">VERIFIED · REVENUECAT</div>
+              <div class="p-mtitle">First $1,000 MRR</div>
+              <div class="p-mstats">
+                <span>Lv 4<small>FOUNDER</small></span>
+                <span>12<small>DAY STREAK</small></span>
+                <span>38<small>QUESTS</small></span>
+              </div>
+            </div>
+            <div class="p-share">Share founder card</div>
           </div>
         </div>
+        <div class="screen-cap">Milestones sealed in gold</div>
       </div>
     </div>
   </header>
