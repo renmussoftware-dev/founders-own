@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Polygon, Stop } from 'react-native-svg';
 import { colors, fonts, hexagonPoints } from '@/theme/tokens';
@@ -8,17 +9,21 @@ import { colors, fonts, hexagonPoints } from '@/theme/tokens';
  * (e.g. "$1K") centered inside.
  */
 export function HexSeal({ label, size = 64 }: { label: string; size?: number }) {
+  // Unique gradient id per instance. A shared static id collides when several
+  // seals are in the DOM at once (web react-native-svg resolves url(#id) to the
+  // wrong/empty def, leaving the hexagon unfilled so the dark label disappears).
+  const gradId = `sealGold-${useId().replace(/:/g, '')}`;
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size} viewBox="0 0 100 100">
         <Defs>
-          <LinearGradient id="sealGold" x1="0" y1="0" x2="0" y2="1">
+          <LinearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
             <Stop offset="0" stopColor={colors.gold} />
             <Stop offset="0.55" stopColor={colors.goldMid} />
             <Stop offset="1" stopColor={colors.goldDeep} />
           </LinearGradient>
         </Defs>
-        <Polygon points={hexagonPoints} fill="url(#sealGold)" />
+        <Polygon points={hexagonPoints} fill={`url(#${gradId})`} />
         <Polygon
           points={hexagonPoints}
           fill="none"
