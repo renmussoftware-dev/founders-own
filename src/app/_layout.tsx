@@ -16,7 +16,7 @@ import { migrateDbIfNeeded } from '@/db/migrations';
 import { initAnalytics } from '@/utils/analytics';
 import { bootstrapRevenueCat } from '@/hooks/useRevenueCat';
 import { initFeedback, setSoundOn } from '@/utils/feedback';
-import { loadReminderEnabled, loadSoundEnabled } from '@/integrations/settings';
+import { loadReminderEnabled, loadReminderHour, loadSoundEnabled } from '@/integrations/settings';
 import { scheduleDailyReminder } from '@/integrations/notifications';
 import { useStore } from '@/store/useStore';
 
@@ -43,10 +43,10 @@ export default function RootLayout() {
       setSoundOn(enabled);
       useStore.setState({ soundEnabled: enabled });
     });
-    // Restore the daily reminder preference and re-arm the schedule on launch.
-    loadReminderEnabled().then(enabled => {
-      useStore.setState({ reminderEnabled: enabled });
-      if (enabled) scheduleDailyReminder();
+    // Restore the daily reminder preference + time and re-arm the schedule.
+    Promise.all([loadReminderEnabled(), loadReminderHour()]).then(([enabled, hour]) => {
+      useStore.setState({ reminderEnabled: enabled, reminderHour: hour });
+      if (enabled) scheduleDailyReminder(hour);
     });
   }, []);
 

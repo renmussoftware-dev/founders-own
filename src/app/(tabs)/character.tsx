@@ -19,6 +19,13 @@ import { feedback } from '@/utils/feedback';
 
 type SheetTab = 'Stats' | 'Milestones' | 'Journal';
 
+const REMINDER_TIMES: { label: string; hour: number }[] = [
+  { label: 'Morning', hour: 9 },
+  { label: 'Midday', hour: 13 },
+  { label: 'Evening', hour: 19 },
+  { label: 'Night', hour: 21 },
+];
+
 /** Character sheet (design 7a) + milestone timeline (SPEC #3). */
 export default function CharacterScreen() {
   const insets = useSafeAreaInsets();
@@ -30,6 +37,8 @@ export default function CharacterScreen() {
   const setSoundEnabled = useStore(s => s.setSoundEnabled);
   const reminderEnabled = useStore(s => s.reminderEnabled);
   const setReminderEnabled = useStore(s => s.setReminderEnabled);
+  const reminderHour = useStore(s => s.reminderHour);
+  const setReminderHour = useStore(s => s.setReminderHour);
   const [tab, setTab] = useState<SheetTab>('Stats');
   const [milestones, setMilestones] = useState<MilestoneItem[]>([]);
   const [reminderBusy, setReminderBusy] = useState(false);
@@ -53,11 +62,17 @@ export default function CharacterScreen() {
       await cancelDailyReminder();
       setReminderEnabled(false);
     } else {
-      const ok = await scheduleDailyReminder(); // prompts for permission
+      const ok = await scheduleDailyReminder(reminderHour); // prompts for permission
       setReminderEnabled(ok);
       if (ok) feedback('tap');
     }
     setReminderBusy(false);
+  }
+
+  async function onSelectReminderHour(hour: number) {
+    setReminderHour(hour); // persists
+    if (reminderEnabled) await scheduleDailyReminder(hour); // re-arm at the new time
+    feedback('tap');
   }
 
   async function onBuyFreeze() {
@@ -220,6 +235,24 @@ export default function CharacterScreen() {
                   <View style={[styles.knob, reminderEnabled && styles.knobOn]} />
                 </View>
               </Pressable>
+              {reminderEnabled ? (
+                <View style={styles.timeChips}>
+                  {REMINDER_TIMES.map(t => {
+                    const active = reminderHour === t.hour;
+                    return (
+                      <Pressable
+                        key={t.hour}
+                        onPress={() => onSelectReminderHour(t.hour)}
+                        style={[styles.timeChip, active && styles.timeChipActive]}
+                      >
+                        <Text style={[styles.timeChipText, active && styles.timeChipTextActive]}>
+                          {t.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ) : null}
             </>
           )}
         </ScrollView>
@@ -458,6 +491,22 @@ const styles = StyleSheet.create({
     color: colors.textFaint,
     marginTop: 8,
   },
+  timeChips: { flexDirection: 'row', gap: 8, marginTop: 10 },
+  timeChip: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 9,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
+    backgroundColor: colors.surfaceBottom,
+  },
+  timeChipActive: {
+    borderColor: colors.violetBright,
+    backgroundColor: 'rgba(124,104,232,0.22)',
+  },
+  timeChipText: { fontFamily: fonts.uiExtraBold, fontSize: 11.5, color: colors.textSecondary },
+  timeChipTextActive: { color: colors.textPrimary },
   milestoneEmptyText: {
     fontFamily: fonts.uiBold,
     fontSize: 12,

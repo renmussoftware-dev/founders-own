@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { type CharacterRow } from '@/db/character';
 import { type RcOverview } from '@/integrations/revenuecat';
-import { saveReminderEnabled, saveSoundEnabled } from '@/integrations/settings';
+import { saveReminderEnabled, saveReminderHour, saveSoundEnabled } from '@/integrations/settings';
 import { setSoundOn } from '@/utils/feedback';
 
 interface AppState {
@@ -16,6 +16,10 @@ interface AppState {
   /** Daily reminder notification. Persisted; default off (needs permission). */
   reminderEnabled: boolean;
   setReminderEnabled: (enabled: boolean) => void;
+
+  /** Hour of day (0–23) for the daily reminder. Persisted; default 19. */
+  reminderHour: number;
+  setReminderHour: (hour: number) => void;
 
   /** In-memory snapshot of the character row; SQLite is the source of truth. */
   character: CharacterRow | null;
@@ -45,6 +49,12 @@ export const useStore = create<AppState>(set => ({
   setReminderEnabled: enabled => {
     void saveReminderEnabled(enabled); // persist; scheduling handled by caller
     set({ reminderEnabled: enabled });
+  },
+
+  reminderHour: 19,
+  setReminderHour: hour => {
+    void saveReminderHour(hour); // persist; rescheduling handled by caller
+    set({ reminderHour: hour });
   },
 
   character: null,

@@ -47,6 +47,8 @@ export default function TodayScreen() {
   const [quests, setQuests] = useState<QuestLogRow[]>([]);
   const [celebratingId, setCelebratingId] = useState<number | null>(null);
   const celebrationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [streakSaved, setStreakSaved] = useState<number | null>(null);
+  const streakSavedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { connected, projectName, overview, loading } = useRevenueData();
   const isPro = useStore(s => s.isPro);
@@ -124,7 +126,7 @@ export default function TodayScreen() {
 
   const onComplete = useCallback(
     async (quest: QuestLogRow) => {
-      const fresh = await completeQuest(db, quest);
+      const { character: fresh, streakSaved } = await completeQuest(db, quest);
       await upsertDailyEntry(db);
       // Level-up when this quest's XP pushed its stat across a level boundary.
       const afterXp = statXp(fresh, quest.stat);
@@ -139,6 +141,12 @@ export default function TodayScreen() {
       setCelebratingId(quest.id);
       if (celebrationTimer.current) clearTimeout(celebrationTimer.current);
       celebrationTimer.current = setTimeout(() => setCelebratingId(null), 2600);
+      // A freeze just rescued the streak — surface it so it doesn't feel silent.
+      if (streakSaved) {
+        setStreakSaved(fresh.streak);
+        if (streakSavedTimer.current) clearTimeout(streakSavedTimer.current);
+        streakSavedTimer.current = setTimeout(() => setStreakSaved(null), 4500);
+      }
     },
     [db, setCharacter]
   );
@@ -180,6 +188,15 @@ export default function TodayScreen() {
             </View>
           </View>
         </View>
+
+        {streakSaved !== null ? (
+          <View style={styles.streakSavedBanner}>
+            <Text style={styles.streakSavedGlyph}>❄</Text>
+            <Text style={styles.streakSavedText}>
+              Streak freeze used — your {streakSaved}-day streak is safe.
+            </Text>
+          </View>
+        ) : null}
 
         <View style={styles.dashboard}>
           <RevenueDashboard
@@ -336,6 +353,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(237,234,251,0.14)',
   },
   dashboard: { marginTop: 16 },
+  streakSavedBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 14,
+    backgroundColor: 'rgba(124,104,232,0.16)',
+    borderWidth: 1,
+    borderColor: 'rgba(164,147,255,0.4)',
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+  },
+  streakSavedGlyph: { fontSize: 15, color: '#C9BDFF' },
+  streakSavedText: {
+    flex: 1,
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 12.5,
+    color: colors.textPrimary,
+  },
   advisor: { marginTop: 16 },
   devSample: { alignSelf: 'center', paddingVertical: 8 },
   devSampleText: { fontFamily: fonts.uiBold, fontSize: 10, color: colors.textFaint },

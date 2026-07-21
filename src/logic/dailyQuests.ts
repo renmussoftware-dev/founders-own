@@ -242,13 +242,15 @@ export async function ensureTodayQuests(
 /**
  * Complete a quest: stamp quest_log, grant stat XP + gems, and update the
  * streak (first completion of the day extends or restarts it). Returns the
- * refreshed character row.
+ * refreshed character row plus whether a streak freeze was spent to save the
+ * streak (so the UI can celebrate the rescue).
  */
 export async function completeQuest(
   db: SQLiteDatabase,
   quest: QuestLogRow
-): Promise<CharacterRow> {
+): Promise<{ character: CharacterRow; streakSaved: boolean }> {
   const dateKey = todayKey();
+  let streakSaved = false;
   const doneTodayBefore = await db.getFirstAsync<{ n: number }>(
     'SELECT COUNT(*) AS n FROM quest_log WHERE quest_date = ? AND completed_at IS NOT NULL',
     dateKey
@@ -284,6 +286,7 @@ export async function completeQuest(
             'UPDATE character SET streak = streak + 1, streak_freezes = streak_freezes - 1 WHERE id = 1 AND streak_freezes > 0'
           )
         ).changes > 0;
+      streakSaved = bridged;
       if (!bridged) {
         await db.runAsync('UPDATE character SET streak = 1 WHERE id = 1');
       }
@@ -315,5 +318,6 @@ export async function completeQuest(
     }
   }
 
-  return grantStatXp(db, quest.stat, quest.xp);
+  const character = await grantStatXp(db, quest.stat, quest.xp);
+  return { character, streakSaved };
 }

@@ -2,7 +2,7 @@
 export async function requestNotificationPermission(): Promise<boolean> {
   return false;
 }
-export async function scheduleDailyReminder(): Promise<boolean> {
+export async function scheduleDailyReminder(_hour?: number): Promise<boolean> {
   return false;
 }
 export async function cancelDailyReminder(): Promise<void> {}

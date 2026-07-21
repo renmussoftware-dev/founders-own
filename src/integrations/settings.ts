@@ -9,6 +9,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const KEY_SOUND = 'pref_sound_enabled';
 const KEY_REMINDER = 'pref_daily_reminder';
+const KEY_REMINDER_HOUR = 'pref_reminder_hour';
 
 async function getItem(k: string): Promise<string | null> {
   if (Platform.OS === 'web') return localStorage.getItem(k);
@@ -36,4 +37,14 @@ export async function loadReminderEnabled(): Promise<boolean> {
 
 export async function saveReminderEnabled(enabled: boolean): Promise<void> {
   await setItem(KEY_REMINDER, enabled ? '1' : '0');
+}
+
+/** Hour of day (0–23) for the daily reminder. Defaults to 19 (7 PM). */
+export async function loadReminderHour(): Promise<number> {
+  const n = parseInt((await getItem(KEY_REMINDER_HOUR)) ?? '', 10);
+  return Number.isInteger(n) && n >= 0 && n <= 23 ? n : 19;
+}
+
+export async function saveReminderHour(hour: number): Promise<void> {
+  await setItem(KEY_REMINDER_HOUR, String(hour));
 }

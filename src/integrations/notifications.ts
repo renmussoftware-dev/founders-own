@@ -9,7 +9,7 @@ import { Platform } from 'react-native';
 
 const REMINDER_ID = 'founders-own-daily';
 const CHANNEL_ID = 'daily-reminder';
-const REMINDER_HOUR = 19; // 7:00 PM local — evening wind-down, tunable
+const DEFAULT_HOUR = 19; // 7:00 PM local — evening wind-down
 const REMINDER_MINUTE = 0;
 
 let handlerSet = false;
@@ -36,8 +36,8 @@ export async function requestNotificationPermission(): Promise<boolean> {
   return req.granted;
 }
 
-/** Schedule (or reschedule) the daily reminder. Returns false if not permitted. */
-export async function scheduleDailyReminder(): Promise<boolean> {
+/** Schedule (or reschedule) the daily reminder at `hour`. False if not permitted. */
+export async function scheduleDailyReminder(hour: number = DEFAULT_HOUR): Promise<boolean> {
   ensureHandler();
   const granted = await requestNotificationPermission();
   if (!granted) return false;
@@ -59,7 +59,7 @@ export async function scheduleDailyReminder(): Promise<boolean> {
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
-      hour: REMINDER_HOUR,
+      hour,
       minute: REMINDER_MINUTE,
       ...(Platform.OS === 'android' ? { channelId: CHANNEL_ID } : {}),
     },
