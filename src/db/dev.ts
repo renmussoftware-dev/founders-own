@@ -53,6 +53,7 @@ export async function devSeedSampleMetrics(db: SQLiteDatabase): Promise<RcOvervi
     );
   }
   return {
+    provider: 'revenuecat',
     currency: 'USD',
     metrics: {
       mrr: endMrr,

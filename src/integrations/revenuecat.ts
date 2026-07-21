@@ -6,27 +6,19 @@
  * never lives on-device).
  */
 
+import { type MetricId, type ProviderAccount, type RevenueOverview } from '@/integrations/revenue/types';
+
 const BASE = 'https://api.revenuecat.com/v2';
 
-export type RcMetricId =
-  | 'active_trials'
-  | 'active_subscriptions'
-  | 'mrr'
-  | 'revenue'
-  | 'new_customers'
-  | 'active_users';
-
-export interface RcProject {
-  id: string;
-  name: string;
-}
-
-export interface RcOverview {
-  currency: string;
-  metrics: Partial<Record<RcMetricId, number>>;
-  /** ISO timestamp the app fetched this. */
-  fetchedAt: string;
-}
+// Canonical revenue types now live in integrations/revenue/types. These aliases
+// keep existing imports (`RcOverview`, `RcMetricId`, `RcProject`) working; new
+// code should import the provider-agnostic names directly.
+/** @deprecated use MetricId from '@/integrations/revenue' */
+export type RcMetricId = MetricId;
+/** @deprecated use ProviderAccount from '@/integrations/revenue' */
+export type RcProject = ProviderAccount;
+/** @deprecated use RevenueOverview from '@/integrations/revenue' */
+export type RcOverview = RevenueOverview;
 
 export class RcError extends Error {
   constructor(
@@ -73,9 +65,14 @@ export async function getOverview(
     `/projects/${projectId}/metrics/overview?currency=${currency}`,
     key
   );
-  const metrics: Partial<Record<RcMetricId, number>> = {};
-  for (const m of data.metrics ?? []) metrics[m.id as RcMetricId] = m.value;
-  return { currency: data.currency, metrics, fetchedAt: new Date().toISOString() };
+  const metrics: Partial<Record<MetricId, number>> = {};
+  for (const m of data.metrics ?? []) metrics[m.id as MetricId] = m.value;
+  return {
+    provider: 'revenuecat',
+    currency: data.currency,
+    metrics,
+    fetchedAt: new Date().toISOString(),
+  };
 }
 
 /** Validate a key by listing projects; returns them or throws RcError. */

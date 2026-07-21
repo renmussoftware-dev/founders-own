@@ -3,6 +3,7 @@ import { CHAPTERS, CHAPTERS_BY_ID, type Chapter, type VerifyMetric } from '@/con
 import { unlockNext } from '@/db/chapters';
 import { writeMilestoneEntry } from '@/logic/journal';
 import { type RcOverview } from '@/integrations/revenuecat';
+import { providerSupportsMetric } from '@/integrations/revenue';
 
 /**
  * Verification write-path (SPEC §7). Records the event, promotes the chapter to
@@ -42,9 +43,18 @@ export async function markChapterVerified(
   await unlockNext(db, chapterId);
 }
 
-/** A chapter is RevenueCat-verifiable when it carries a verify spec. */
+/** A chapter carries a verify spec (verifiable by *some* provider). */
 export function isVerifiable(chapterId: string): boolean {
   return !!CHAPTERS_BY_ID[chapterId]?.verify;
+}
+
+/**
+ * Can this chapter be gold-verified with the *currently connected* provider?
+ * A verify spec whose metric the provider can't supply (e.g. `active_users` on
+ * Stripe) is not offered — the chapter stays self-report instead.
+ */
+export function chapterVerifiableNow(overview: RcOverview | null, chapter: Chapter): boolean {
+  return !!chapter.verify && providerSupportsMetric(overview, chapter.verify.metric);
 }
 
 export function metricValue(overview: RcOverview | null, metric: VerifyMetric): number {
@@ -97,9 +107,10 @@ export function nextUnmetMoneyTarget(
 ): { chapter: Chapter; current: number; gap: number } | null {
   if (!overview) return null;
   for (const c of CHAPTERS) {
-    // Only monetization milestones drive the revenue-gap copy — a pure reach
-    // milestone (active_users) shouldn't caption a revenue quest.
+    // Only monetization milestones the provider can measure drive the revenue-gap
+    // copy — a pure reach milestone (active_users) shouldn't caption a revenue quest.
     if (!c.verify || c.verify.metric === 'active_users') continue;
+    if (!providerSupportsMetric(overview, c.verify.metric)) continue;
     const current = metricValue(overview, c.verify.metric);
     if (current < c.verify.threshold) return { chapter: c, current, gap: c.verify.threshold - current };
   }
@@ -115,9 +126,9 @@ export function nextMoneyMilestone(
   overview: RcOverview | null,
   verifiedIds: Set<string>
 ): NextMilestone | null {
-  const pending = CHAPTERS.filter(c => c.verify && !verifiedIds.has(c.id)).sort(
-    (a, b) => a.index - b.index
-  );
+  const pending = CHAPTERS.filter(
+    c => c.verify && !verifiedIds.has(c.id) && providerSupportsMetric(overview, c.verify.metric)
+  ).sort((a, b) => a.index - b.index);
   const chapter = pending[0];
   if (!chapter?.verify) return null;
   const current = metricValue(overview, chapter.verify.metric);
