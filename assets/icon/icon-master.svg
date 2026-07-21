@@ -1,0 +1,49 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="20%" r="90%">
+      <stop offset="0%" stop-color="#2E2856"/>
+      <stop offset="55%" stop-color="#1C1838"/>
+      <stop offset="100%" stop-color="#120F26"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="46%" r="42%">
+      <stop offset="0%" stop-color="#F0CD79" stop-opacity="0.22"/>
+      <stop offset="70%" stop-color="#F0CD79" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#F0CD79" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FCE7A6"/>
+      <stop offset="42%" stop-color="#F0CD79"/>
+      <stop offset="72%" stop-color="#C89441"/>
+      <stop offset="100%" stop-color="#8A6224"/>
+    </linearGradient>
+    <clipPath id="hexClip">
+      <polygon points="512,192 787.2,352 787.2,672 512,832 236.8,672 236.8,352"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#halo)"/>
+
+  <polygon points="512,192 787.2,352 787.2,672 512,832 236.8,672 236.8,352" fill="url(#gold)"/>
+
+  <g clip-path="url(#hexClip)">
+    <polygon points="236.8,352 787.2,352 787.2,470 236.8,470" fill="#FFFFFF" opacity="0.14"/>
+    <polygon points="236.8,610 787.2,610 787.2,672 512,832 236.8,672" fill="#5A3C12" opacity="0.28"/>
+  </g>
+
+  <polygon points="512,192 787.2,352 787.2,672 512,832 236.8,672 236.8,352"
+    fill="none" stroke="#FFF7E0" stroke-opacity="0.5" stroke-width="7"/>
+  <polygon points="512,214 768,363 768,661 512,810 256,661 256,363"
+    fill="none" stroke="#6E4C18" stroke-opacity="0.45" stroke-width="4"/>
+
+  <g fill="#39280C">
+    <rect x="387" y="470" width="66" height="150" rx="12"/>
+    <rect x="479" y="380" width="66" height="240" rx="12"/>
+    <rect x="571" y="290" width="66" height="330" rx="12"/>
+  </g>
+  <g fill="#FFFFFF" opacity="0.10">
+    <rect x="387" y="470" width="66" height="10" rx="5"/>
+    <rect x="479" y="380" width="66" height="10" rx="5"/>
+    <rect x="571" y="290" width="66" height="10" rx="5"/>
+  </g>
+</svg>
