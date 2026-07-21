@@ -165,12 +165,18 @@ export default function TodayScreen() {
           <View style={styles.counterPill}>
             <View style={styles.counterItem}>
               <View style={styles.gem} />
-              <Text style={styles.counterGold}>{character.gems.toLocaleString()}</Text>
+              <View>
+                <Text style={styles.counterGold}>{character.gems.toLocaleString()}</Text>
+                <Text style={styles.counterLabel}>GEMS</Text>
+              </View>
             </View>
             <View style={styles.counterDivider} />
             <View style={styles.counterItem}>
               <View style={styles.streakCoin} />
-              <Text style={styles.counterText}>{character.streak}</Text>
+              <View>
+                <Text style={styles.counterText}>{character.streak}</Text>
+                <Text style={styles.counterLabel}>STREAK</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -309,12 +315,20 @@ const styles = StyleSheet.create({
   counterGold: {
     fontFamily: fonts.uiExtraBold,
     fontSize: 13,
+    lineHeight: 15,
     color: colors.gold,
   },
   counterText: {
     fontFamily: fonts.uiExtraBold,
     fontSize: 13,
+    lineHeight: 15,
     color: colors.textPrimary,
+  },
+  counterLabel: {
+    fontFamily: fonts.uiExtraBold,
+    fontSize: 7.5,
+    letterSpacing: 0.6,
+    color: colors.textFaint,
   },
   counterDivider: {
     width: 1,
