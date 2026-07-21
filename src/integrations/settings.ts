@@ -8,6 +8,7 @@ import * as SecureStore from 'expo-secure-store';
  */
 
 const KEY_SOUND = 'pref_sound_enabled';
+const KEY_REMINDER = 'pref_daily_reminder';
 
 async function getItem(k: string): Promise<string | null> {
   if (Platform.OS === 'web') return localStorage.getItem(k);
@@ -26,4 +27,13 @@ export async function loadSoundEnabled(): Promise<boolean> {
 
 export async function saveSoundEnabled(enabled: boolean): Promise<void> {
   await setItem(KEY_SOUND, enabled ? '1' : '0');
+}
+
+/** Daily reminder defaults OFF — it needs notification permission to be useful. */
+export async function loadReminderEnabled(): Promise<boolean> {
+  return (await getItem(KEY_REMINDER)) === '1';
+}
+
+export async function saveReminderEnabled(enabled: boolean): Promise<void> {
+  await setItem(KEY_REMINDER, enabled ? '1' : '0');
 }

@@ -16,7 +16,8 @@ import { migrateDbIfNeeded } from '@/db/migrations';
 import { initAnalytics } from '@/utils/analytics';
 import { bootstrapRevenueCat } from '@/hooks/useRevenueCat';
 import { initFeedback, setSoundOn } from '@/utils/feedback';
-import { loadSoundEnabled } from '@/integrations/settings';
+import { loadReminderEnabled, loadSoundEnabled } from '@/integrations/settings';
+import { scheduleDailyReminder } from '@/integrations/notifications';
 import { useStore } from '@/store/useStore';
 
 SplashScreen.preventAutoHideAsync();
@@ -41,6 +42,11 @@ export default function RootLayout() {
     loadSoundEnabled().then(enabled => {
       setSoundOn(enabled);
       useStore.setState({ soundEnabled: enabled });
+    });
+    // Restore the daily reminder preference and re-arm the schedule on launch.
+    loadReminderEnabled().then(enabled => {
+      useStore.setState({ reminderEnabled: enabled });
+      if (enabled) scheduleDailyReminder();
     });
   }, []);
 

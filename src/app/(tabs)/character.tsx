@@ -8,8 +8,10 @@ import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
 import { HexSeal } from '@/components/ui/HexSeal';
 import { StatRow } from '@/components/ui/StatRow';
 import { getMilestoneTimeline, type MilestoneItem } from '@/db/chapters';
+import { buyStreakFreeze, STREAK_FREEZE_COST } from '@/db/character';
 import { devResetAll } from '@/db/dev';
 import { CHAPTERS_BY_ID } from '@/content/questline';
+import { cancelDailyReminder, scheduleDailyReminder } from '@/integrations/notifications';
 import { colors, fonts, statOrder } from '@/theme/tokens';
 import { statXp } from '@/logic/leveling';
 import { useStore } from '@/store/useStore';
@@ -26,8 +28,11 @@ export default function CharacterScreen() {
   const setCharacter = useStore(s => s.setCharacter);
   const soundEnabled = useStore(s => s.soundEnabled);
   const setSoundEnabled = useStore(s => s.setSoundEnabled);
+  const reminderEnabled = useStore(s => s.reminderEnabled);
+  const setReminderEnabled = useStore(s => s.setReminderEnabled);
   const [tab, setTab] = useState<SheetTab>('Stats');
   const [milestones, setMilestones] = useState<MilestoneItem[]>([]);
+  const [reminderBusy, setReminderBusy] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -41,7 +46,32 @@ export default function CharacterScreen() {
     router.replace('/onboarding');
   }
 
+  async function onToggleReminder() {
+    if (reminderBusy) return;
+    setReminderBusy(true);
+    if (reminderEnabled) {
+      await cancelDailyReminder();
+      setReminderEnabled(false);
+    } else {
+      const ok = await scheduleDailyReminder(); // prompts for permission
+      setReminderEnabled(ok);
+      if (ok) feedback('tap');
+    }
+    setReminderBusy(false);
+  }
+
+  async function onBuyFreeze() {
+    if (!character || character.gems < STREAK_FREEZE_COST) return;
+    const { ok, character: fresh } = await buyStreakFreeze(db);
+    if (ok) {
+      setCharacter(fresh);
+      feedback('tap');
+    }
+  }
+
   if (!character) return <ArcaneBackground />;
+
+  const canAffordFreeze = character.gems >= STREAK_FREEZE_COST;
 
   return (
     <ArcaneBackground>
@@ -134,6 +164,32 @@ export default function CharacterScreen() {
                 </View>
               )}
 
+              <Text style={[styles.milestoneTitle, styles.settingsHeading]}>Streak protection</Text>
+              <View style={styles.freezeCard}>
+                <View style={styles.freezeIcon}>
+                  <Text style={styles.freezeGlyph}>❄</Text>
+                </View>
+                <View style={styles.freezeBody}>
+                  <Text style={styles.freezeTitle}>
+                    Streak freeze{character.streak_freezes > 0 ? ` · ${character.streak_freezes}` : ''}
+                  </Text>
+                  <Text style={styles.settingSub}>Covers one missed day so your streak survives</Text>
+                </View>
+                <Pressable
+                  onPress={onBuyFreeze}
+                  disabled={!canAffordFreeze}
+                  style={[styles.freezeBuy, !canAffordFreeze && styles.freezeBuyOff]}
+                >
+                  <View style={styles.gemMini} />
+                  <Text style={styles.freezeBuyText}>{STREAK_FREEZE_COST}</Text>
+                </Pressable>
+              </View>
+              {!canAffordFreeze ? (
+                <Text style={styles.freezeHint}>
+                  Earn gems by completing quests — {STREAK_FREEZE_COST - character.gems} more for a freeze.
+                </Text>
+              ) : null}
+
               <Text style={[styles.milestoneTitle, styles.settingsHeading]}>Settings</Text>
               <Pressable
                 onPress={() => {
@@ -149,6 +205,19 @@ export default function CharacterScreen() {
                 </View>
                 <View style={[styles.switch, soundEnabled && styles.switchOn]}>
                   <View style={[styles.knob, soundEnabled && styles.knobOn]} />
+                </View>
+              </Pressable>
+              <Pressable
+                onPress={onToggleReminder}
+                disabled={reminderBusy}
+                style={[styles.settingRow, styles.settingRowStacked]}
+              >
+                <View style={styles.settingBody}>
+                  <Text style={styles.settingLabel}>Daily reminder</Text>
+                  <Text style={styles.settingSub}>An evening nudge to keep your streak alive</Text>
+                </View>
+                <View style={[styles.switch, reminderEnabled && styles.switchOn]}>
+                  <View style={[styles.knob, reminderEnabled && styles.knobOn]} />
                 </View>
               </Pressable>
             </>
@@ -342,6 +411,53 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   knobOn: { alignSelf: 'flex-end' },
+  settingRowStacked: { marginTop: 8 },
+  freezeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: colors.surfaceBottom,
+    borderWidth: 1,
+    borderColor: colors.surfaceBorder,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+  },
+  freezeIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(124,104,232,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  freezeGlyph: { fontSize: 16, color: '#C9BDFF' },
+  freezeBody: { flex: 1 },
+  freezeTitle: { fontFamily: fonts.uiExtraBold, fontSize: 14, color: colors.textPrimary },
+  freezeBuy: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.violet,
+    borderRadius: 999,
+    paddingHorizontal: 13,
+    paddingVertical: 8,
+  },
+  freezeBuyOff: { backgroundColor: 'rgba(237,234,251,0.08)' },
+  freezeBuyText: { fontFamily: fonts.uiExtraBold, fontSize: 12.5, color: colors.textPrimary },
+  gemMini: {
+    width: 9,
+    height: 9,
+    borderRadius: 2,
+    backgroundColor: colors.gold,
+    transform: [{ rotate: '45deg' }],
+  },
+  freezeHint: {
+    fontFamily: fonts.uiBold,
+    fontSize: 11,
+    color: colors.textFaint,
+    marginTop: 8,
+  },
   milestoneEmptyText: {
     fontFamily: fonts.uiBold,
     fontSize: 12,

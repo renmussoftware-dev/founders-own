@@ -269,7 +269,24 @@ export async function completeQuest(
     if ((hadYesterday?.n ?? 0) > 0) {
       await db.runAsync('UPDATE character SET streak = streak + 1 WHERE id = 1');
     } else {
-      await db.runAsync('UPDATE character SET streak = 1 WHERE id = 1');
+      // Missed yesterday. If the day before had activity and a streak freeze is
+      // available, spend one to bridge the single-day gap instead of resetting.
+      const twoDaysAgo = new Date();
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+      const hadTwoDaysAgo = await db.getFirstAsync<{ n: number }>(
+        'SELECT COUNT(*) AS n FROM quest_log WHERE quest_date = ? AND completed_at IS NOT NULL',
+        todayKey(twoDaysAgo)
+      );
+      const bridged =
+        (hadTwoDaysAgo?.n ?? 0) > 0 &&
+        (
+          await db.runAsync(
+            'UPDATE character SET streak = streak + 1, streak_freezes = streak_freezes - 1 WHERE id = 1 AND streak_freezes > 0'
+          )
+        ).changes > 0;
+      if (!bridged) {
+        await db.runAsync('UPDATE character SET streak = 1 WHERE id = 1');
+      }
     }
   }
 

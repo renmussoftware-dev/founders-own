@@ -29,8 +29,12 @@ export interface CharacterRow {
   operations_xp: number;
   finance_level: number;
   finance_xp: number;
+  streak_freezes: number;
   created_at: string;
 }
+
+/** Gem cost of one streak freeze. Tunable — ~3 days of questing at 15 xp/quest. */
+export const STREAK_FREEZE_COST = 150;
 
 export async function getCharacter(db: SQLiteDatabase): Promise<CharacterRow | null> {
   return db.getFirstAsync<CharacterRow>('SELECT * FROM character WHERE id = 1');
@@ -104,4 +108,22 @@ export async function grantStatXp(
     rankTitle(level)
   );
   return (await getCharacter(db))!;
+}
+
+/**
+ * Spend gems on a streak freeze. Returns { ok, character } — ok is false (no
+ * charge) when the founder can't afford one. Atomic: the UPDATE only fires when
+ * the balance covers the cost.
+ */
+export async function buyStreakFreeze(
+  db: SQLiteDatabase
+): Promise<{ ok: boolean; character: CharacterRow }> {
+  const res = await db.runAsync(
+    `UPDATE character
+       SET gems = gems - ?, streak_freezes = streak_freezes + 1
+     WHERE id = 1 AND gems >= ?`,
+    STREAK_FREEZE_COST,
+    STREAK_FREEZE_COST
+  );
+  return { ok: res.changes > 0, character: (await getCharacter(db))! };
 }

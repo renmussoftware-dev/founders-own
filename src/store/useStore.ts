@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { type CharacterRow } from '@/db/character';
 import { type RcOverview } from '@/integrations/revenuecat';
-import { saveSoundEnabled } from '@/integrations/settings';
+import { saveReminderEnabled, saveSoundEnabled } from '@/integrations/settings';
 import { setSoundOn } from '@/utils/feedback';
 
 interface AppState {
@@ -12,6 +12,10 @@ interface AppState {
   /** UI sound effects (achievements, level-ups, taps). Persisted; default on. */
   soundEnabled: boolean;
   setSoundEnabled: (enabled: boolean) => void;
+
+  /** Daily reminder notification. Persisted; default off (needs permission). */
+  reminderEnabled: boolean;
+  setReminderEnabled: (enabled: boolean) => void;
 
   /** In-memory snapshot of the character row; SQLite is the source of truth. */
   character: CharacterRow | null;
@@ -35,6 +39,12 @@ export const useStore = create<AppState>(set => ({
     setSoundOn(enabled); // keep the audio layer in sync immediately
     void saveSoundEnabled(enabled); // persist for next launch
     set({ soundEnabled: enabled });
+  },
+
+  reminderEnabled: false,
+  setReminderEnabled: enabled => {
+    void saveReminderEnabled(enabled); // persist; scheduling handled by caller
+    set({ reminderEnabled: enabled });
   },
 
   character: null,

@@ -119,6 +119,11 @@ const MIGRATIONS: string[] = [
   ALTER TABLE quest_log_v4 RENAME TO quest_log;
   CREATE INDEX idx_quest_log_date ON quest_log (quest_date);
   `,
+
+  // v5 — streak freezes: spendable tokens that bridge a single missed day
+  `
+  ALTER TABLE character ADD COLUMN streak_freezes INTEGER NOT NULL DEFAULT 0;
+  `,
 ];
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
