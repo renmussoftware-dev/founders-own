@@ -96,6 +96,12 @@
   .btn-ghost { font-weight: 800; font-size: 14px; color: var(--text-soft); padding: 15px 6px; }
   .btn-ghost:hover { color: var(--text); }
   .cta-note { font-size: 12.5px; color: var(--text-faint); margin-top: 16px; font-weight: 700; }
+  .stats-strip { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+  .stats-strip span {
+    font-size: 12px; font-weight: 800; letter-spacing: .4px; color: var(--text-soft);
+    border: 1px solid var(--border); border-radius: 999px; padding: 6px 13px;
+    background: rgba(237,234,251,.03);
+  }
 
   /* mock cards row */
   .mocks { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 56px; }
@@ -190,14 +196,18 @@
     <span class="eyebrow">The founder RPG for app developers</span>
     <h1>Turn your app's revenue<br>into <span class="grad">a game worth playing</span></h1>
     <p class="lead">
-      Connect RevenueCat read-only, verify your revenue milestones in gold, and get an
-      AI-diagnosed focus every week. Your real app business becomes the campaign — one quest at a time.
+      Instead of a habit tracker or a spreadsheet, your app business becomes an RPG character with five
+      stats that level up as you do the real work. A questline from First Real Users to your First
+      $1,000,000 Year — with every milestone verified against your live RevenueCat revenue, not self-reported.
     </p>
     <div class="cta-row">
       <a class="btn-gold" href="#pricing">Coming to the App Store</a>
       <a class="btn-ghost" href="#how">See how it works →</a>
     </div>
     <p class="cta-note">iOS first · Android to follow · built by Renmus Software</p>
+    <div class="stats-strip">
+      <span>Product</span><span>Marketing</span><span>Revenue</span><span>Operations</span><span>Finance</span>
+    </div>
 
     <div class="mocks">
       <div class="card mock-dash">
@@ -241,8 +251,8 @@
       </div>
       <div class="feature">
         <div class="ic ic-violet">◆</div>
-        <h3>A real questline</h3>
-        <p>An authored journey from your first paying subscriber to $1M — with daily quests chosen for your business type and exactly where you are.</p>
+        <h3>Quests tuned to your numbers</h3>
+        <p>An authored journey to $1M, with daily quests read from your real metrics — few users pushes Marketing, weak revenue-per-user pushes pricing, real money pushes Finance.</p>
       </div>
       <div class="feature">
         <div class="ic ic-mint">✦</div>
@@ -266,7 +276,7 @@
       <div class="step">
         <div class="n">1</div>
         <h3>Connect (read-only)</h3>
-        <p>Paste a read-only RevenueCat API key. It's stored in your device keychain and only ever reads your metrics.</p>
+        <p>Paste a read-only RevenueCat API key — no new SDK, no cost, and the reads run on your own quota. Stored in your device keychain; it only ever reads your metrics.</p>
       </div>
       <div class="step">
         <div class="n">2</div>
@@ -284,7 +294,7 @@
   <section id="pricing">
     <div class="section-head">
       <h2>Start free. Go Pro when it counts.</h2>
-      <p>The free tier runs entirely on your device. Pro unlocks the RevenueCat-backed layer — verified revenue, all acts, and the AI advisor.</p>
+      <p>Connect RevenueCat and watch your live dashboard for free — that's the hook. Pro unlocks the payoff: gold-verified milestones, quests tuned to your numbers, the AI advisor, and the whole road to $1M.</p>
     </div>
     <div class="plans">
       <div class="plan">
@@ -292,9 +302,10 @@
         <div class="price">$0</div>
         <div class="sub">Forever</div>
         <ul>
+          <li>Connect RevenueCat — live revenue dashboard</li>
           <li>Act I of the questline</li>
-          <li>Daily quests + streaks</li>
-          <li>Founder journal</li>
+          <li>Daily quests, streaks &amp; journal</li>
+          <li>Launch Playbook to your first customer</li>
           <li>Self-reported milestones + cards</li>
         </ul>
       </div>
@@ -304,14 +315,21 @@
         <div class="price">$49.99<small> / year</small></div>
         <div class="sub">or $8.99 / month</div>
         <ul>
-          <li>Connect RevenueCat — live revenue dashboard</li>
-          <li>Gold-verified milestones</li>
-          <li>Every act — the whole road to $1M</li>
+          <li>Gold-verified milestones from your real revenue</li>
+          <li>Quests tuned to your live numbers</li>
           <li>Weekly AI advisor deep-dives</li>
+          <li>Every act — the whole road to $1M</li>
           <li>Full journal history + exports</li>
         </ul>
       </div>
     </div>
+  </section>
+
+  <section id="pitch" style="padding-top: 0;">
+    <p class="tagline-serif" style="text-align: center; font-size: clamp(18px, 3vw, 24px); color: var(--text-soft); max-width: 680px; margin: 0 auto; line-height: 1.5;">
+      You already track your revenue in RevenueCat. Founders Own turns those numbers into a game you're
+      motivated to win — with milestones you can actually prove.
+    </p>
   </section>
 
   <footer>
