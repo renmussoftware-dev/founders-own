@@ -17,7 +17,14 @@ import {
 import { useStore } from '@/store/useStore';
 import { colors, fonts, stats } from '@/theme/tokens';
 
-const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+// Indexed by Date.getDay() (0 = Sunday). The streak strip is a rolling 7-day
+// window ending today, so each column's label must come from that cell's real
+// date — a fixed Mon–Sun row would misalign today onto the wrong weekday.
+const DOW_LETTER = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+function weekdayLetter(dateKey: string): string {
+  return DOW_LETTER[new Date(dateKey + 'T00:00:00').getDay()];
+}
 
 /** Journal (design 7c) + Founder Wrapped + export (SPEC #3). */
 export default function JournalScreen() {
@@ -100,9 +107,9 @@ export default function JournalScreen() {
             ))}
           </View>
           <View style={styles.calRow}>
-            {WEEKDAYS.map((d, i) => (
+            {strip.map((cell, i) => (
               <Text key={i} style={styles.weekday}>
-                {d}
+                {weekdayLetter(cell.date)}
               </Text>
             ))}
           </View>
