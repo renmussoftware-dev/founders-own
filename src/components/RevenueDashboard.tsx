@@ -1,11 +1,15 @@
+import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RevenueSparkline } from '@/components/RevenueSparkline';
 import { type MetricSnapshot } from '@/db/metrics';
 import { type RcOverview } from '@/integrations/revenuecat';
 import { buildInsights } from '@/logic/insights';
+import { computePace, type MilestoneGoal } from '@/logic/goal';
 import { formatMetric, metricLabel, type NextMilestone } from '@/logic/verification';
 import { colors, fonts } from '@/theme/tokens';
+
+const GOAL_DAYS = [30, 60, 90];
 
 /**
  * Live revenue dashboard on the Today board (SPEC value item #1). Turns the
@@ -19,8 +23,11 @@ export function RevenueDashboard({
   loading,
   snapshots,
   next,
+  goal,
   onConnect,
   onVerifyNext,
+  onSetGoal,
+  onClearGoal,
 }: {
   connected: boolean;
   projectName: string | null;
@@ -28,9 +35,13 @@ export function RevenueDashboard({
   loading: boolean;
   snapshots: MetricSnapshot[];
   next: NextMilestone | null;
+  goal?: MilestoneGoal | null;
   onConnect: () => void;
   onVerifyNext: (chapterId: string) => void;
+  onSetGoal?: (days: number) => void;
+  onClearGoal?: () => void;
 }) {
+  const [picking, setPicking] = useState(false);
   if (!connected) {
     return (
       <Pressable onPress={onConnect}>
@@ -80,6 +91,59 @@ export function RevenueDashboard({
     insights.mrrTrend !== null ||
     insights.activeTrials !== null ||
     insights.newCustomers !== null;
+
+  function renderGoal() {
+    if (!next?.chapter.verify) return null;
+    const metric = next.chapter.verify.metric;
+    if (goal && goal.chapterId === next.chapter.id) {
+      const pace = computePace(goal, next.current);
+      const dueLabel = new Date(goal.dueDate + 'T00:00:00').toLocaleDateString([], {
+        month: 'short',
+        day: 'numeric',
+      });
+      const paceText = pace.onPace
+        ? 'On pace ✓'
+        : `Behind — ${formatMetric(metric, pace.requiredPerDay)}/day to hit it`;
+      return (
+        <View style={styles.goalRow}>
+          <View style={styles.goalBody}>
+            <Text style={[styles.goalPace, { color: pace.onPace ? colors.mintBright : '#E8836B' }]}>
+              {paceText}
+            </Text>
+            <Text style={styles.goalDue}>
+              Target {dueLabel} · {pace.daysLeft}d left
+            </Text>
+          </View>
+          <Pressable onPress={onClearGoal} hitSlop={8}>
+            <Text style={styles.goalClear}>Clear</Text>
+          </Pressable>
+        </View>
+      );
+    }
+    if (picking) {
+      return (
+        <View style={styles.goalChips}>
+          {GOAL_DAYS.map(d => (
+            <Pressable
+              key={d}
+              onPress={() => {
+                onSetGoal?.(d);
+                setPicking(false);
+              }}
+              style={styles.goalChip}
+            >
+              <Text style={styles.goalChipText}>{d} days</Text>
+            </Pressable>
+          ))}
+        </View>
+      );
+    }
+    return (
+      <Pressable onPress={() => setPicking(true)} style={styles.setGoal}>
+        <Text style={styles.setGoalText}>Set a target date ›</Text>
+      </Pressable>
+    );
+  }
 
   return (
     <LinearGradient colors={[colors.surfaceTop, colors.surfaceBottom]} style={styles.card}>
@@ -175,6 +239,7 @@ export function RevenueDashboard({
               {formatMetric(next.chapter.verify.metric, next.chapter.verify.threshold)}{' '}
               {metricLabel(next.chapter.verify.metric)}
             </Text>
+            {onSetGoal ? renderGoal() : null}
           </View>
         )
       ) : null}
@@ -252,6 +317,24 @@ const styles = StyleSheet.create({
   nextTrack: { height: 7, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.35)', overflow: 'hidden', marginTop: 8 },
   nextFill: { height: '100%', borderRadius: 4 },
   nextProgress: { fontFamily: fonts.uiExtraBold, fontSize: 11, color: colors.gold, marginTop: 7 },
+  goalRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 11 },
+  goalBody: { flex: 1 },
+  goalPace: { fontFamily: fonts.uiExtraBold, fontSize: 12 },
+  goalDue: { fontFamily: fonts.uiBold, fontSize: 10.5, color: colors.textFaint, marginTop: 2 },
+  goalClear: { fontFamily: fonts.uiExtraBold, fontSize: 10.5, color: colors.textSecondary },
+  setGoal: { marginTop: 11 },
+  setGoalText: { fontFamily: fonts.uiExtraBold, fontSize: 11.5, color: colors.violetBright },
+  goalChips: { flexDirection: 'row', gap: 8, marginTop: 11 },
+  goalChip: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(164,147,255,0.4)',
+    backgroundColor: 'rgba(124,104,232,0.15)',
+  },
+  goalChipText: { fontFamily: fonts.uiExtraBold, fontSize: 11.5, color: colors.textPrimary },
   readyLabel: { fontFamily: fonts.uiBold, fontSize: 9, letterSpacing: 1, color: colors.mintBright },
   readyRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   readyText: { flex: 1, fontFamily: fonts.uiExtraBold, fontSize: 11.5, lineHeight: 16, color: colors.gold },

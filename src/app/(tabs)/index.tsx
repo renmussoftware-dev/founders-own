@@ -27,6 +27,7 @@ import { statLevel, statProgress, statXp, XP_PER_LEVEL } from '@/logic/leveling'
 import { upsertDailyEntry } from '@/logic/journal';
 import { questContext } from '@/logic/questContext';
 import { nextMoneyMilestone, type NextMilestone } from '@/logic/verification';
+import { clearGoal, getGoal, setGoal, type MilestoneGoal } from '@/logic/goal';
 import { proLocked } from '@/config/pro';
 import { feedback } from '@/utils/feedback';
 import { CHAPTERS_BY_ID } from '@/content/questline';
@@ -54,6 +55,7 @@ export default function TodayScreen() {
   const isPro = useStore(s => s.isPro);
   const [snapshots, setSnapshots] = useState<MetricSnapshot[]>([]);
   const [next, setNext] = useState<NextMilestone | null>(null);
+  const [goal, setGoalState] = useState<MilestoneGoal | null>(null);
   const [activeChapterTitle, setActiveChapterTitle] = useState<string | undefined>();
   const [advice, setAdvice] = useState<AdvisorInsight | null>(null);
   const [deepDiveStatus, setDeepDiveStatus] = useState<string | null>(null);
@@ -89,6 +91,17 @@ export default function TodayScreen() {
     })();
   }, [db, overview]);
 
+  // Load any saved milestone goal, and drop it once its milestone is verified
+  // (the goal always tracks the current next milestone).
+  useEffect(() => {
+    getGoal(db).then(setGoalState);
+  }, [db]);
+  useEffect(() => {
+    if (goal && next && goal.chapterId !== next.chapter.id) {
+      clearGoal(db).then(() => setGoalState(null));
+    }
+  }, [db, goal, next]);
+
   // Recompute the advisor's read whenever the character or metrics change.
   // Skipped entirely when locked — free users see the teaser, not real advice.
   useEffect(() => {
@@ -98,6 +111,23 @@ export default function TodayScreen() {
     }
     buildAdvisorSnapshot(db, character, overview).then(s => setAdvice(localAdvisor(s)));
   }, [db, character, overview, advisorLocked]);
+
+  async function onSetGoal(days: number) {
+    if (!next?.chapter.verify) return;
+    const g = await setGoal(db, {
+      chapterId: next.chapter.id,
+      metric: next.chapter.verify.metric,
+      target: next.chapter.verify.threshold,
+      startValue: next.current,
+      days,
+    });
+    setGoalState(g);
+    feedback('tap');
+  }
+  async function onClearGoal() {
+    await clearGoal(db);
+    setGoalState(null);
+  }
 
   async function onDevSample() {
     const fixture = await devSeedSampleMetrics(db);
@@ -206,8 +236,11 @@ export default function TodayScreen() {
             loading={loading}
             snapshots={snapshots}
             next={next}
+            goal={goal}
             onConnect={() => router.push('/connect')}
             onVerifyNext={id => router.push(proLocked(isPro) ? '/paywall' : `/verify/${id}`)}
+            onSetGoal={onSetGoal}
+            onClearGoal={onClearGoal}
           />
           {__DEV__ && !connected ? (
             <Pressable onPress={onDevSample} style={styles.devSample}>
