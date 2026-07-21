@@ -12,6 +12,7 @@ import { buyStreakFreeze, STREAK_FREEZE_COST } from '@/db/character';
 import { devResetAll } from '@/db/dev';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { cancelDailyReminder, scheduleDailyReminder } from '@/integrations/notifications';
+import { proLocked } from '@/config/pro';
 import { colors, fonts, statOrder } from '@/theme/tokens';
 import { statXp } from '@/logic/leveling';
 import { useStore } from '@/store/useStore';
@@ -39,6 +40,7 @@ export default function CharacterScreen() {
   const setReminderEnabled = useStore(s => s.setReminderEnabled);
   const reminderHour = useStore(s => s.reminderHour);
   const setReminderHour = useStore(s => s.setReminderHour);
+  const isPro = useStore(s => s.isPro);
   const [tab, setTab] = useState<SheetTab>('Stats');
   const [milestones, setMilestones] = useState<MilestoneItem[]>([]);
   const [reminderBusy, setReminderBusy] = useState(false);
@@ -125,6 +127,25 @@ export default function CharacterScreen() {
 
       <LinearGradient colors={['#28224C', '#1E1A3C']} style={styles.sheet}>
         <ScrollView contentContainerStyle={styles.sheetContent}>
+          {tab === 'Stats' && proLocked(isPro) ? (
+            <Pressable onPress={() => router.push('/paywall')}>
+              <LinearGradient
+                colors={['rgba(240,205,121,0.22)', 'rgba(200,148,65,0.07)']}
+                style={styles.proCard}
+              >
+                <View style={styles.proIcon}>
+                  <HexSeal label="★" size={30} />
+                </View>
+                <View style={styles.proBody}>
+                  <Text style={styles.proTitle}>Founders Own Pro</Text>
+                  <Text style={styles.proSub}>
+                    Verify in gold · quests tuned to your numbers · AI advisor
+                  </Text>
+                </View>
+                <Text style={styles.proChevron}>›</Text>
+              </LinearGradient>
+            </Pressable>
+          ) : null}
           {tab === 'Stats' && (
             <View style={styles.statList}>
               {statOrder.map(stat => (
@@ -374,6 +395,35 @@ const styles = StyleSheet.create({
     padding: 18,
     paddingBottom: 32,
   },
+  proCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(223,195,131,0.5)',
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    marginBottom: 12,
+  },
+  proIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: 'rgba(240,205,121,0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  proBody: { flex: 1 },
+  proTitle: { fontFamily: fonts.uiExtraBold, fontSize: 15, color: colors.textPrimary },
+  proSub: {
+    fontFamily: fonts.uiBold,
+    fontSize: 11,
+    lineHeight: 15,
+    color: colors.textSecondary,
+    marginTop: 3,
+  },
+  proChevron: { fontFamily: fonts.uiExtraBold, fontSize: 18, color: colors.gold },
   statList: { gap: 9 },
   statCard: {
     backgroundColor: colors.surfaceBottom,

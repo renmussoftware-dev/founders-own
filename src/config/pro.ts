@@ -1,9 +1,8 @@
 /**
  * Master switch for Pro gating (monetization model B).
  *
- * OFF during the testing phase, so everything is usable while we test. Flip to
- * true at launch — once the app's own RevenueCat SDK keys are in and `isPro`
- * syncs at launch (see useRevenueCat).
+ * ON: `isPro` syncs at launch (bootstrapRevenueCat) and the iOS SDK key is in,
+ * so the payoff features gate to the paywall until the founder subscribes.
  *
  * Model B: the RevenueCat connection + live revenue dashboard stay FREE (the
  * hook — seeing your real MRR inside the app). The payoff is Pro:
@@ -12,7 +11,7 @@
  *   - the AI advisor + weekly deep-dive
  *   - Acts II–IV
  */
-export const PRO_GATING_ENABLED = false;
+export const PRO_GATING_ENABLED = true;
 
 /** True when a Pro feature should be blocked for this user. */
 export function proLocked(isPro: boolean): boolean {
