@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { RevenueSparkline } from '@/components/RevenueSparkline';
 import { type MetricSnapshot } from '@/db/metrics';
 import { type RcOverview } from '@/integrations/revenuecat';
+import { buildInsights } from '@/logic/insights';
 import { formatMetric, metricLabel, type NextMilestone } from '@/logic/verification';
 import { colors, fonts } from '@/theme/tokens';
 
@@ -70,6 +71,16 @@ export function RevenueDashboard({
   const subs = overview.metrics.active_subscriptions ?? 0;
   const series = snapshots.map(s => s.mrr);
 
+  const insights = buildInsights(snapshots, overview);
+  const trendDir = insights.mrrTrend?.dir;
+  const trendArrow = trendDir === 'up' ? '▲ ' : trendDir === 'down' ? '▼ ' : '· ';
+  const trendColor =
+    trendDir === 'up' ? colors.mintBright : trendDir === 'down' ? '#E8836B' : colors.textSecondary;
+  const hasInsights =
+    insights.mrrTrend !== null ||
+    insights.activeTrials !== null ||
+    insights.newCustomers !== null;
+
   return (
     <LinearGradient colors={[colors.surfaceTop, colors.surfaceBottom]} style={styles.card}>
       <View style={styles.header}>
@@ -102,6 +113,32 @@ export function RevenueDashboard({
       ) : (
         <Text style={styles.building}>Your MRR chart builds as you check in each day.</Text>
       )}
+
+      {hasInsights ? (
+        <View style={styles.insights}>
+          {insights.mrrTrend ? (
+            <View style={styles.insight}>
+              <Text style={[styles.insightValue, { color: trendColor }]}>
+                {trendArrow}
+                {Math.abs(Math.round(insights.mrrTrend.pct))}%
+              </Text>
+              <Text style={styles.insightLabel}>MRR · 7-DAY</Text>
+            </View>
+          ) : null}
+          {insights.activeTrials !== null ? (
+            <View style={styles.insight}>
+              <Text style={styles.insightValue}>{insights.activeTrials.toLocaleString()}</Text>
+              <Text style={styles.insightLabel}>TRIALS</Text>
+            </View>
+          ) : null}
+          {insights.newCustomers !== null ? (
+            <View style={styles.insight}>
+              <Text style={styles.insightValue}>{insights.newCustomers.toLocaleString()}</Text>
+              <Text style={styles.insightLabel}>NEW · 28D</Text>
+            </View>
+          ) : null}
+        </View>
+      ) : null}
 
       {next?.chapter.verify ? (
         next.pct >= 1 ? (
@@ -189,6 +226,24 @@ const styles = StyleSheet.create({
 
   spark: { marginTop: 12, marginHorizontal: -2 },
   building: { fontFamily: fonts.uiBold, fontSize: 11.5, color: colors.textFaint, marginTop: 12 },
+
+  insights: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 14,
+    paddingTop: 14,
+    borderTopWidth: 1,
+    borderTopColor: colors.surfaceBorder,
+  },
+  insight: { flex: 1 },
+  insightValue: { fontFamily: fonts.uiBlack, fontSize: 16, color: colors.textPrimary },
+  insightLabel: {
+    fontFamily: fonts.uiBold,
+    fontSize: 8.5,
+    letterSpacing: 0.8,
+    color: colors.textFaint,
+    marginTop: 4,
+  },
 
   next: { marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.surfaceBorder },
   nextHeader: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
