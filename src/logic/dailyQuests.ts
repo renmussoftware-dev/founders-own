@@ -57,6 +57,31 @@ export function founderStage(activeChapter?: string): Stage {
   return 'scale';
 }
 
+const STAGE_RANK: Record<Stage, number> = { foundation: 0, early: 1, growth: 2, scale: 3 };
+
+/** Stage implied purely by live metrics — a founder with real sales isn't "pre-launch". */
+function metricStage(overview: RcOverview | null): Stage {
+  if (!overview) return 'foundation';
+  const subs = overview.metrics.active_subscriptions ?? 0;
+  const mrr = overview.metrics.mrr ?? 0;
+  const users = overview.metrics.active_users ?? 0;
+  if (subs >= 100 || mrr >= 1000) return 'scale';
+  if (subs >= 1 || mrr > 0) return 'growth'; // paying customers = a running business
+  if (users >= 10) return 'early';
+  return 'foundation';
+}
+
+/**
+ * The stage to serve quests for: the higher of chapter progress and what live
+ * metrics reveal. Prevents pre-launch quests (ship a build, draft your store
+ * listing) from surfacing for an app that already has real revenue and users.
+ */
+export function effectiveStage(activeChapter: string | undefined, overview: RcOverview | null): Stage {
+  const byChapter = founderStage(activeChapter);
+  const byMetric = metricStage(overview);
+  return STAGE_RANK[byMetric] > STAGE_RANK[byChapter] ? byMetric : byChapter;
+}
+
 function stageMatches(t: QuestTemplate, stage: Stage): boolean {
   return !t.stages || t.stages.includes(stage);
 }
@@ -134,7 +159,7 @@ function selectDaily(
   overview: RcOverview | null
 ): QuestTemplate[] {
   const bt = c.business_type;
-  const stage = founderStage(activeChapter);
+  const stage = effectiveStage(activeChapter, overview);
   const chosen: QuestTemplate[] = [];
   const used = new Set<string>();
 

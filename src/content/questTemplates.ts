@@ -121,12 +121,12 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   { id: 'app_rev_e1b', type: 'digital_product', stat: 'revenue', effort: 'heavy', chainOnly: true, title: 'Ship one fix for that drop-off point' },
   { id: 'app_rev_e2', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['early', 'growth'], title: 'Change one thing on your paywall and note the before/after' },
   { id: 'app_rev_g1', type: 'digital_product', stat: 'revenue', effort: 'heavy', stages: ['growth', 'scale'], title: 'A/B test one element of your paywall' },
-  { id: 'app_rev_g2', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['growth', 'scale'], title: 'Add an annual option or one upsell' },
+  { id: 'app_rev_g2', type: 'digital_product', stat: 'revenue', effort: 'medium', stages: ['growth', 'scale'], title: 'Raise revenue per customer with one upsell or add-on' },
 
   // ---- Operations ----
   { id: 'app_ops_f1', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['foundation'], title: 'Set up analytics so you can see installs and key events' },
   { id: 'app_ops_f2', type: 'digital_product', stat: 'operations', effort: 'light', stages: ['foundation'], title: 'Turn on crash reporting' },
-  { id: 'app_ops_f3', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['foundation', 'early'], title: 'Draft your store listing (screenshots, description)' },
+  { id: 'app_ops_f3', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['foundation', 'early'], title: 'Refresh your store listing — screenshots and copy that convert' },
   { id: 'app_ops_e1', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['early', 'growth'], title: 'Automate one step of your build or release' },
   { id: 'app_ops_e2', type: 'digital_product', stat: 'operations', effort: 'medium', stages: ['early', 'growth'], title: 'Set up a simple way to collect user feedback in-app' },
   { id: 'app_ops_g1', type: 'digital_product', stat: 'operations', effort: 'heavy', stages: ['growth', 'scale'], title: 'Automate or delegate one recurring release task' },
@@ -228,7 +228,7 @@ export const QUEST_TEMPLATES: QuestTemplate[] = [
   { id: 'ch4_any_revenue', type: 'any', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch4', title: 'Do the one thing most likely to drive paid installs, twice' },
 
   // Ch.5 First $1,000 MRR
-  { id: 'ch5_app_annual', type: 'digital_product', stat: 'revenue', effort: 'medium', chapter: 'act1_ch5', title: 'Add an annual plan and surface it in your paywall' },
+  { id: 'ch5_app_annual', type: 'digital_product', stat: 'revenue', effort: 'medium', chapter: 'act1_ch5', title: 'Sharpen your paywall — make your best-value plan the obvious pick' },
   { id: 'ch5_app_trial', type: 'digital_product', stat: 'revenue', effort: 'heavy', chapter: 'act1_ch5', title: 'Raise trial → paid conversion by one concrete change' },
   { id: 'ch5_any_retain', type: 'any', stat: 'product', effort: 'medium', chapter: 'act1_ch5', title: 'Remove one reason subscribers cancel' },
 ];

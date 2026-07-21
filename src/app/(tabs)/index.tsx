@@ -53,7 +53,7 @@ export default function TodayScreen() {
   const [streakSaved, setStreakSaved] = useState<number | null>(null);
   const streakSavedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { connected, projectName, overview, loading } = useRevenueData();
+  const { connected, projectName, overview, loading, ready } = useRevenueData();
   const isPro = useStore(s => s.isPro);
   const [snapshots, setSnapshots] = useState<MetricSnapshot[]>([]);
   const [next, setNext] = useState<NextMilestone | null>(null);
@@ -71,10 +71,8 @@ export default function TodayScreen() {
   const advisorLocked = proLocked(isPro);
   const questOverview = advisorLocked ? null : overview;
 
+  // The active chapter drives stage + the playbook gate; load it on mount.
   useEffect(() => {
-    if (character) {
-      ensureTodayQuests(db, character, questOverview).then(setQuests);
-    }
     db.getFirstAsync<{ chapter_id: string }>(
       "SELECT chapter_id FROM chapter_progress WHERE status = 'active' ORDER BY act, chapter_id LIMIT 1"
     ).then(r => {
@@ -82,9 +80,16 @@ export default function TodayScreen() {
       setActiveChapterTitle(ch?.title);
       setActiveAct(ch?.act ?? null);
     });
-    // Issue once per mount; quest rows for today are stable afterwards.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db]);
+
+  // Issue today's quests only once the connection has settled, so an established
+  // app's real metrics inform the stage instead of a not-yet-loaded overview.
+  // Idempotent per day: re-runs return the existing board.
+  useEffect(() => {
+    if (!character || !ready) return;
+    ensureTodayQuests(db, character, questOverview).then(setQuests);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [db, character, ready]);
 
   // Snapshot live metrics daily + recompute the next milestone whenever metrics load.
   useEffect(() => {
@@ -209,6 +214,13 @@ export default function TodayScreen() {
   const focusXp = statXp(character, focusStat);
   const tone = stats[focusStat].tone;
 
+  // An app with real sales has already shipped, priced, and found users — the
+  // pre-revenue Launch Playbook no longer applies.
+  const established =
+    connected &&
+    !!overview &&
+    ((overview.metrics.active_subscriptions ?? 0) > 0 || (overview.metrics.mrr ?? 0) > 0);
+
   return (
     <ArcaneBackground>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 16 }]}>
@@ -265,8 +277,9 @@ export default function TodayScreen() {
           ) : null}
         </View>
 
-        {/* Act I blind spot: before there's revenue to read, give concrete steps. */}
-        {activeAct === 1 && playbookDone < PLAYBOOK_TOTAL ? (
+        {/* Act I blind spot: before there's revenue to read, give concrete steps.
+            Hidden once the app is established (real sales already prove it shipped). */}
+        {activeAct === 1 && playbookDone < PLAYBOOK_TOTAL && !established ? (
           <Pressable onPress={() => router.push('/playbook')}>
             <LinearGradient
               colors={['rgba(124,104,232,0.2)', 'rgba(124,104,232,0.06)']}

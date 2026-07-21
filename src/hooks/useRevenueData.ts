@@ -16,6 +16,10 @@ export function useRevenueData() {
   const setRcOverview = useStore(s => s.setRcOverview);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // True once the initial connection check has settled (metrics loaded, or
+  // confirmed not connected). Callers gate metric-dependent work on this so it
+  // doesn't run against a not-yet-loaded overview.
+  const [ready, setReady] = useState(false);
 
   const refresh = useCallback(async () => {
     const cred = await getRcCredentials();
@@ -42,10 +46,15 @@ export function useRevenueData() {
   }, [setRcConnection, setRcOverview]);
 
   useEffect(() => {
-    // Fetch once per mount when nothing is cached yet.
-    if (!overview) refresh();
+    // Fetch once per mount when nothing is cached yet, then mark ready so
+    // callers know the connection state (and metrics) have settled.
+    if (overview) {
+      setReady(true);
+      return;
+    }
+    refresh().finally(() => setReady(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { connected, projectName, overview, loading, error, refresh };
+  return { connected, projectName, overview, loading, error, ready, refresh };
 }
