@@ -15,12 +15,18 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_ADVISOR_ENDPOINT": "https://founders-own.vercel.app/api/advisor-deepdive"
       }
     },
     "production": {
       "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_ADVISOR_ENDPOINT": "https://founders-own.vercel.app/api/advisor-deepdive"
       }
     }
   },
