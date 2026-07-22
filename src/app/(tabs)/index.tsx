@@ -32,8 +32,9 @@ import { getPlaybookDone } from '@/logic/playbook';
 import { PLAYBOOK_TOTAL } from '@/content/playbook';
 import { proLocked } from '@/config/pro';
 import { feedback } from '@/utils/feedback';
-import { getInsights } from '@/integrations/revenuecat';
+import { getBenchmarks, getInsights, type BenchmarkSet } from '@/integrations/revenuecat';
 import { getRcCredentials } from '@/integrations/rcCredentials';
+import { BenchmarksCard } from '@/components/BenchmarksCard';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { useRevenueData } from '@/hooks/useRevenueData';
 import { useStore } from '@/store/useStore';
@@ -64,6 +65,7 @@ export default function TodayScreen() {
   const [activeAct, setActiveAct] = useState<number | null>(null);
   const [playbookDone, setPlaybookDone] = useState(0);
   const [advice, setAdvice] = useState<AdvisorInsight | null>(null);
+  const [benchmarks, setBenchmarks] = useState<BenchmarkSet | null>(null);
   const [deepDiveStatus, setDeepDiveStatus] = useState<string | null>(null);
 
   // Model B: metric-driven personalization (quest selection, the "why this
@@ -132,14 +134,23 @@ export default function TodayScreen() {
   useEffect(() => {
     if (!character || advisorLocked) {
       setAdvice(null);
+      setBenchmarks(null);
       return;
     }
     let cancelled = false;
     (async () => {
       const cred = connected ? await getRcCredentials() : null;
-      const insights = cred ? await getInsights(cred.apiKey, cred.projectId) : null;
+      const [insights, bench] = cred
+        ? await Promise.all([
+            getInsights(cred.apiKey, cred.projectId),
+            getBenchmarks(cred.apiKey, cred.projectId),
+          ])
+        : [null, null];
       const snap = await buildAdvisorSnapshot(db, character, overview, insights);
-      if (!cancelled) setAdvice(localAdvisor(snap));
+      if (cancelled) return;
+      setAdvice(localAdvisor(snap));
+      // Pick the app that actually has benchmarks (a project can hold several).
+      setBenchmarks(bench?.find(s => s.benchmarks.length > 0) ?? bench?.[0] ?? null);
     })();
     return () => {
       cancelled = true;
@@ -353,6 +364,12 @@ export default function TodayScreen() {
               deepDiveStatus={deepDiveStatus}
               onDeepDive={onDeepDive}
             />
+          </View>
+        ) : null}
+
+        {!advisorLocked && benchmarks ? (
+          <View style={styles.advisor}>
+            <BenchmarksCard set={benchmarks} />
           </View>
         ) : null}
 

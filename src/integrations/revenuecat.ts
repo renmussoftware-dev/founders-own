@@ -213,3 +213,116 @@ export async function getInsights(key: string, projectId: string): Promise<Insig
     fetchedAt: new Date().toISOString(),
   };
 }
+
+// ---------------------------------------------------------------------------
+// Benchmarks — "am I normal?" Percentile vs. store + category peers over ~12mo.
+// Needs the read-only key's `charts_metrics:benchmarks:read` scope (confirmed
+// grantable via "Charts metrics: Read only"). The endpoint is not in the public
+// v2 reference (newer, surfaced via the RevenueCat MCP); the path here is
+// inferred from the /metrics/* pattern — validate on device and adjust if 404.
+// ---------------------------------------------------------------------------
+
+export interface Benchmark {
+  metric: string; // raw id, e.g. "trial_conversion"
+  label: string;
+  /** The app's own value for this metric. */
+  value: number | null;
+  /** Peer percentile bucket, e.g. "60-70". */
+  bucket: string | null;
+  /** Midpoint of the bucket (65 for "60-70") for sorting/coloring. */
+  percentile: number | null;
+  /** Lower is better (churn, refund rate) — bucket already accounts for this. */
+  reverse: boolean;
+  /** Low sample size → treat as low-confidence. */
+  eligible: boolean;
+  category: string | null;
+}
+
+export interface BenchmarkSet {
+  appId: string | null;
+  appName: string | null;
+  benchmarks: Benchmark[];
+}
+
+const BENCHMARK_LABELS: Record<string, string> = {
+  trial_conversion: 'Trial conversion',
+  monthly_churn: 'Monthly churn',
+  churn: 'Monthly churn',
+  initial_conversion: 'Initial conversion',
+  conversion_to_paying: 'Conversion to paying',
+  refund_rate: 'Refund rate',
+  realized_ltv_per_customer: 'LTV / customer',
+  realized_ltv_per_paying_customer: 'LTV / paying customer',
+};
+
+function benchmarkLabel(metric: string): string {
+  return (
+    BENCHMARK_LABELS[metric] ??
+    metric.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  );
+}
+
+function bucketMidpoint(bucket: string | null | undefined): number | null {
+  if (!bucket) return null;
+  const m = String(bucket).match(/(\d+)\s*[-–]\s*(\d+)/);
+  if (m) return (parseInt(m[1], 10) + parseInt(m[2], 10)) / 2;
+  const n = parseInt(String(bucket), 10);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Tolerant parse — the exact envelope varies, so we probe common shapes. */
+export function parseBenchmarks(data: unknown): BenchmarkSet[] {
+  const d = data as Record<string, unknown>;
+  const appsRaw = Array.isArray(d?.apps)
+    ? d.apps
+    : Array.isArray(d?.items)
+      ? d.items
+      : Array.isArray(data)
+        ? (data as unknown[])
+        : d
+          ? [d]
+          : [];
+  return (appsRaw as Record<string, unknown>[]).map(a => {
+    const list = (Array.isArray(a.benchmarks)
+      ? a.benchmarks
+      : Array.isArray(a.metrics)
+        ? a.metrics
+        : []) as Record<string, unknown>[];
+    return {
+      appId: (a.app_id ?? a.id ?? null) as string | null,
+      appName: (a.app_name ?? a.name ?? null) as string | null,
+      benchmarks: list.map(b => {
+        const metric = String(b.metric ?? b.metric_name ?? b.name ?? '');
+        const bucket = (b.percentile_bucket ?? null) as string | null;
+        return {
+          metric,
+          label: benchmarkLabel(metric),
+          value: (b.metric_value ?? b.value ?? null) as number | null,
+          bucket,
+          percentile: bucketMidpoint(bucket),
+          reverse: b.is_reverse_metric === true,
+          eligible: b.is_eligible_for_benchmarking !== false,
+          category: (b.comparison_category ?? null) as string | null,
+        };
+      }),
+    };
+  });
+}
+
+/**
+ * Fetch peer benchmarks for the project (or a single app). Returns null on any
+ * error (missing scope, 404, or web CORS) so callers degrade gracefully.
+ */
+export async function getBenchmarks(
+  key: string,
+  projectId: string,
+  opts: { appId?: string } = {}
+): Promise<BenchmarkSet[] | null> {
+  const q = opts.appId ? `?app_id=${encodeURIComponent(opts.appId)}` : '';
+  try {
+    const data = await rcGet<unknown>(`/projects/${projectId}/metrics/benchmarks${q}`, key);
+    return parseBenchmarks(data);
+  } catch {
+    return null;
+  }
+}
