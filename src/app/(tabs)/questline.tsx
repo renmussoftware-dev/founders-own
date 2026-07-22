@@ -9,6 +9,8 @@ import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
 import { VerifiedBadge } from '@/components/ui/VerifiedBadge';
 import { ACTS, CHAPTERS_BY_ID, chaptersForAct, type Chapter } from '@/content/questline';
 import { getAllProgress, type ChapterProgressRow } from '@/db/chapters';
+import { proLocked } from '@/config/pro';
+import { useStore } from '@/store/useStore';
 import { colors, fonts, hexagonPoints } from '@/theme/tokens';
 
 /** Questline map (design 7b). */
@@ -16,6 +18,7 @@ export default function QuestlineScreen() {
   const insets = useSafeAreaInsets();
   const db = useSQLiteContext();
   const router = useRouter();
+  const isPro = useStore(s => s.isPro);
   const [progress, setProgress] = useState<ChapterProgressRow[]>([]);
 
   useFocusEffect(
@@ -28,6 +31,8 @@ export default function QuestlineScreen() {
   const activeAct = progress.find(p => p.status === 'active')?.act ?? 1;
   const act = ACTS.find(a => a.number === activeAct) ?? ACTS[0];
   const chapters = chaptersForAct(act.number);
+  // Acts II–IV are the Pro payoff — gate the whole act for non-Pro founders.
+  const actLocked = proLocked(isPro) && act.number >= 2;
 
   return (
     <ArcaneBackground>
@@ -37,21 +42,36 @@ export default function QuestlineScreen() {
           {act.name} — {act.subtitle}
         </Text>
 
+        {actLocked ? (
+          <Pressable onPress={() => router.push('/paywall')}>
+            <LinearGradient
+              colors={['rgba(240,205,121,0.2)', 'rgba(200,148,65,0.06)']}
+              style={styles.proBanner}
+            >
+              <View style={styles.proBannerIcon}>
+                <Text style={styles.proBannerGlyph}>★</Text>
+              </View>
+              <View style={styles.proBannerBody}>
+                <Text style={styles.proBannerTitle}>Acts II–IV are Pro</Text>
+                <Text style={styles.proBannerSub}>
+                  Keep building all the way to $1M — unlock the rest of the journey.
+                </Text>
+              </View>
+              <Text style={styles.proBannerChevron}>›</Text>
+            </LinearGradient>
+          </Pressable>
+        ) : null}
+
         <View style={styles.spine}>
           {chapters.map(ch => {
             const p = byId.get(ch.id);
-            return (
-              <ChapterNode
-                key={ch.id}
-                chapter={ch}
-                progress={p}
-                onPress={() =>
-                  p && p.status !== 'locked'
-                    ? router.push(`/chapter/${ch.id}`)
-                    : undefined
-                }
-              />
-            );
+            const onPress =
+              actLocked
+                ? () => router.push('/paywall')
+                : p && p.status !== 'locked'
+                  ? () => router.push(`/chapter/${ch.id}`)
+                  : undefined;
+            return <ChapterNode key={ch.id} chapter={ch} progress={p} onPress={onPress} />;
           })}
         </View>
 
@@ -214,6 +234,36 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginBottom: 18,
   },
+  proBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1.5,
+    borderColor: 'rgba(223,195,131,0.5)',
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    marginBottom: 18,
+  },
+  proBannerIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 11,
+    backgroundColor: 'rgba(240,205,121,0.14)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  proBannerGlyph: { fontFamily: fonts.uiBlack, fontSize: 17, color: colors.gold },
+  proBannerBody: { flex: 1 },
+  proBannerTitle: { fontFamily: fonts.uiExtraBold, fontSize: 14.5, color: colors.textPrimary },
+  proBannerSub: {
+    fontFamily: fonts.uiBold,
+    fontSize: 11,
+    lineHeight: 15,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  proBannerChevron: { fontFamily: fonts.uiExtraBold, fontSize: 18, color: colors.gold },
   spine: { gap: 14 },
   nodeRow: { flexDirection: 'row', gap: 14, alignItems: 'flex-start' },
   markerCol: { width: 32, alignItems: 'center', paddingTop: 8 },

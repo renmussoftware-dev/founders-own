@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -7,6 +7,7 @@ import { useSQLiteContext } from 'expo-sqlite';
 import { ArcaneBackground } from '@/components/ui/ArcaneBackground';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { isPaywallBoundary } from '@/content/questline';
+import { proLocked } from '@/config/pro';
 import {
   getProgress,
   parseFlags,
@@ -34,6 +35,14 @@ export default function ChapterDetail() {
     }, [db, id])
   );
 
+  // Acts II–IV are Pro. A non-Pro founder who reaches one of these chapters
+  // (deep link, or after churning) is sent to the paywall instead of playing it.
+  useEffect(() => {
+    if (chapter && chapter.act >= 2 && proLocked(isPro)) {
+      router.replace('/paywall');
+    }
+  }, [chapter, isPro, router]);
+
   if (!chapter) {
     return (
       <ArcaneBackground>
@@ -54,13 +63,16 @@ export default function ChapterDetail() {
 
     if (justCompleted && chapter) {
       await writeMilestoneEntry(db, chapter.title);
-      // Paywall lands at the Act 1→2 boundary (SPEC §9) for non-pro founders.
-      if (isPaywallBoundary(chapter.id) && !isPro) {
-        router.replace('/paywall');
-        return;
-      }
+      // Unlock the next chapter either way, so finishing Act I reveals Act II
+      // (as a Pro-gated preview) instead of dead-ending on a completed Act I.
       await unlockNext(db, id);
-      router.replace(`/milestone/${id}`);
+      // At the Act 1→2 boundary, a non-Pro founder gets the paywall upsell;
+      // otherwise the milestone celebration.
+      if (isPaywallBoundary(chapter.id) && proLocked(isPro)) {
+        router.replace('/paywall');
+      } else {
+        router.replace(`/milestone/${id}`);
+      }
     }
   }
 
