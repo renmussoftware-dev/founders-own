@@ -223,7 +223,12 @@ export async function recordDeepDive(db: SQLiteDatabase): Promise<void> {
   );
 }
 
-/** The PII-free payload sent to the endpoint — the snapshot minus UI-only bits. */
+/**
+ * The PII-free payload sent to the endpoint — the founder's real *business*
+ * numbers only. Deliberately excludes questsThisWeek and other in-app coaching
+ * signals: those describe the founder's activity inside Founders Own, not their
+ * product, and a business advisor misreads them as product engagement.
+ */
 export interface DeepDiveRequest {
   connected: boolean;
   users: number;
@@ -235,7 +240,6 @@ export interface DeepDiveRequest {
   churnRate: number | null;
   trialConversion: number | null;
   conversionToPaying: number | null;
-  questsThisWeek: number;
   next: { title: string; label: string; gap: number } | null;
 }
 
@@ -251,7 +255,6 @@ function toDeepDiveRequest(s: AdvisorSnapshot): DeepDiveRequest {
     churnRate: s.churnRate,
     trialConversion: s.trialConversion,
     conversionToPaying: s.conversionToPaying,
-    questsThisWeek: s.questsThisWeek,
     next: s.next ? { title: s.next.title, label: s.next.label, gap: s.next.gap } : null,
   };
 }

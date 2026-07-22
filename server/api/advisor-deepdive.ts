@@ -24,7 +24,6 @@ interface DeepDiveRequest {
   churnRate: number | null;
   trialConversion: number | null;
   conversionToPaying: number | null;
-  questsThisWeek: number;
   next: { title: string; label: string; gap: number } | null;
 }
 
@@ -37,8 +36,8 @@ Write a weekly read that does exactly three things, in this order and with no he
 
 Rules:
 - Second person, direct, specific. No hype, no filler, no congratulating them for connecting data.
-- 150–220 words. Plain prose in short paragraphs. No markdown, no bullet symbols, no headings.
-- Only reason from the numbers provided. If a metric is marked "not available", do not invent it — reason from what you have.
+- 150–200 words. Be economical — every sentence must earn its place. Plain prose in short paragraphs. No markdown, no bullet symbols, no headings.
+- Only reason from the numbers provided. If a metric is marked "not available", do not invent it — reason from what you have. Every number you cite must be one you were given or a direct calculation from them — never invent a metric you weren't handed.
 - Benchmarks to anchor against: trial→paid conversion is typically 25–35%; monthly subscriber churn above ~8–10% is a leak worth fixing first; ARPU below ~$3 usually means pricing or upsell headroom.
 - Pick ONE bottleneck and commit to it. Do not hedge across five things.`;
 
@@ -60,7 +59,6 @@ function buildUserPrompt(s: DeepDiveRequest): string {
     `Monthly subscriber churn: ${pct(s.churnRate)}`,
     `Trial-to-paid conversion: ${pct(s.trialConversion)}`,
     `New-customer-to-paying conversion: ${pct(s.conversionToPaying)}`,
-    `Quests completed in the app this week: ${s.questsThisWeek}`,
   ];
   if (s.next) {
     lines.push(
