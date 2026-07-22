@@ -32,6 +32,8 @@ import { getPlaybookDone } from '@/logic/playbook';
 import { PLAYBOOK_TOTAL } from '@/content/playbook';
 import { proLocked } from '@/config/pro';
 import { feedback } from '@/utils/feedback';
+import { getInsights } from '@/integrations/revenuecat';
+import { getRcCredentials } from '@/integrations/rcCredentials';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { useRevenueData } from '@/hooks/useRevenueData';
 import { useStore } from '@/store/useStore';
@@ -125,13 +127,24 @@ export default function TodayScreen() {
 
   // Recompute the advisor's read whenever the character or metrics change.
   // Skipped entirely when locked — free users see the teaser, not real advice.
+  // For Pro founders, pull the deeper charts (churn, trial conversion) so the
+  // advice is grounded in real rates, not proxies; charts degrade to null.
   useEffect(() => {
     if (!character || advisorLocked) {
       setAdvice(null);
       return;
     }
-    buildAdvisorSnapshot(db, character, overview).then(s => setAdvice(localAdvisor(s)));
-  }, [db, character, overview, advisorLocked]);
+    let cancelled = false;
+    (async () => {
+      const cred = connected ? await getRcCredentials() : null;
+      const insights = cred ? await getInsights(cred.apiKey, cred.projectId) : null;
+      const snap = await buildAdvisorSnapshot(db, character, overview, insights);
+      if (!cancelled) setAdvice(localAdvisor(snap));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [db, character, overview, advisorLocked, connected]);
 
   async function onSetGoal(days: number) {
     if (!next?.chapter.verify) return;

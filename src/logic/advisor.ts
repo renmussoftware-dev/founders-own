@@ -3,7 +3,7 @@ import { type CharacterRow } from '@/db/character';
 import { getSnapshots } from '@/db/metrics';
 import { weakestStat } from '@/logic/leveling';
 import { nextUnmetMoneyTarget, formatMetric, metricLabel } from '@/logic/verification';
-import { type RcOverview } from '@/integrations/revenuecat';
+import { type RcOverview, type InsightBundle } from '@/integrations/revenuecat';
 import { CHAPTERS_BY_ID } from '@/content/questline';
 import { type StatKey } from '@/theme/tokens';
 
@@ -27,6 +27,10 @@ export interface AdvisorSnapshot {
   next: { title: string; metric: string; gap: number; label: string } | null;
   questsThisWeek: number;
   mrrTrend: 'up' | 'flat' | 'down' | 'unknown';
+  // Deeper charts (null when unavailable: free tier, missing scope, or web CORS).
+  churnRate: number | null; // monthly %, lower is better
+  trialConversion: number | null; // %
+  conversionToPaying: number | null; // %
 }
 
 export interface AdvisorInsight {
@@ -39,7 +43,8 @@ export interface AdvisorInsight {
 export async function buildAdvisorSnapshot(
   db: SQLiteDatabase,
   character: CharacterRow,
-  overview: RcOverview | null
+  overview: RcOverview | null,
+  insights: InsightBundle | null = null
 ): Promise<AdvisorSnapshot> {
   const active = await db.getFirstAsync<{ chapter_id: string }>(
     "SELECT chapter_id FROM chapter_progress WHERE status = 'active' ORDER BY act, chapter_id LIMIT 1"
@@ -78,6 +83,9 @@ export async function buildAdvisorSnapshot(
       : null,
     questsThisWeek: weekQuests?.n ?? 0,
     mrrTrend: trend,
+    churnRate: insights?.churn?.latest ?? null,
+    trialConversion: insights?.trialConversion?.latest ?? null,
+    conversionToPaying: insights?.conversionToPaying?.latest ?? null,
   };
 }
 
@@ -90,15 +98,6 @@ export function localAdvisor(s: AdvisorSnapshot): AdvisorInsight {
         'Right now I’m guessing from your quests. Link your read-only key and I’ll pinpoint the one thing holding your revenue back.',
       focusStat: null,
       focusLabel: 'Connect',
-    };
-  }
-
-  if (s.questsThisWeek < 3) {
-    return {
-      headline: 'Momentum is your bottleneck this week',
-      detail: `Only ${s.questsThisWeek} quest${s.questsThisWeek === 1 ? '' : 's'} done in the last 7 days. Consistency compounds — protect the streak before anything else.`,
-      focusStat: 'operations',
-      focusLabel: 'Consistency',
     };
   }
 
@@ -121,23 +120,55 @@ export function localAdvisor(s: AdvisorSnapshot): AdvisorInsight {
     };
   }
 
+  // Real churn beats every proxy: if subscribers are leaking, that's the ceiling.
+  if (s.churnRate !== null && s.churnRate >= 10) {
+    return {
+      headline: `Churn is your ceiling — ${Math.round(s.churnRate)}% cancel each month`,
+      detail:
+        'At this rate, new subscribers mostly replace lost ones. Find the top cancel reason — a missing feature, a rough renewal, or price — and remove it before chasing installs.',
+      focusStat: 'product',
+      focusLabel: 'Retention',
+    };
+  }
+
+  // Trials starting but not converting = a first-run / paywall problem, not reach.
+  if (s.trialConversion !== null && s.trialConversion < 25) {
+    return {
+      headline: `Only ${Math.round(s.trialConversion)}% of trials convert to paid`,
+      detail:
+        'That’s below the ~25–35% most apps see. The leak is usually first-run value or paywall timing — tighten the moment a trial user first “gets it.”',
+      focusStat: 'product',
+      focusLabel: 'Conversion',
+    };
+  }
+
   const arpu = s.mrr / Math.max(1, s.subs);
   if (arpu < 3) {
     return {
       headline: 'Your revenue per user is thin',
-      detail: `About $${arpu.toFixed(2)} MRR per subscriber. Test pricing, an annual plan, or one upsell — small ARPU gains flow straight to MRR.`,
+      detail: `About $${arpu.toFixed(2)} MRR per subscriber. Test pricing or one upsell — small ARPU gains flow straight to MRR.`,
       focusStat: 'revenue',
       focusLabel: 'Pricing',
     };
   }
 
-  if (s.mrrTrend === 'down') {
+  // Fall back to the MRR trend only when real churn data isn't available.
+  if (s.churnRate === null && s.mrrTrend === 'down') {
     return {
       headline: 'MRR is slipping — churn is the ceiling',
       detail:
         'Your recurring revenue trended down this stretch. Find one reason subscribers cancel and remove it before chasing new installs.',
       focusStat: 'product',
       focusLabel: 'Retention',
+    };
+  }
+
+  if (s.questsThisWeek < 3) {
+    return {
+      headline: 'Momentum is slipping',
+      detail: `Only ${s.questsThisWeek} quest${s.questsThisWeek === 1 ? '' : 's'} done in the last 7 days. Your numbers look okay — the risk now is you, not the app. Protect the streak.`,
+      focusStat: 'operations',
+      focusLabel: 'Consistency',
     };
   }
 
