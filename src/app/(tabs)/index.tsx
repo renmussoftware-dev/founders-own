@@ -13,6 +13,7 @@ import {
   buildAdvisorSnapshot,
   generateAdvisorDeepDive,
   localAdvisor,
+  recordDeepDive,
   type AdvisorInsight,
 } from '@/logic/advisor';
 import { devSeedSampleMetrics } from '@/db/dev';
@@ -67,6 +68,8 @@ export default function TodayScreen() {
   const [advice, setAdvice] = useState<AdvisorInsight | null>(null);
   const [benchmarks, setBenchmarks] = useState<BenchmarkSet | null>(null);
   const [deepDiveStatus, setDeepDiveStatus] = useState<string | null>(null);
+  const [deepDiveText, setDeepDiveText] = useState<string | null>(null);
+  const [deepDiveLoading, setDeepDiveLoading] = useState(false);
 
   // Model B: metric-driven personalization (quest selection, the "why this
   // quest" data line) and the advisor are Pro. Free users get pre-scripted
@@ -181,7 +184,7 @@ export default function TodayScreen() {
   }
 
   async function onDeepDive() {
-    if (!character) return;
+    if (!character || deepDiveLoading) return;
     const gate = await advisorDeepDiveEligible(db, isPro);
     if (gate.reason === 'not_pro') {
       router.push('/paywall');
@@ -191,11 +194,22 @@ export default function TodayScreen() {
       setDeepDiveStatus('Your next weekly deep-dive isn’t ready yet — check back soon.');
       return;
     }
+    setDeepDiveLoading(true);
+    setDeepDiveStatus('Reading your week…');
     try {
-      const snapshot = await buildAdvisorSnapshot(db, character, overview);
-      await generateAdvisorDeepDive(snapshot);
+      // Ground the read in real charts (churn, conversion) when available.
+      const cred = connected ? await getRcCredentials() : null;
+      const insights = cred ? await getInsights(cred.apiKey, cred.projectId) : null;
+      const snapshot = await buildAdvisorSnapshot(db, character, overview, insights);
+      const read = await generateAdvisorDeepDive(snapshot);
+      await recordDeepDive(db); // only stamp the weekly cooldown on success
+      setDeepDiveText(read);
+      setDeepDiveStatus(null);
+      feedback('milestone');
     } catch {
       setDeepDiveStatus('Weekly AI deep-dive is coming to Pro shortly.');
+    } finally {
+      setDeepDiveLoading(false);
     }
   }
 
@@ -362,6 +376,8 @@ export default function TodayScreen() {
               insight={advice}
               isPro={isPro}
               deepDiveStatus={deepDiveStatus}
+              deepDiveText={deepDiveText}
+              deepDiveLoading={deepDiveLoading}
               onDeepDive={onDeepDive}
             />
           </View>

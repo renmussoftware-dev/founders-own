@@ -13,6 +13,8 @@ export function AdvisorCard({
   insight,
   isPro,
   deepDiveStatus = null,
+  deepDiveText = null,
+  deepDiveLoading = false,
   onDeepDive,
   locked,
   onUnlock,
@@ -20,6 +22,8 @@ export function AdvisorCard({
   insight?: AdvisorInsight | null;
   isPro?: boolean;
   deepDiveStatus?: string | null;
+  deepDiveText?: string | null;
+  deepDiveLoading?: boolean;
   onDeepDive?: () => void;
   locked?: boolean;
   onUnlock?: () => void;
@@ -67,12 +71,25 @@ export function AdvisorCard({
       <Text style={styles.headline}>{insight.headline}</Text>
       <Text style={styles.detail}>{insight.detail}</Text>
 
-      <Pressable onPress={onDeepDive} style={styles.deepDive}>
+      <Pressable onPress={onDeepDive} disabled={deepDiveLoading} style={styles.deepDive}>
         <Text style={styles.deepDiveText}>
-          {isPro ? 'Get this week’s AI deep-dive' : 'Weekly AI deep-dive'}
+          {deepDiveLoading
+            ? 'Reading your week…'
+            : deepDiveText
+              ? 'Refresh this week’s AI deep-dive'
+              : isPro
+                ? 'Get this week’s AI deep-dive'
+                : 'Weekly AI deep-dive'}
         </Text>
-        <Text style={styles.deepDiveHint}>{isPro ? '→' : 'PRO'}</Text>
+        <Text style={styles.deepDiveHint}>
+          {deepDiveLoading ? '···' : isPro || deepDiveText ? '→' : 'PRO'}
+        </Text>
       </Pressable>
+      {deepDiveText ? (
+        <View style={styles.readBox}>
+          <Text style={styles.read}>{deepDiveText}</Text>
+        </View>
+      ) : null}
       {deepDiveStatus ? <Text style={styles.status}>{deepDiveStatus}</Text> : null}
     </LinearGradient>
   );
@@ -145,6 +162,20 @@ const styles = StyleSheet.create({
     fontSize: 10,
     letterSpacing: 1,
     color: colors.gold,
+  },
+  readBox: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: 'rgba(164,147,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(164,147,255,0.18)',
+  },
+  read: {
+    fontFamily: fonts.uiBold,
+    fontSize: 13,
+    lineHeight: 20,
+    color: colors.textPrimary,
   },
   status: {
     fontFamily: fonts.uiBold,

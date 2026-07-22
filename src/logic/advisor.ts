@@ -5,6 +5,7 @@ import { weakestStat } from '@/logic/leveling';
 import { nextUnmetMoneyTarget, formatMetric, metricLabel } from '@/logic/verification';
 import { type RcOverview, type InsightBundle } from '@/integrations/revenuecat';
 import { CHAPTERS_BY_ID } from '@/content/questline';
+import { ADVISOR_CONFIGURED, ADVISOR_ENDPOINT } from '@/config/advisor';
 import { type StatKey } from '@/theme/tokens';
 
 /**
@@ -192,7 +193,7 @@ export function localAdvisor(s: AdvisorSnapshot): AdvisorInsight {
   };
 }
 
-// ---- Premium weekly LLM deep-dive (margin-safe; endpoint pending) ----
+// ---- Premium weekly LLM deep-dive (margin-safe; margin tracks a paid action) ----
 
 const LAST_DEEPDIVE_KEY = 'advisor_deepdive_last';
 const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
@@ -213,12 +214,69 @@ export async function advisorDeepDiveEligible(
   return { eligible: true, reason: 'ok' };
 }
 
+/** Stamp the cooldown so the next deep-dive is a week out. Call on success. */
+export async function recordDeepDive(db: SQLiteDatabase): Promise<void> {
+  await db.runAsync(
+    'INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+    LAST_DEEPDIVE_KEY,
+    new Date().toISOString()
+  );
+}
+
+/** The PII-free payload sent to the endpoint — the snapshot minus UI-only bits. */
+export interface DeepDiveRequest {
+  connected: boolean;
+  users: number;
+  subs: number;
+  mrr: number;
+  trials: number;
+  arpu: number;
+  mrrTrend: AdvisorSnapshot['mrrTrend'];
+  churnRate: number | null;
+  trialConversion: number | null;
+  conversionToPaying: number | null;
+  questsThisWeek: number;
+  next: { title: string; label: string; gap: number } | null;
+}
+
+function toDeepDiveRequest(s: AdvisorSnapshot): DeepDiveRequest {
+  return {
+    connected: s.connected,
+    users: s.users,
+    subs: s.subs,
+    mrr: s.mrr,
+    trials: s.trials,
+    arpu: s.mrr / Math.max(1, s.subs),
+    mrrTrend: s.mrrTrend,
+    churnRate: s.churnRate,
+    trialConversion: s.trialConversion,
+    conversionToPaying: s.conversionToPaying,
+    questsThisWeek: s.questsThisWeek,
+    next: s.next ? { title: s.next.title, label: s.next.label, gap: s.next.gap } : null,
+  };
+}
+
 /**
- * The single live-LLM call for the advisor. Assembles the snapshot into a
- * prompt and asks Claude (via the Renmus proxy) for a richer weekly read.
- * Endpoint + auth pending — throws so callers surface "coming to Pro".
+ * The single live-LLM call for the advisor. POSTs a PII-free metrics snapshot
+ * to the Renmus serverless endpoint (which holds the Anthropic key and calls
+ * Claude), then returns the prose read. Throws when the endpoint isn't
+ * configured or the request fails — callers surface "coming to Pro".
  */
-export async function generateAdvisorDeepDive(_snapshot: AdvisorSnapshot): Promise<string> {
-  // TODO(Phase 5): POST the snapshot to the Renmus LLM proxy; return the read.
-  throw new Error('advisor-endpoint-not-configured');
+export async function generateAdvisorDeepDive(snapshot: AdvisorSnapshot): Promise<string> {
+  if (!ADVISOR_CONFIGURED) throw new Error('advisor-endpoint-not-configured');
+  let res: Response;
+  try {
+    res = await fetch(ADVISOR_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(toDeepDiveRequest(snapshot)),
+    });
+  } catch {
+    throw new Error('advisor-endpoint-unreachable');
+  }
+  if (!res.ok) throw new Error(`advisor-endpoint-error-${res.status}`);
+  const data = (await res.json()) as { read?: string };
+  const read = data.read?.trim();
+  if (!read) throw new Error('advisor-endpoint-empty');
+  return read;
 }
